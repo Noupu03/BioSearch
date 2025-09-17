@@ -49,17 +49,12 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler
         FolderIcon dragged = eventData.pointerDrag?.GetComponent<FolderIcon>();
         if (dragged == null) return;
 
-        // 1) FileDragManager의 OnEndDrag를 EventSystem 흐름으로 직접 호출
         if (FolderDragManager.Instance != null)
-        {
             ExecuteEvents.Execute(FolderDragManager.Instance.gameObject, eventData, ExecuteEvents.endDragHandler);
-        }
 
-        // 2) 폴더 이동 로직
         Folder source = dragged.GetFolder();
         Folder target = folder;
 
-        // 깊이 제한 확인
         string warning;
         if (!FolderDepthUtility.CanMove(source, target, out warning))
         {
@@ -73,9 +68,12 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler
         target.children.Add(source);
         source.parent = target;
 
-        // 3) UI 갱신은 다음 프레임으로 지연 이벤트 시스템이 정리될 시간 확보
+        // 폴더 이동 로그
+        LogWindowManager.Instance.Log($"폴더 '{source.name}' → '{target.name}' 이동됨");
+
         fileWindow.StartCoroutine(OpenFolderNextFrame(target));
     }
+
 
 
     private System.Collections.IEnumerator OpenFolderNextFrame(Folder target)

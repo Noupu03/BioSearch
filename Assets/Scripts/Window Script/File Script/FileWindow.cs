@@ -23,68 +23,67 @@ public class FileWindow : MonoBehaviour
 
     void Awake()
     {
-        // PathPanelManager 먼저 초기화
         if (pathPanelManager != null)
             pathPanelManager.Initialize(this);
     }
 
     void Start()
     {
-        // 폴더 구조
+        // 폴더 구조 생성
         rootFolder = new Folder("Root");
-        Folder head = new Folder("head", rootFolder);
-        head.children.Add(new Folder("mouse", head));
-        head.children.Add(new Folder("left eye", head));
-        head.children.Add(new Folder("right eye", head));
-        head.children.Add(new Folder("nose", head));
+        Folder Head = new Folder("Head", rootFolder);
+        Head.children.Add(new Folder("Mouse", Head));
+        Head.children.Add(new Folder("LeftEye", Head));
+        Head.children.Add(new Folder("RightEye", Head));
+        Head.children.Add(new Folder("Nose", Head));
 
-        Folder body = new Folder("body", rootFolder);
+        Folder Body = new Folder("Body", rootFolder);
 
-        Folder organ = new Folder("organ", rootFolder);
-        organ.children.Add(new Folder("heart", organ));
+        Folder Organ = new Folder("Organ", rootFolder);
+        Organ.children.Add(new Folder("Heart", Organ));
 
-        Folder left_arm = new Folder("left arm", rootFolder);
-        left_arm.children.Add(new Folder("left hand", left_arm));
-        Folder right_arm = new Folder("right arm", rootFolder);
-        right_arm.children.Add(new Folder("right hand", right_arm));
+        Folder LeftArm = new Folder("LeftArm", rootFolder);
+        LeftArm.children.Add(new Folder("LeftHand", LeftArm));
+        Folder RightArm = new Folder("RightArm", rootFolder);
+        RightArm.children.Add(new Folder("RightHand", RightArm));
 
-        Folder left_leg = new Folder("left leg", rootFolder);
-        left_leg.children.Add(new Folder("left foot", left_leg));
-        Folder right_leg = new Folder("right leg", rootFolder);
-        right_leg.children.Add(new Folder("right foot", right_leg));
+        Folder LeftLeg = new Folder("LeftLeg", rootFolder);
+        LeftLeg.children.Add(new Folder("LeftFoot", LeftLeg));
+        Folder RightLeg = new Folder("RightLeg", rootFolder);
+        RightLeg.children.Add(new Folder("RightFoot", RightLeg));
 
+        rootFolder.children.Add(Head);
+        rootFolder.children.Add(Body);
+        rootFolder.children.Add(Organ);
+        rootFolder.children.Add(LeftArm);
+        rootFolder.children.Add(RightArm);
+        rootFolder.children.Add(LeftLeg);
+        rootFolder.children.Add(RightLeg);
 
-        rootFolder.children.Add(head);
-        rootFolder.children.Add(body);
-        rootFolder.children.Add(organ);
-        rootFolder.children.Add(left_arm);
-        rootFolder.children.Add(right_arm);
-        rootFolder.children.Add(left_leg);
-        rootFolder.children.Add(right_leg);
+        // 이상 폴더 확률 설정 (0~1)
+        AssignAbnormalParameters(rootFolder);
 
-        // 이상 폴더 랜덤 지정 + 하위 폴더 상속
-        PickAbnormalFolderRecursive(rootFolder);
-
-        // Back 버튼 항상 활성화
+        // Back 버튼
         if (backButton != null)
+        {
             backButton.onClick.AddListener(OnBackButtonClicked);
-        if (backButton != null)
             backButton.gameObject.SetActive(true);
+        }
 
         OpenFolder(rootFolder, false);
     }
 
-    void PickAbnormalFolderRecursive(Folder folder)
+    // 각 폴더별로 abnormalParameter를 설정하고, 확률에 따라 isAbnormal 결정
+    void AssignAbnormalParameters(Folder folder)
     {
-        if (folder.children.Count == 0)
-        {
-            folder.isAbnormal = Random.value < 0.1f; // 10% 확률
-            return;
-        }
-        int index = Random.Range(0, folder.children.Count);
-        folder.children[index].isAbnormal = true;
         foreach (var child in folder.children)
-            PickAbnormalFolderRecursive(child);
+        {
+            child.abnormalParameter = 0.1f; // 10% 확률
+            child.AssignAbnormalByParameter();
+
+            // 재귀 호출, 하위 폴더도 독립적으로 설정
+            AssignAbnormalParameters(child);
+        }
     }
 
     public void OpenFolder(Folder folder, bool recordPrevious = true)
@@ -104,7 +103,7 @@ public class FileWindow : MonoBehaviour
         {
             GameObject iconObj = Instantiate(fileIconPrefab, contentArea);
             FolderIcon icon = iconObj.GetComponent<FolderIcon>();
-            icon.Setup(child, this, folder.isAbnormal);
+            icon.Setup(child, this, child.isAbnormal);
         }
 
         if (backButton != null)
