@@ -3,11 +3,14 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
+/// <summary>
+/// 폴더와 파일을 표시하고 탐색하는 UI 창
+/// </summary>
 public class FileWindow : MonoBehaviour
 {
     [Header("Prefabs")]
-    public GameObject folderIconPrefab;
-    public GameObject fileIconPrefab;
+    public GameObject folderIconPrefab;   // 폴더 프리팹
+    public GameObject fileIconPrefab;     // 파일 프리팹 (공용)
 
     [Header("Scroll Area")]
     public Transform contentArea;
@@ -19,8 +22,13 @@ public class FileWindow : MonoBehaviour
     [Header("Back Button")]
     public Button backButton;
 
-    [Header("Inspector File List")]
-    public List<FileData> fileDatas = new List<FileData>();
+    [Header("Body Buttons")]
+    public Button headButton;
+    public Button bodyButton;
+    public Button leftArmButton;
+    public Button rightArmButton;
+    public Button leftLegButton;
+    public Button rightLegButton;
 
     private FolderIcon selectedFolderIcon;
     private FileIcon selectedFileIcon;
@@ -29,6 +37,7 @@ public class FileWindow : MonoBehaviour
     private Folder currentFolder;
     private Stack<Folder> folderHistory = new Stack<Folder>();
 
+    // 현재 폴더 안의 파일들
     private List<File> currentFolderFiles = new List<File>();
 
     void Awake()
@@ -39,46 +48,9 @@ public class FileWindow : MonoBehaviour
 
     void Start()
     {
-        // 기본 폴더 구조 생성
+        // --- 1. 폴더 구조 생성 ---
         rootFolder = new Folder("Root");
-        CreateDefaultFolders();
 
-        // Inspector에 입력한 FileData 기반으로 파일 생성
-        foreach (var data in fileDatas)
-        {
-            Folder targetParent = FindFolderByName(rootFolder, data.parentFolderName);
-            if (targetParent == null)
-            {
-                Debug.LogWarning($"부모 폴더 '{data.parentFolderName}'을(를) 찾을 수 없습니다. Root에 추가합니다.");
-                targetParent = rootFolder;
-            }
-
-            File file = new File(
-                data.fileName,
-                data.extension,
-                targetParent,
-                data.textContent,
-                data.imageContent
-            );
-
-            currentFolderFiles.Add(file);
-            targetParent.files.Add(file);
-        }
-
-        // 이상 폴더 확률 설정
-        AssignAbnormalParameters(rootFolder);
-
-        if (backButton != null)
-        {
-            backButton.onClick.AddListener(OnBackButtonClicked);
-            backButton.gameObject.SetActive(true);
-        }
-
-        OpenFolder(rootFolder, false);
-    }
-
-    void CreateDefaultFolders()
-    {
         Folder Head = new Folder("Head", rootFolder);
         Head.children.Add(new Folder("Mouse", Head));
         Head.children.Add(new Folder("LeftEye", Head));
@@ -106,18 +78,54 @@ public class FileWindow : MonoBehaviour
         rootFolder.children.Add(RightArm);
         rootFolder.children.Add(LeftLeg);
         rootFolder.children.Add(RightLeg);
+
+        // --- 2. UI 버튼 연결 ---
+        if (headButton != null) Head.linkedBodyButton = headButton;
+        if (bodyButton != null) Body.linkedBodyButton = bodyButton;
+        if (leftArmButton != null) LeftArm.linkedBodyButton = leftArmButton;
+        if (rightArmButton != null) RightArm.linkedBodyButton = rightArmButton;
+        if (leftLegButton != null) LeftLeg.linkedBodyButton = leftLegButton;
+        if (rightLegButton != null) RightLeg.linkedBodyButton = rightLegButton;
+
+        // --- 3. 예시 파일 추가 ---
+        File file1 = new File("Readme", "txt", rootFolder);
+        currentFolderFiles.Add(file1);
+        rootFolder.files.Add(file1);
+
+        File file2 = new File("ImageSample", "png", rootFolder);
+        currentFolderFiles.Add(file2);
+        rootFolder.files.Add(file2);
+
+        // --- 4. 이상 폴더 확률 설정 ---
+        AssignAbnormalParameters(rootFolder);
+
+        // --- 5. Back 버튼 ---
+        if (backButton != null)
+        {
+            backButton.onClick.AddListener(OnBackButtonClicked);
+            backButton.gameObject.SetActive(true);
+        }
+
+        // --- 6. 초기 폴더 열기 ---
+        OpenFolder(rootFolder, false);
     }
 
+    // 각 폴더별로 abnormalParameter를 설정하고, 확률에 따라 isAbnormal 결정
     void AssignAbnormalParameters(Folder folder)
     {
         foreach (var child in folder.children)
         {
             child.abnormalParameter = 0.1f; // 10% 확률
             child.AssignAbnormalByParameter();
+
+            // 재귀 호출, 하위 폴더도 독립적으로 설정
             AssignAbnormalParameters(child);
         }
     }
 
+    /// <summary>
+    /// 폴더 열기
+    /// </summary>
     public void OpenFolder(Folder folder, bool recordPrevious = true)
     {
         if (recordPrevious && currentFolder != null && folder != currentFolder)
@@ -146,6 +154,7 @@ public class FileWindow : MonoBehaviour
         foreach (File file in currentFolderFiles)
         {
             if (file.parent != folder) continue;
+
             GameObject iconObj = Instantiate(fileIconPrefab, contentArea);
             FileIcon icon = iconObj.GetComponent<FileIcon>();
             icon.Setup(file, this);
@@ -221,19 +230,4 @@ public class FileWindow : MonoBehaviour
         if (currentFolder != null)
             OpenFolder(currentFolder, false);
     }
-    private Folder FindFolderByName(Folder folder, string name)
-    {
-        if (folder.name.Equals(name, System.StringComparison.OrdinalIgnoreCase))
-            return folder;
-
-        foreach (var child in folder.children)
-        {
-            var found = FindFolderByName(child, name);
-            if (found != null)
-                return found;
-        }
-
-        return null;
-    }
-
 }
