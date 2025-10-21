@@ -87,7 +87,7 @@ Material:
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _BandSpeed: 0.5
-    - _BandStrength: 0.2
+    - _BandStrength: 0.25
     - _BandThickness: 0.2
     - _Blend: 0
     - _BlendModePreserveSpecular: 1

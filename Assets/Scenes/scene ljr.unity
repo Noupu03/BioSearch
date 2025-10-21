@@ -3426,7 +3426,7 @@ MonoBehaviour:
   targetCamera: {fileID: 919113284}
   defaultFOV: 20
   zoomFOV: 20
-  transitionSpeed: 4
+  transitionSpeed: 3
   view1: {fileID: 1454907862}
   view2: {fileID: 614927673}
   leftView: {fileID: 661166835}
