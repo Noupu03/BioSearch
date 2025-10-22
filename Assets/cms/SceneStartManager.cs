@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SceneStartManager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class SceneStartManager : MonoBehaviour
 
         if (sanity != null)
         {
-            sanity.ResetSanity();
+            sanity.UpdateSanityUI(); // 현재 수치 그대로 표시
         }
 
         if (gameOver != null)
@@ -24,6 +25,6 @@ public class SceneStartManager : MonoBehaviour
             gameOver.ResetGameOver();
         }
 
-        Debug.Log("[SceneStartManager] Timer & Sanity reset, GameOver state cleared!");
+        Debug.Log("[SceneStartManager] 초기화 완료, Timer 시작, Sanity UI 갱신, GameOver 상태 초기화");
     }
 }

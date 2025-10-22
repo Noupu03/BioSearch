@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+
 public class SelectPopupManager : MonoBehaviour
 {
     [Header("버튼 연결")]
@@ -20,7 +21,12 @@ public class SelectPopupManager : MonoBehaviour
     public LogWindowManager logWindow;
     public FileWindow fileWindow;
 
-    private void Start()
+    // static으로 유지해서 씬 Reload 후에도 보존
+    public static int successCount = 0;
+    public static int failCount = 0;
+    public static int stageCount = 1;
+
+    void Start()
     {
         if (acceptButton != null)
             acceptButton.onClick.AddListener(() => ShowPopup(acceptPopupPrefab, true));
@@ -29,18 +35,15 @@ public class SelectPopupManager : MonoBehaviour
             releaseButton.onClick.AddListener(() => ShowPopup(releasePopupPrefab, false));
     }
 
-    private void ShowPopup(GameObject popupPrefab, bool isAccept)
+        private void ShowPopup(GameObject popupPrefab, bool isAccept)
     {
         if (currentPopup != null) return;
-
         if (popupPrefab == null || popupParent == null) return;
 
         currentPopup = Instantiate(popupPrefab, popupParent);
 
         // PopupPanel 안 X 버튼 찾기
         Button xButton = currentPopup.transform.Find("PopupPanel/XButton")?.GetComponent<Button>();
-        if (xButton != null)
-            xButton.onClick.AddListener(ClosePopup);
 
         // contentPanel 안 Yes/No 버튼 찾기
         Transform content = currentPopup.transform.Find("PopupPanel/contentPanel");
@@ -60,11 +63,15 @@ public class SelectPopupManager : MonoBehaviour
                 popupComp.onYes += () =>
                 {
                     HandleYes(isAccept);
+                    ClosePopup();
                 };
 
                 // No 클릭은 그냥 닫기
             }
         }
+
+        if (xButton != null)
+            xButton.onClick.AddListener(ClosePopup);
     }
 
     private void HandleYes(bool isAccept)
@@ -72,30 +79,35 @@ public class SelectPopupManager : MonoBehaviour
         Folder root = fileWindow.GetRootFolder();
         if (root == null) return;
 
-        int abnormalCount = CountAbnormal(root);
+        int abnormalCount = AbnormalDetector.GetAbnormalCount(root);
 
-        if ((isAccept && abnormalCount == 0) || (!isAccept && abnormalCount > 0))
+        bool success = (isAccept && abnormalCount == 0) || (!isAccept && abnormalCount > 0);
+
+        if (success)
         {
             logWindow.Log("성공!");
+            successCount++;
         }
         else
         {
             logWindow.Log("실패!");
+            failCount++;
             if (sanityManager != null)
                 sanityManager.DecreaseSanity(40f);
+           
         }
-    }
 
-    private int CountAbnormal(Folder folder)
-    {
-        if (folder == null) return 0;
+        if (sanityManager.GetCurrentSanity() <= 0f)
+        {
+            ResetCounts();
+            return;
+        }
 
-        int count = folder.isAbnormal ? 1 : 0;
-        foreach (var child in folder.children)
-            count += CountAbnormal(child);
-        foreach (var file in folder.files)
-            if (file.isAbnormal) count++;
-        return count;
+            // 스테이지 증가 및 씬 Reload
+            stageCount++;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+        );
     }
 
     private void ClosePopup()
@@ -105,5 +117,12 @@ public class SelectPopupManager : MonoBehaviour
             Destroy(currentPopup);
             currentPopup = null;
         }
+    }
+
+    public void ResetCounts()
+    {
+        successCount = 0;
+        failCount = 0;
+        stageCount = 1;
     }
 }

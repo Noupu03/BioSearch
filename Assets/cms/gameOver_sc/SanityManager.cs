@@ -5,66 +5,50 @@ public class SanityManager : MonoBehaviour
 {
     [Header("Sanity Settings")]
     public float maxSanity = 100f;
-    private float currentSanity;
+
+    // static으로 선언하여 씬 Reload 시에도 값 유지
+    public static float currentSanityStatic;
 
     [Header("UI (TMP Text)")]
     public TextMeshProUGUI sanityText;
 
-    [Header("Decrease Settings")]
-    public float decreaseAmount = 5f;
-
-    private bool isGameOverTriggered = false;
-
-    void Start()
+    void Awake()
     {
-        currentSanity = maxSanity;
+        // 첫 실행이면 초기화
+        if (currentSanityStatic == 0)
+            currentSanityStatic = maxSanity;
+        
         UpdateSanityUI();
-    }
-
-    void Update()
-    {
-        if (isGameOverTriggered)
-            return;
-
-        // For test: decrease sanity when pressing the left arrow key
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            DecreaseSanity(decreaseAmount);
-        }
     }
 
     public void DecreaseSanity(float amount)
     {
-        currentSanity -= amount;
-        currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
+        currentSanityStatic -= amount;
+        currentSanityStatic = Mathf.Clamp(currentSanityStatic, 0f, maxSanity);
         UpdateSanityUI();
 
-        if (currentSanity <= 0f)
+        if (currentSanityStatic <= 0f)
         {
-            isGameOverTriggered = true;
-            OnSanityDepleted();
+            // 더 이상 다음 스테이지로 진행하지 않고 게임오버 처리
+            GameOverManager gameOver = FindObjectOfType<GameOverManager>();
+            if (gameOver != null)
+                gameOver.TriggerGameOver("Sanity reached zero");
         }
     }
 
-    void UpdateSanityUI()
+
+    public void UpdateSanityUI()
     {
         if (sanityText != null)
-            sanityText.text = $"Sanity: {currentSanity:0} / {maxSanity:0}";
-    }
-
-    void OnSanityDepleted()
-    {
-        GameOverManager gameOver = FindObjectOfType<GameOverManager>();
-        if (gameOver != null)
-        {
-            gameOver.TriggerGameOver("Sanity reached zero");
-        }
+            sanityText.text = $"Sanity: {currentSanityStatic:0}";
     }
 
     public void ResetSanity()
     {
-        currentSanity = maxSanity;
-        isGameOverTriggered = false;
+        currentSanityStatic = maxSanity;
         UpdateSanityUI();
     }
+
+    // 현재 정신력 반환
+    public float GetCurrentSanity() => currentSanityStatic;
 }

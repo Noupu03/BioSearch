@@ -16,7 +16,10 @@ EditorBuildSettings:
     guid: 32aed1ecfc6eebd4eaffdca375e270a9
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
-    guid: 8d665bd32381c8d41812211aa78cf02b
+    guid: e3b404ae073c8894e8768e60027fd910
+  - enabled: 1
+    path: Assets/Scenes/scene ssh.unity
+    guid: 66791ace5922f5d4ea53a10343fdfd73
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

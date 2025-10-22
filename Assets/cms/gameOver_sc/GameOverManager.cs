@@ -21,6 +21,7 @@ public class GameOverManager : MonoBehaviour
     {
         Debug.Log("[GameOverManager] 5초 후 시작 화면으로 복귀합니다...");
         yield return new WaitForSeconds(returnDelay);
+
         SceneManager.LoadScene(startSceneName);
     }
 
@@ -33,5 +34,6 @@ public class GameOverManager : MonoBehaviour
     public bool IsGameOver()
     {
         return isGameOver;
+
     }
 }
