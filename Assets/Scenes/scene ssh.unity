@@ -946,6 +946,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timerText: {fileID: 1093830573}
   totalTime: 10
+  isRunning: 0
 --- !u!114 &168379754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -958,7 +959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e67bf6c4c6f5c44ebc7ef3d7373e8b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  returnDelay: 5
+  returnDelay: 0
   startSceneName: StartScene
 --- !u!4 &168379755
 Transform:
@@ -8283,7 +8284,7 @@ MonoBehaviour:
     parentFolderName: Body
   headButton: {fileID: 1265956438}
   bodyButton: {fileID: 1515243329}
-  leftArmButton: {fileID: 2084964257}
+  leftArmButton: {fileID: 490495806}
   leftHandButton: {fileID: 1167035857}
   rightArmButton: {fileID: 2084964257}
   rightHandButton: {fileID: 723116580}

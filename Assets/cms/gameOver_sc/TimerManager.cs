@@ -6,7 +6,7 @@ public class TimerManager : MonoBehaviour
     public TextMeshProUGUI timerText;
     public float totalTime = 60f;
     private float currentTime;
-    private bool isRunning = false;
+    public bool isRunning = false;
 
     private GameOverManager gameOverManager;
 
@@ -26,8 +26,10 @@ public class TimerManager : MonoBehaviour
 
         if (currentTime <= 0f)
         {
+
             currentTime = 0f;
             isRunning = false;
+            
             gameOverManager.TriggerGameOver("시간 초과로 인한 게임 오버");
         }
     }

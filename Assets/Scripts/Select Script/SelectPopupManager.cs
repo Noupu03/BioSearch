@@ -20,6 +20,7 @@ public class SelectPopupManager : MonoBehaviour
     public SanityManager sanityManager;
     public LogWindowManager logWindow;
     public FileWindow fileWindow;
+    TimerManager timerManager;
 
     // static으로 유지해서 씬 Reload 후에도 보존
     public static int successCount = 0;
@@ -35,7 +36,11 @@ public class SelectPopupManager : MonoBehaviour
             releaseButton.onClick.AddListener(() => ShowPopup(releasePopupPrefab, false));
     }
 
-        private void ShowPopup(GameObject popupPrefab, bool isAccept)
+
+    //시간 초과로 게임오버시 값 초기화
+
+
+	private void ShowPopup(GameObject popupPrefab, bool isAccept)
     {
         if (currentPopup != null) return;
         if (popupPrefab == null || popupParent == null) return;
@@ -92,23 +97,34 @@ public class SelectPopupManager : MonoBehaviour
         {
             logWindow.Log("실패!");
             failCount++;
+
             if (sanityManager != null)
+            {
                 sanityManager.DecreaseSanity(40f);
-           
+
+                //  게임오버 확인
+                if (sanityManager.GetCurrentSanity() <= 0f)
+                {
+                    // 게임오버 처리
+                    GameOverManager gameOver = FindObjectOfType<GameOverManager>();
+                    if (gameOver != null)
+                    {
+                        gameOver.TriggerGameOver("정신력 0으로 인한 게임오버");
+                    }
+
+                    // 씬 Reload나 stage 증가 중단
+                    return;
+                }
+            }
         }
 
-        if (sanityManager.GetCurrentSanity() <= 0f)
-        {
-            ResetCounts();
-            return;
-        }
-
-            // 스테이지 증가 및 씬 Reload
-            stageCount++;
+        // 게임오버가 아니면 스테이지 진행
+        stageCount++;
         UnityEngine.SceneManagement.SceneManager.LoadScene(
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
         );
     }
+
 
     private void ClosePopup()
     {

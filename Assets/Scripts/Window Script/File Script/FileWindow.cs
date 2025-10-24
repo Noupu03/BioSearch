@@ -89,6 +89,8 @@ public partial class FileWindow : MonoBehaviour
     /// </summary>
     private void InitializeFilesFromInspector()
     {
+        float abnormalChance = GetAbnormalProbabilityBySanity();
+
         foreach (var data in fileDatas)
         {
             Folder targetParent = FindFolderByName(rootFolder, data.parentFolderName);
@@ -99,8 +101,8 @@ public partial class FileWindow : MonoBehaviour
                 targetParent = rootFolder;
             }
 
-            // 10% 확률로 isAbnormal 랜덤 설정 (Inspector 값보다 우선)
-            bool randomAbnormal = Random.value < 0.1f; // 10%
+            // Sanity 기반 확률로 비정상 여부 설정
+            bool randomAbnormal = Random.value < abnormalChance;
 
             File file = new File(
                 data.fileName,
@@ -108,13 +110,14 @@ public partial class FileWindow : MonoBehaviour
                 targetParent,
                 data.textContent,
                 data.imageContent,
-                data.isAbnormal || randomAbnormal // 기존 데이터가 true면 유지 + 10% 랜덤
+                data.isAbnormal || randomAbnormal
             );
 
             currentFolderFiles.Add(file);
             targetParent.files.Add(file);
         }
     }
+
 
 
     /// <summary>
@@ -169,16 +172,30 @@ public partial class FileWindow : MonoBehaviour
     /// </summary>
     void AssignAbnormalParameters(Folder folder)
     {
+        float abnormalChance = GetAbnormalProbabilityBySanity();
+
         foreach (var child in folder.children)
         {
-            child.abnormalParameter = 0.1f; // 10% 확률
+            child.abnormalParameter = abnormalChance;
             child.AssignAbnormalByParameter();
             AssignAbnormalParameters(child);
         }
     }
+
     public Folder GetRootFolder()
     {
         return rootFolder;
+    }
+    /// <summary>
+    /// 현재 정신력에 따라 이상 확률 반환
+    /// </summary>
+    private float GetAbnormalProbabilityBySanity()
+    {
+        float sanity = SanityManager.currentSanityStatic;
+
+        if (sanity >= 70f) return 0.1f;   // 고 sanity 구간
+        else if (sanity >= 30f) return 0.2f; // 중간 sanity 구간
+        else return 0.5f; // 낮은 sanity 구간
     }
 
 }
