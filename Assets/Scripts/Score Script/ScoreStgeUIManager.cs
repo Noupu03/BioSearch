@@ -19,12 +19,12 @@ public class ScoreStageUIManager : MonoBehaviour
         if (spm == null) return;
 
         if (successText != null)
-            successText.text = $"Success: {SelectPopupManager.successCount}";
+            successText.text = $"성공 : {SelectPopupManager.successCount}";
 
         if (failText != null)
-            failText.text = $"Fail: {SelectPopupManager.failCount}";
+            failText.text = $"실패 : {SelectPopupManager.failCount}";
 
         if (stageText != null)
-            stageText.text = $"Stage: {SelectPopupManager.stageCount}";
+            stageText.text = $"{SelectPopupManager.stageCount} 명째";
     }
 }

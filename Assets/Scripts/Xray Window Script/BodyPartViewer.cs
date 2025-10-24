@@ -103,15 +103,28 @@ public class BodyPartViewer : MonoBehaviour
     }
 
     /// <summary>
-    /// Folder.cs의 HasAbnormalInChildren과 동일한 기준으로 자식 이상 폴더 존재 여부 확인
+    /// Folder.cs의 HasAbnormalInChildren과 동일한 기준으로
+    /// 자식 폴더 + 파일 이상 여부 확인
     /// </summary>
     private bool HasAbnormalInChildren(Folder folder)
     {
+        if (folder == null) return false;
+
+        // 파일 이상 여부 먼저 검사
+        foreach (var file in folder.files)
+        {
+            if (file.isAbnormal)
+                return true;
+        }
+
+        // 자식 폴더 재귀 검사
         foreach (var child in folder.children)
         {
             if (child.isAbnormal || HasAbnormalInChildren(child))
                 return true;
         }
+
         return false;
     }
+
 }

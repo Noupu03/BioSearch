@@ -99,19 +99,23 @@ public partial class FileWindow : MonoBehaviour
                 targetParent = rootFolder;
             }
 
+            // 10% 확률로 isAbnormal 랜덤 설정 (Inspector 값보다 우선)
+            bool randomAbnormal = Random.value < 0.1f; // 10%
+
             File file = new File(
                 data.fileName,
                 data.extension,
                 targetParent,
                 data.textContent,
                 data.imageContent,
-                data.isAbnormal
+                data.isAbnormal || randomAbnormal // 기존 데이터가 true면 유지 + 10% 랜덤
             );
 
             currentFolderFiles.Add(file);
             targetParent.files.Add(file);
         }
     }
+
 
     /// <summary>
     /// 기본 폴더 구조를 생성하고 UI 버튼과 연결

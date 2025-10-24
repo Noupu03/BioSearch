@@ -73,15 +73,26 @@ public class Folder
     }
 
     // 재귀적으로 자식 폴더 이상 여부 확인
+    // 재귀적으로 자식 폴더 + 파일 이상 여부 확인
     private bool HasAbnormalInChildren()
     {
+        // 1) 파일 먼저 검사
+        foreach (var file in files)
+        {
+            if (file.isAbnormal)    // 파일에 이상이 하나라도 있으면 이상 처리
+                return true;
+        }
+
+        // 2) 자식 폴더 검사
         foreach (var child in children)
         {
             if (child.isAbnormal || child.HasAbnormalInChildren())
                 return true;
         }
+
         return false;
     }
+
 
 
     // 자식 추가
