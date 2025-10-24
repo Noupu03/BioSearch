@@ -186,4 +186,16 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
         yield return null; // 한 프레임 대기
         fileWindow.OpenFolder(target, false);
     }
+    // FolderIcon.cs
+    public void SetupDummy(string dummyName)
+    {
+        if (fileNameText != null)
+            fileNameText.text = dummyName;
+
+        Button btn = GetComponent<Button>();
+        if (btn != null)
+            btn.interactable = false;
+    }
+
+
 }

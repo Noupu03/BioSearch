@@ -12,6 +12,8 @@ public partial class FileWindow : MonoBehaviour
     [Header("Prefabs")]
     public GameObject folderIconPrefab;    // 폴더 아이콘 프리팹
     public GameObject fileIconPrefab;      // 파일 아이콘 프리팹
+    public GameObject dummyFolderIconPrefab;
+    public GameObject dummyFileIconPrefab;
 
     [Header("Scroll Area")]
     public Transform contentArea;          // 스크롤 콘텐츠 영역
@@ -53,6 +55,41 @@ public partial class FileWindow : MonoBehaviour
 
     // 현재 생성된 파일 목록
     private List<File> currentFolderFiles = new List<File>();
+
+    [System.Serializable]
+    public class DummyIcon
+    {
+        public string name;          // 아이콘 이름
+        public bool isFolder;        // 폴더인지 파일인지
+        public Folder parentFolder;  // 원본 아이콘의 부모 폴더
+        public GameObject uiObject;  // 실제 UI GameObject
+    }
+
+    [Header("Dummy Icons")]
+    public List<DummyIcon> dummyIcons = new List<DummyIcon>();
+    // FileWindow.cs
+    public void CreateDummyIconUI(DummyIcon dummy, Folder parentFolder)
+    {
+        if (dummy == null) return;
+
+        GameObject prefab = dummy.isFolder ? dummyFolderIconPrefab : dummyFileIconPrefab;
+        if (prefab == null || contentArea == null) return;
+
+        GameObject go = Instantiate(prefab, contentArea);
+        dummy.uiObject = go;
+
+        TMP_Text textComp = go.GetComponentInChildren<TMP_Text>();
+        if (textComp != null)
+            textComp.text = dummy.name;
+
+        Button btn = go.GetComponent<Button>();
+        if (btn != null)
+            btn.interactable = false;
+    }
+
+
+
+
 
     void Awake()
     {
@@ -186,6 +223,8 @@ public partial class FileWindow : MonoBehaviour
     {
         return rootFolder;
     }
+
+    public Folder GetCurrentFolder() => currentFolder;
     /// <summary>
     /// 현재 정신력에 따라 이상 확률 반환
     /// </summary>

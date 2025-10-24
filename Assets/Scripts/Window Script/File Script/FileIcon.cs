@@ -96,4 +96,16 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     }
 
     #endregion
+    // FileIcon.cs
+    public void SetupDummy(string dummyName)
+    {
+        if (fileNameText != null)
+            fileNameText.text = dummyName;
+
+        // 클릭/드래그 비활성화
+        Button btn = GetComponent<Button>();
+        if (btn != null)
+            btn.interactable = false;
+    }
+
 }
