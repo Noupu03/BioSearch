@@ -945,7 +945,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 1093830573}
-  totalTime: 10
+  totalTime: 30
   isRunning: 0
 --- !u!114 &168379754
 MonoBehaviour:
@@ -2822,6 +2822,7 @@ GameObject:
   - component: {fileID: 693352158}
   - component: {fileID: 693352159}
   - component: {fileID: 693352160}
+  - component: {fileID: 693352161}
   m_Layer: 5
   m_Name: CanvasManager
   m_TagString: Untagged
@@ -2938,6 +2939,20 @@ MonoBehaviour:
   successText: {fileID: 449377471}
   failText: {fileID: 134486340}
   stageText: {fileID: 1245567807}
+--- !u!114 &693352161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693352153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78400dafee199ae469647a5e2a96abe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileWindow: {fileID: 1796863570}
+  spawnInterval: 1
 --- !u!1 &708220948
 GameObject:
   m_ObjectHideFlags: 0
@@ -8265,6 +8280,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   folderIconPrefab: {fileID: 2148310354490608959, guid: 9a7fdc50c5a26794392b1db8b25953c8, type: 3}
   fileIconPrefab: {fileID: 2148310354490608959, guid: ba79f0571b26f804597d74c216fff8b6, type: 3}
+  dummyFolderIconPrefab: {fileID: 2148310354490608959, guid: b7923cb7949e05746892bd48877c99e4, type: 3}
+  dummyFileIconPrefab: {fileID: 2148310354490608959, guid: 541b61359b186fe4fb5e528ad5e62977, type: 3}
   contentArea: {fileID: 751168858}
   emptyText: {fileID: 861951011}
   pathPanelManager: {fileID: 1841328800}
@@ -8293,6 +8310,7 @@ MonoBehaviour:
   rightLegButton: {fileID: 455835654}
   rightFootButton: {fileID: 1329427624}
   upButtonPrefab: {fileID: 7856131077749057725, guid: 7e50e978dcde1574c82c9676f3c521a0, type: 3}
+  dummyIcons: []
 --- !u!1 &1841328794
 GameObject:
   m_ObjectHideFlags: 0
