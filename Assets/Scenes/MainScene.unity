@@ -732,7 +732,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSanity: 100
   sanityText: {fileID: 2121517776}
-  decreaseAmount: 5
 --- !u!1 &171645015
 GameObject:
   m_ObjectHideFlags: 0
@@ -3674,6 +3673,9 @@ MonoBehaviour:
   view2: {fileID: 614927673}
   leftView: {fileID: 661166835}
   rightView: {fileID: 1177477598}
+  rendererData: {fileID: 0}
+  featureName: FullScreenPassRendererFeature
+  offDelay: 1.5
 --- !u!114 &919113287
 MonoBehaviour:
   m_ObjectHideFlags: 0
