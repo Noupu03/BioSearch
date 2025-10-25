@@ -6808,7 +6808,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1369091287}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d9cddb2c5cf5fe4ca31a16f9d7b7ad8, type: 3}
   m_Name: 
@@ -6820,16 +6820,16 @@ MonoBehaviour:
   vignetteIntensity_Room: 0.25
   vignetteSmoothness_Room: 1
   filmGrainIntensity_Room: 1
-  bloomIntensity_Transition: 300
-  bloomScatter_Transition: 0.65
-  vignetteIntensity_Transition: 1
-  vignetteSmoothness_Transition: 1
-  filmGrainIntensity_Transition: 1
-  bloomIntensity_Monitor: 30
-  bloomScatter_Monitor: 0.65
-  vignetteIntensity_Monitor: 0.3
-  vignetteSmoothness_Monitor: 1
-  filmGrainIntensity_Monitor: 1
+  bloomIntensity_Transition: 0.6
+  bloomScatter_Transition: 0.45
+  vignetteIntensity_Transition: 0.4
+  vignetteSmoothness_Transition: 0.9
+  filmGrainIntensity_Transition: 0.7
+  bloomIntensity_Monitor: 0.3
+  bloomScatter_Monitor: 0.3
+  vignetteIntensity_Monitor: 0.55
+  vignetteSmoothness_Monitor: 0.8
+  filmGrainIntensity_Monitor: 0.5
 --- !u!4 &1369091289
 Transform:
   m_ObjectHideFlags: 0
