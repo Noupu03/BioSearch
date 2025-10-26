@@ -8733,18 +8733,54 @@ MonoBehaviour:
   pathPanelManager: {fileID: 1841328800}
   backButton: {fileID: 6551093433372594366}
   fileDatas:
-  - fileName: 11
+  - fileName: cornea
     extension: txt
-    textContent: asdf
+    textContent: 11
     imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
     isAbnormal: 0
-    parentFolderName: body
-  - fileName: 22
+    parentFolderName: Head
+  - fileName: iris
     extension: txt
-    textContent: asdf
+    textContent: 11
+    imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
+    isAbnormal: 0
+    parentFolderName: Head
+  - fileName: chest_skin
+    extension: txt
+    textContent: 11
     imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
     isAbnormal: 0
     parentFolderName: Body
+  - fileName: shoulder_skin
+    extension: txt
+    textContent: 11
+    imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
+    isAbnormal: 0
+    parentFolderName: Left Arm
+  - fileName: shoulder_skin
+    extension: txt
+    textContent: 11
+    imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
+    isAbnormal: 0
+    parentFolderName: Right Arm
+  - fileName: thigh_skin
+    extension: txt
+    textContent: 11
+    imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
+    isAbnormal: 0
+    parentFolderName: Left Leg
+  - fileName: thigh_skin
+    extension: txt
+    textContent: 11
+    imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
+    isAbnormal: 0
+    parentFolderName: Right Leg
+  - fileName: heart
+    extension: txt
+    textContent: 11
+    imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
+    isAbnormal: 0
+    parentFolderName: Organ
   headButton: {fileID: 1265956438}
   bodyButton: {fileID: 1515243329}
   leftArmButton: {fileID: 490495806}
