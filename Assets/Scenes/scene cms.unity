@@ -4161,8 +4161,8 @@ MonoBehaviour:
   leftView: {fileID: 661166835}
   rightView: {fileID: 1177477598}
   rendererDatas:
+  - {fileID: 11400000, guid: 15c812cb966f3e44687735362951ecf5, type: 2}
   - {fileID: 11400000, guid: f288ae1f4751b564a96ac7587541f7a2, type: 2}
-  - {fileID: 11400000, guid: 5cce156e2de01d6449d3263e432319ba, type: 2}
   featureName: FullScreenPassRendererFeature
   offDelay: 1.5
 --- !u!114 &919113287
