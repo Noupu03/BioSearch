@@ -29,7 +29,7 @@ public class GameOverManager : MonoBehaviour
  IEnumerator ReturnToStartScene()
 {
     // optional delay
-    yield return new WaitForSeconds(returnDelay);
+    yield return null;
 
     // 게임오버 시 초기화
     SanityManager sanity = FindObjectOfType<SanityManager>();
