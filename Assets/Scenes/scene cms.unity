@@ -1016,7 +1016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e67bf6c4c6f5c44ebc7ef3d7373e8b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  returnDelay: 5
+  returnDelay: 0
   startSceneName: StartScene
 --- !u!4 &168379755
 Transform:
@@ -4480,6 +4480,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fileWindow: {fileID: 1796863570}
   logWindow: {fileID: 942185077}
+  scanPopupPrefab: {fileID: 253244205126553983, guid: 68721eb34da524e4bb268f6ed7565fc4, type: 3}
+  parentCanvas: {fileID: 1152194525}
 --- !u!114 &942185081
 MonoBehaviour:
   m_ObjectHideFlags: 0
