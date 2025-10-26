@@ -11,15 +11,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/StartScene.unity
     guid: bf5427076c6f3934b8cbcacac7aa1af5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/scene cms.unity
-    guid: 32aed1ecfc6eebd4eaffdca375e270a9
-  - enabled: 1
+    guid: 75a29448816295b4f8738d79650767ae
+  - enabled: 0
     path: Assets/Scenes/MainScene.unity
-    guid: e3b404ae073c8894e8768e60027fd910
+    guid: d660bdf89e135334da227c3c1030e98d
   - enabled: 1
     path: Assets/Scenes/scene ssh.unity
-    guid: 66791ace5922f5d4ea53a10343fdfd73
+    guid: 85980d46474e0174fbf95410ec7de08f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
