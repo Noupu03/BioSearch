@@ -11,60 +11,68 @@ public class CameraSwitch : MonoBehaviour
     public float transitionSpeed = 5f;
 
     [Header("시점 설정")]
-    public Transform view1;     // 첫 번째 시점 (W)
-    public Transform view2;     // 두 번째 시점 (S, 기본 시작점)
-    public Transform leftView;  // S 상태일 때 왼쪽 (A)
-    public Transform rightView; // S 상태일 때 오른쪽 (D)
+    public Transform view1;
+    public Transform view2;
+    public Transform leftView;
+    public Transform rightView;
 
     private Transform currentView;
-    private bool inView2 = false;   // 현재 S 시점인지
+    private bool inView2 = false;
 
     [Header("URP 셰이더 설정")]
-    public UniversalRendererData rendererData;  // 예: PC_Renderer
-    public string featureName = "FullScreenPassRendererFeature"; // Renderer Feature 이름
-    public float offDelay = 1.5f; // W 키로 끌 때 지연 시간
+    [SerializeField, Tooltip("인스펙터에서 2개의 렌더러 데이터를 드래그하세요.")]
+    private UniversalRendererData[] rendererDatas = new UniversalRendererData[2]; // 2개 고정
+    public string featureName = "FullScreenPassRendererFeature";
+    public float offDelay = 1.5f;
 
-    private ScriptableRendererFeature targetFeature;
+    private ScriptableRendererFeature[] targetFeatures = new ScriptableRendererFeature[2];
     private Coroutine offCoroutine;
     private float targetFOV;
 
     void Start()
     {
-        // 시작 시 S 시점으로 설정
+        // 시작 시 S 시점
         currentView = view2;
         transform.position = view2.position;
         transform.rotation = view2.rotation;
         inView2 = true;
         targetFOV = defaultFOV;
 
-        // 카메라 자동 연결
         if (targetCamera == null)
             targetCamera = GetComponent<Camera>();
 
-        // Renderer Feature 탐색
-        if (rendererData != null)
+        // 각 렌더러 데이터에서 Feature 탐색
+        for (int i = 0; i < rendererDatas.Length; i++)
         {
-            foreach (var feature in rendererData.rendererFeatures)
+            var data = rendererDatas[i];
+            if (data != null)
             {
-                if (feature != null && feature.name == featureName)
+                foreach (var feature in data.rendererFeatures)
                 {
-                    targetFeature = feature;
-                    break;
+                    if (feature != null && feature.name == featureName)
+                    {
+                        targetFeatures[i] = feature;
+                        break;
+                    }
                 }
-            }
 
-            if (targetFeature == null)
-                Debug.LogWarning("'" + featureName + "' Renderer Feature를 찾을 수 없습니다!");
+                if (targetFeatures[i] == null)
+                    Debug.LogWarning($"Renderer {i}에서 '{featureName}'를 찾을 수 없습니다!");
+            }
+            else
+            {
+                Debug.LogWarning($"Renderer {i}가 할당되지 않았습니다!");
+            }
         }
-        else
-        {
-            Debug.LogWarning("Renderer Data가 지정되지 않았습니다!");
-        }
+
+        // 시작 시 기본 상태: view2 → 1번 켜고 2번 끄기
+        if (targetFeatures[0] != null) targetFeatures[0].SetActive(true);
+        if (targetFeatures[1] != null) targetFeatures[1].SetActive(false);
     }
 
     void Update()
     {
-        // W → view1 전환 + 셰이더 OFF (1.5초 후)
+        // W → view1 전환 + 1번 OFF, 2번 ON (딜레이 가능)
         if (Input.GetKeyDown(KeyCode.W))
         {
             if (inView2 && currentView == view2)
@@ -73,16 +81,13 @@ public class CameraSwitch : MonoBehaviour
                 inView2 = false;
                 targetFOV = zoomFOV;
 
-                if (targetFeature != null)
-                {
-                    if (offCoroutine != null)
-                        StopCoroutine(offCoroutine);
-                    offCoroutine = StartCoroutine(DelayedShaderOff());
-                }
+                if (offCoroutine != null)
+                    StopCoroutine(offCoroutine);
+                offCoroutine = StartCoroutine(DelayedSwitchShader(true));
             }
         }
 
-        // S → view2 전환 + 셰이더 ON (즉시)
+        // S → view2 전환 + 1번 ON, 2번 OFF
         if (Input.GetKeyDown(KeyCode.S))
         {
             if (currentView != view2)
@@ -91,50 +96,58 @@ public class CameraSwitch : MonoBehaviour
                 inView2 = true;
                 targetFOV = defaultFOV;
 
-                if (targetFeature != null)
+                if (offCoroutine != null)
                 {
-                    if (offCoroutine != null)
-                    {
-                        StopCoroutine(offCoroutine);
-                        offCoroutine = null;
-                    }
-                    targetFeature.SetActive(true);
-                    Debug.Log(" 셰이더 ON (S 눌림)");
+                    StopCoroutine(offCoroutine);
+                    offCoroutine = null;
                 }
+
+                SwitchShader(false);
             }
         }
 
-        // S 상태일 때만 A/D 이동 가능
+        // S 상태일 때만 A/D 이동
         if (inView2)
         {
             if (Input.GetKeyDown(KeyCode.A) && currentView != leftView)
-            {
                 currentView = leftView;
-            }
 
             if (Input.GetKeyDown(KeyCode.D) && currentView != rightView)
-            {
                 currentView = rightView;
-            }
         }
 
-        // 카메라 부드럽게 이동/회전
+        // 카메라 이동/회전 보간
         transform.position = Vector3.Lerp(transform.position, currentView.position, Time.deltaTime * transitionSpeed);
         transform.rotation = Quaternion.Lerp(transform.rotation, currentView.rotation, Time.deltaTime * transitionSpeed);
-
-        // FOV 보간
         targetCamera.fieldOfView = Mathf.Lerp(targetCamera.fieldOfView, targetFOV, Time.deltaTime * transitionSpeed);
     }
 
-    // 셰이더 OFF (딜레이 포함)
-    IEnumerator DelayedShaderOff()
+    // W 누를 때 딜레이 포함
+    IEnumerator DelayedSwitchShader(bool isW)
     {
-        Debug.Log(" " + offDelay + "초 후 셰이더 OFF 예정...");
         yield return new WaitForSeconds(offDelay);
-
-        targetFeature.SetActive(false);
-        Debug.Log(" 셰이더 OFF (W 눌림)");
-
+        SwitchShader(isW);
         offCoroutine = null;
+    }
+
+    // Shader 상태 전환 함수
+    private void SwitchShader(bool wPressed)
+    {
+        if (targetFeatures.Length < 2) return;
+
+        if (wPressed)
+        {
+            // W → 1번 OFF, 2번 ON
+            if (targetFeatures[0] != null) targetFeatures[0].SetActive(false);
+            if (targetFeatures[1] != null) targetFeatures[1].SetActive(true);
+            Debug.Log("W 눌림 → 1번 OFF, 2번 ON");
+        }
+        else
+        {
+            // S → 1번 ON, 2번 OFF
+            if (targetFeatures[0] != null) targetFeatures[0].SetActive(true);
+            if (targetFeatures[1] != null) targetFeatures[1].SetActive(false);
+            Debug.Log("S 눌림 → 1번 ON, 2번 OFF");
+        }
     }
 }
