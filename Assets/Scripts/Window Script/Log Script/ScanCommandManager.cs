@@ -102,25 +102,28 @@ public class ScanCommandManager : MonoBehaviour
 
         logWindow.Log("이상 스캔중...");
 
-        
+
         // --- 버퍼링 구간 생성 ---
-        int bufferCount = Random.Range(4, 5); // 1~3개
+        int bufferCount = Random.Range(4, 6); // 1~3개
         float[] bufferTimes = new float[bufferCount];
         float totalBufferTime = 0f;
+
         for (int i = 0; i < bufferCount; i++)
         {
-            bufferTimes[i] = Random.Range(2f, 3.5f);
+            // totalScanTime 비례: 예를 들어 5~15% 비율 랜덤
+            float ratio = Random.Range(0.1f, 0.15f);
+            bufferTimes[i] = totalScanTime * ratio;
             totalBufferTime += bufferTimes[i];
         }
 
         // 실제 진행 시간 = 총 시간 - 버퍼링 합
         float progressTime = Mathf.Max(0f, totalScanTime - totalBufferTime);
 
-        // 버퍼링 위치 설정 (0~1 구간) + 정렬
+        // 버퍼링 위치 설정 (0~1 구간 랜덤)
         float[] bufferPositions = new float[bufferCount];
         for (int i = 0; i < bufferCount; i++)
             bufferPositions[i] = Random.Range(0f, 1f);
-        System.Array.Sort(bufferPositions);  //  꼭 정렬
+        System.Array.Sort(bufferPositions);
 
         float elapsed = 0f;
         int bufferIndex = 0;
@@ -141,6 +144,7 @@ public class ScanCommandManager : MonoBehaviour
             scanProgressSlider.value = progress;
             yield return null;
         }
+
 
         scanProgressSlider.value = 1f;
 
