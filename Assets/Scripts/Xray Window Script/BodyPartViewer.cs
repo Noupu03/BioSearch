@@ -6,7 +6,7 @@ using System.Collections.Generic;
 [System.Serializable]
 public class BodyPart
 {
-    public string partName;       // 부위 이름 (예: "Head")
+    public string partName;       // 부위 이름 (예: "LeftUpperArm")
     public Button button;         // 해당 부위 버튼
     public Sprite normalSprite;   // 정상 상태 스프라이트
     public Sprite abnormalSprite; // 이상 상태 스프라이트
@@ -22,6 +22,27 @@ public class BodyPartViewer : MonoBehaviour
 
     [Header("File Window 연결")]
     public FileWindow fileWindow; // 폴더 이상 여부 정보를 가져오기 위한 참조
+
+    // 부위명 → Folder 경로 매핑
+    private Dictionary<string, string[]> partNameToFolderPath = new Dictionary<string, string[]>
+    {
+        { "Head", new string[] { "Head" } },
+        { "Chest", new string[] { "Body", "Chest" } },
+        { "LeftUpperArm", new string[] { "LeftArm", "UpperArm" } },
+        { "LeftForeArm", new string[] { "LeftArm", "ForeArm" } },
+        { "LeftHand", new string[]  { "LeftArm", "Hand" } },
+        { "RightUpperArm", new string[] { "RightArm", "UpperAarm" } },
+        { "RightForeArm", new string[] { "RightArm", "ForeArm" } },
+        { "RightHand", new string[] { "RightArm", "Hand" } },
+        { "Stomach", new string[] { "Organ", "Stomach" } },
+        { "Pelvis", new string[] { "Body", "Pelvis" } },
+        { "LeftThigh", new string[] { "LeftLeg", "Thigh" } },
+        { "LeftCalf", new string[] { "LeftLeg", "Calf" } },
+        { "LeftFoot", new string[] { "LeftLeg", "Foot" } },
+        { "RightThigh", new string[] { "RightLeg", "Thigh" } },
+        { "RightCalf", new string[] { "RightLeg", "Calf" } },
+        { "RightFoot", new string[] { "RightLeg", "Foot" } }
+    };
 
     void Start()
     {
@@ -53,78 +74,53 @@ public class BodyPartViewer : MonoBehaviour
             return;
         }
 
-        // FileWindow 내부의 폴더 구조에서 해당 부위 폴더 찾기
-        Folder targetFolder = FindFolderByName(fileWindow.GetRootFolder(), partName);
-
-        if (targetFolder == null)
+        // 부위명 → Folder 경로 매핑 확인
+        if (!partNameToFolderPath.TryGetValue(partName, out var path))
         {
-            Debug.LogWarning("해당 부위 폴더를 찾을 수 없습니다: " + partName);
+            Debug.LogWarning("부위 경로를 찾을 수 없습니다: " + partName);
             return;
         }
 
-        // BodyPartViewer의 bodyParts 목록에서 대응되는 BodyPart 찾기
-        foreach (var part in bodyParts)
+        // 루트 폴더에서 경로 따라 Folder 탐색
+        Folder targetFolder = fileWindow.GetRootFolder();
+        foreach (var node in path)
         {
-            if (part.partName == partName)
+            targetFolder = targetFolder.children.Find(f => f.name == node);
+            if (targetFolder == null)
             {
-                // Folder.cs의 버튼 색상 조건과 동일한 기준 적용
-                bool shouldShowAbnormal = targetFolder.isAbnormal || HasAbnormalInChildren(targetFolder);
-
-                if (shouldShowAbnormal && part.abnormalSprite != null)
-                {
-                    cameraPanel.sprite = part.abnormalSprite;
-                }
-                else
-                {
-                    cameraPanel.sprite = part.normalSprite;
-                }
+                Debug.LogWarning("폴더 경로 중 일부를 찾을 수 없습니다: " + string.Join("/", path));
                 return;
             }
         }
 
-        Debug.LogWarning("Unknown part: " + partName);
+        // BodyPartViewer의 bodyParts 목록에서 대응되는 BodyPart 찾기
+        var partObj = System.Array.Find(bodyParts, p => p.partName == partName);
+        if (partObj == null) return;
+
+        // Folder 이상 여부 기준
+        bool shouldShowAbnormal = targetFolder.isAbnormal || HasAbnormalInChildren(targetFolder);
+
+        // 스프라이트 갱신
+        cameraPanel.sprite = (shouldShowAbnormal && partObj.abnormalSprite != null) ? partObj.abnormalSprite : partObj.normalSprite;
     }
 
     /// <summary>
-    /// 폴더 이름으로 Folder 검색 (재귀)
-    /// </summary>
-    private Folder FindFolderByName(Folder folder, string name)
-    {
-        if (folder == null) return null;
-        if (folder.name == name) return folder;
-
-        foreach (var child in folder.children)
-        {
-            Folder found = FindFolderByName(child, name);
-            if (found != null)
-                return found;
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// Folder.cs의 HasAbnormalInChildren과 동일한 기준으로
-    /// 자식 폴더 + 파일 이상 여부 확인
+    /// 자식 폴더 + 파일 이상 여부 확인 (재귀)
     /// </summary>
     private bool HasAbnormalInChildren(Folder folder)
     {
         if (folder == null) return false;
 
-        // 파일 이상 여부 먼저 검사
         foreach (var file in folder.files)
         {
-            if (file.isAbnormal)
-                return true;
+            if (file.isAbnormal) return true;
         }
 
-        // 자식 폴더 재귀 검사
         foreach (var child in folder.children)
         {
-            if (child.isAbnormal || HasAbnormalInChildren(child))
-                return true;
+            if (child.isAbnormal || HasAbnormalInChildren(child)) return true;
         }
 
         return false;
     }
-
 }

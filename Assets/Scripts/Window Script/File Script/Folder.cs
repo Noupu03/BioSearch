@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// 실제 폴더 데이터 구조.
 /// 자식 폴더 보관, 이상 여부 표시.
 /// </summary>
-[System.Serializable]
+
 public class Folder
 {
     public string name;
