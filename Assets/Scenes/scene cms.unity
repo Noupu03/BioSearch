@@ -4164,6 +4164,7 @@ MonoBehaviour:
   featureName1: FullScreenPassRendererFeature2
   featureName2: FullScreenPassRendererFeature1
   switchDelay: 1.5
+  inputField: {fileID: 1666166031}
 --- !u!114 &919113287
 MonoBehaviour:
   m_ObjectHideFlags: 0
