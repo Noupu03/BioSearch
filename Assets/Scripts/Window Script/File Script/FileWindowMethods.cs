@@ -163,8 +163,8 @@ public partial class FileWindow
     {
         float sanity = SanityManager.currentSanityStatic;
 
-        if (sanity >= 70f) return 0.1f;   // 고 sanity 구간
-        else if (sanity >= 30f) return 0.2f; // 중간 sanity 구간
-        else return 0.5f; // 낮은 sanity 구간
+        if (sanity >= 70f) return 0.03f;   // 고 sanity 구간
+        else if (sanity >= 30f) return 0.08f; // 중간 sanity 구간
+        else return 0.2f; // 낮은 sanity 구간
     }
 }

@@ -150,34 +150,77 @@ public partial class FileWindow : MonoBehaviour
     /// </summary>
     void CreateDefaultFolders()
     {
-        // 폴더 생성
+        // Head
         Folder Head = new Folder("Head", rootFolder);
-        Head.children.Add(new Folder("Mouse", Head));
-        Head.children.Add(new Folder("LeftEye", Head));
-        Head.children.Add(new Folder("RightEye", Head));
+        Head.children.Add(new Folder("Eye", Head));
+        Head.children.Add(new Folder("Ear", Head));
         Head.children.Add(new Folder("Nose", Head));
+        Head.children.Add(new Folder("Mouth", Head));
+        Head.children.Add(new Folder("Jaw", Head));
+        Head.children.Add(new Folder("Skull", Head));
+        Head.children.Add(new Folder("Brain", Head));
 
+        // Body
         Folder Body = new Folder("Body", rootFolder);
+        Body.children.Add(new Folder("Chest", Body));
+        Body.children.Add(new Folder("Abdomen", Body));
+        Body.children.Add(new Folder("Back", Body));
+        Body.children.Add(new Folder("Pelvis", Body));
 
+        // Left Arm
+        Folder LeftArm = new Folder("Left Arm", rootFolder);
+        LeftArm.children.Add(new Folder("Shoulder", LeftArm));
+        LeftArm.children.Add(new Folder("Upper_arm", LeftArm));
+        LeftArm.children.Add(new Folder("Forearm", LeftArm));
+        LeftArm.children.Add(new Folder("Hand", LeftArm));
+
+        Folder LeftHand = new Folder("Left Hand", rootFolder);
+
+        // Right Arm
+        Folder RightArm = new Folder("Right Arm", rootFolder);
+        RightArm.children.Add(new Folder("Shoulder", RightArm));
+        RightArm.children.Add(new Folder("Upper_arm", RightArm));
+        RightArm.children.Add(new Folder("Forearm", RightArm));
+        RightArm.children.Add(new Folder("Hand", RightArm));
+
+        Folder RightHand = new Folder("Right Hand", rootFolder);
+
+        // Left Leg
+        Folder LeftLeg = new Folder("Left Leg", rootFolder);
+        LeftLeg.children.Add(new Folder("Thigh", LeftLeg));
+        LeftLeg.children.Add(new Folder("Knee", LeftLeg));
+        LeftLeg.children.Add(new Folder("Lower_leg", LeftLeg));
+        LeftLeg.children.Add(new Folder("Foot", LeftLeg));
+
+        Folder LeftFoot = new Folder("Left Foot", rootFolder);
+
+        // Right Leg
+        Folder RightLeg = new Folder("Right Leg", rootFolder);
+        RightLeg.children.Add(new Folder("Thigh", RightLeg));
+        RightLeg.children.Add(new Folder("Knee", RightLeg));
+        RightLeg.children.Add(new Folder("Lower_leg", RightLeg));
+        RightLeg.children.Add(new Folder("Foot", RightLeg));
+
+        Folder RightFoot = new Folder("Right Foot", rootFolder);
+
+        // Organ
         Folder Organ = new Folder("Organ", rootFolder);
         Organ.children.Add(new Folder("Heart", Organ));
+        Organ.children.Add(new Folder("Lungs", Organ));
+        Organ.children.Add(new Folder("Liver", Organ));
+        Organ.children.Add(new Folder("Stomach", Organ));
+        Organ.children.Add(new Folder("Intestine", Organ));
+        Organ.children.Add(new Folder("Kidneys", Organ));
+        Organ.children.Add(new Folder("Pancreas", Organ));
+        Organ.children.Add(new Folder("Spleen", Organ));
+        Organ.children.Add(new Folder("Bladder", Organ));
 
-        Folder LeftArm = new Folder("LeftArm", rootFolder);
-        Folder LeftHand = new Folder("LeftHand", rootFolder);
-        Folder RightArm = new Folder("RightArm", rootFolder);
-        Folder RightHand = new Folder("RightHand", rootFolder);
-
-        Folder LeftLeg = new Folder("LeftLeg", rootFolder);
-        Folder LeftFoot = new Folder("LeftFoot", rootFolder);
-        Folder RightLeg = new Folder("RightLeg", rootFolder);
-        Folder RightFoot = new Folder("RightFoot", rootFolder);
-
-        // 루트에 추가
+        // 루트 폴더에 추가
         rootFolder.children.AddRange(new List<Folder>
-        {
-            Head, Body, Organ, LeftArm, LeftHand, RightArm, RightHand,
-            LeftLeg, LeftFoot, RightLeg, RightFoot
-        });
+    {
+        Head, Body, LeftArm, LeftHand, RightArm, RightHand, LeftLeg, LeftFoot, RightLeg, RightFoot, Organ
+    });
+    
 
         // UI 버튼 연결
         if (headButton != null) Head.linkedBodyButton = headButton;

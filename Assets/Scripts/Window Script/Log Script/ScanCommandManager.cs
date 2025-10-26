@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI; // Slider 사용
 
 /// <summary>
 /// ScanCommandManager
@@ -17,14 +18,26 @@ public class ScanCommandManager : MonoBehaviour
     // 로그 및 명령어 입력을 처리하는 LogWindowManager
     public LogWindowManager logWindow;
 
+    // 스캔 팝업 프리팹 (슬라이더 포함된 UI)
+    public GameObject scanPopupPrefab;
+
+    // 팝업을 붙일 Canvas
+    public Canvas parentCanvas;
+
     // 스캔 중인지 여부를 나타내는 플래그
     private bool isScanning = false;
+
+    // 현재 생성된 스캔 팝업 인스턴스
+    private GameObject scanPopupInstance;
+
+    // 생성된 팝업 내부 슬라이더
+    private Slider scanProgressSlider;
 
     private void Awake()
     {
         // 싱글톤 초기화
         if (Instance == null) Instance = this;
-        else Destroy(gameObject); // 중복 인스턴스 제거
+        else Destroy(gameObject);
     }
 
     private void OnEnable()
@@ -62,7 +75,7 @@ public class ScanCommandManager : MonoBehaviour
 
         if (target == null)
         {
-            logWindow.Log($"폴더 '{folderName}'을(를) 찾을 수 없습니다.");
+            logWindow.Log("대상 폴더를 찾을 수 없습니다.");
             return;
         }
 
@@ -71,50 +84,91 @@ public class ScanCommandManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 지정한 폴더를 비동기로 스캔하며 진행 상황을 로그로 표시
+    /// 지정한 폴더를 비동기로 스캔하며 진행 상황을 UI 슬라이더로 표시
     /// </summary>
     private IEnumerator ScanFolderCoroutine(Folder folder)
     {
         isScanning = true;
-        logWindow.DisableInput(); // 사용자 입력 비활성화
+        logWindow.DisableInput();
 
-        // 스캔 대상 내 폴더 및 파일 개수 계산
+        // 팝업 생성
+        scanPopupInstance = Instantiate(scanPopupPrefab, parentCanvas.transform);
+        scanProgressSlider = scanPopupInstance.GetComponentInChildren<Slider>();
+        scanProgressSlider.value = 0f;
+
         int totalItems = CountAllFilesAndFolders(folder);
-        int progressBarLength = 10; // 진행바의 전체 길이 (10칸)
+        float totalScanTime = totalItems * 3f;
+        int abnormalCount = CountAbnormal(folder);
 
-        // 진행 속도 (총 아이템 수에 따라 대기 시간 증가)
-        float timePerBar = totalItems * 1f; // 총 아이템 수 × 1초
-        int abnormalCount = CountAbnormal(folder); // 이상 항목 개수
+        logWindow.Log("이상 스캔중...");
 
-        // 초기 로그 출력 (빈 진행 바)
-        logWindow.Log($"이상 스캔중 {new string('ㅁ', progressBarLength)}");
 
-        // 진행바를 1칸씩 채워가며 표시
-        for (int i = 0; i < progressBarLength; i++)
+        // --- 버퍼링 구간 생성 ---
+        int bufferCount = Random.Range(4, 6); // 1~3개
+        float[] bufferTimes = new float[bufferCount];
+        float totalBufferTime = 0f;
+
+        for (int i = 0; i < bufferCount; i++)
         {
-            yield return new WaitForSeconds(timePerBar); // 한 칸마다 대기
-            string progress = new string('■', i + 1) + new string('ㅁ', progressBarLength - i - 1);
-            logWindow.ReplaceLastScanLog($"이상 스캔중 {progress}");
+            // totalScanTime 비례: 예를 들어 5~15% 비율 랜덤
+            float ratio = Random.Range(0.1f, 0.15f);
+            bufferTimes[i] = totalScanTime * ratio;
+            totalBufferTime += bufferTimes[i];
         }
 
-        // 최종 결과 출력
-        logWindow.ReplaceLastScanLog($"스캔 완료: 이상 {abnormalCount}개 발견됨.");
+        // 실제 진행 시간 = 총 시간 - 버퍼링 합
+        float progressTime = Mathf.Max(0f, totalScanTime - totalBufferTime);
 
-        // 입력 다시 활성화
+        // 버퍼링 위치 설정 (0~1 구간 랜덤)
+        float[] bufferPositions = new float[bufferCount];
+        for (int i = 0; i < bufferCount; i++)
+            bufferPositions[i] = Random.Range(0f, 1f);
+        System.Array.Sort(bufferPositions);
+
+        float elapsed = 0f;
+        int bufferIndex = 0;
+
+        while (elapsed < progressTime)
+        {
+            float delta = Time.deltaTime;
+            elapsed += delta;
+            float progress = Mathf.Clamp01(elapsed / progressTime);
+
+            // 버퍼링 처리
+            while (bufferIndex < bufferCount && progress >= bufferPositions[bufferIndex])
+            {
+                yield return new WaitForSeconds(bufferTimes[bufferIndex]);
+                bufferIndex++;
+            }
+
+            scanProgressSlider.value = progress;
+            yield return null;
+        }
+
+
+        scanProgressSlider.value = 1f;
+
+        logWindow.ReplaceLastScanLog("스캔 완료");
+
+        // 팝업 제거
+        Destroy(scanPopupInstance);
+
         logWindow.EnableInput();
         isScanning = false;
+
+        // 스캔 결과 로그
+        logWindow.Log("이상 발견 개수: " + abnormalCount);
     }
+
 
     /// <summary>
     /// 폴더 이름으로 Folder 객체 찾기 (재귀 탐색)
     /// </summary>
     private Folder FindFolderByName(Folder folder, string name)
     {
-        // 현재 폴더 이름이 일치하면 반환
         if (folder.name.Equals(name, System.StringComparison.OrdinalIgnoreCase))
             return folder;
 
-        // 자식 폴더 재귀 탐색
         foreach (var child in folder.children)
         {
             var found = FindFolderByName(child, name);
@@ -128,9 +182,9 @@ public class ScanCommandManager : MonoBehaviour
     /// </summary>
     private int CountAllFilesAndFolders(Folder folder)
     {
-        int count = 1 + folder.files.Count; // 현재 폴더 1개 + 포함된 파일 수
+        int count = 1 + folder.files.Count;
         foreach (var child in folder.children)
-            count += CountAllFilesAndFolders(child); // 하위 폴더 포함
+            count += CountAllFilesAndFolders(child);
         return count;
     }
 
@@ -139,11 +193,11 @@ public class ScanCommandManager : MonoBehaviour
     /// </summary>
     private int CountAbnormal(Folder folder)
     {
-        int count = folder.isAbnormal ? 1 : 0; // 현재 폴더가 이상일 경우
+        int count = folder.isAbnormal ? 1 : 0;
         foreach (var child in folder.children)
-            count += CountAbnormal(child); // 자식 폴더 재귀 탐색
+            count += CountAbnormal(child);
         foreach (var file in folder.files)
-            if (file.isAbnormal) count++; // 이상 파일 카운트
+            if (file.isAbnormal) count++;
         return count;
     }
 }
@@ -162,6 +216,9 @@ public static class FileWindowExtensions
     }
 }
 
+/// <summary>
+/// 이상 파일/폴더 개수 계산 전용 헬퍼
+/// </summary>
 public static class AbnormalDetector
 {
     public static int GetAbnormalCount(Folder folder)
@@ -179,4 +236,3 @@ public static class AbnormalDetector
         return count;
     }
 }
-
