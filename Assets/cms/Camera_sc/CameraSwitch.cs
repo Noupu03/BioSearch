@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using TMPro; // TMP_InputField용
 using System.Collections;
 
 public class CameraSwitch : MonoBehaviour
@@ -35,6 +36,9 @@ public class CameraSwitch : MonoBehaviour
     private ScriptableRendererFeature feature1;
     private ScriptableRendererFeature feature2;
     private Coroutine switchCoroutine;
+
+    [Header("UI")]
+    public TMP_InputField inputField; // TMP_InputField
 
     void Start()
     {
@@ -87,8 +91,12 @@ public class CameraSwitch : MonoBehaviour
         }
 
         // S → view2 전환 + Feature1 ON, Feature2 OFF
+        // TMP_InputField 활성화시 무시
         if (Input.GetKeyDown(KeyCode.S))
         {
+            if (inputField != null && inputField.isFocused)
+                return; // 입력 중이면 무시
+
             if (currentView != view2)
             {
                 currentView = view2;
