@@ -16,10 +16,10 @@ public class GameOverManager : MonoBehaviour
         Debug.Log($"[GameOver] 발생! 이유: {reason}");
 
         // 게임오버 시 스테이지/성공/실패 카운트 초기화
-        SelectPopupManager popupManager = FindObjectOfType<SelectPopupManager>();
-        if (popupManager != null)
-            popupManager.ResetCounts();
-       
+        // SelectPopupManager popupManager = FindObjectOfType<SelectPopupManager>();
+        //if (popupManager != null)
+        //popupManager.ResetCounts();
+        ScoreCount.Reset();
 
         StartCoroutine(ReturnToStartScene());
 

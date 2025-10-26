@@ -22,10 +22,6 @@ public class SelectPopupManager : MonoBehaviour
     public FileWindow fileWindow;
     TimerManager timerManager;
 
-    // static으로 유지해서 씬 Reload 후에도 보존
-    public static int successCount = 0;
-    public static int failCount = 0;
-    public static int stageCount = 1;
 
     void Start()
     {
@@ -91,12 +87,12 @@ public class SelectPopupManager : MonoBehaviour
         if (success)
         {
             logWindow.Log("성공!");
-            successCount++;
+            ScoreCount.successCount++;
         }
         else
         {
             logWindow.Log("실패!");
-            failCount++;
+            ScoreCount.failCount++;
 
             if (sanityManager != null)
             {
@@ -119,7 +115,7 @@ public class SelectPopupManager : MonoBehaviour
         }
 
         // 게임오버가 아니면 스테이지 진행
-        stageCount++;
+        ScoreCount.stageCount++;
         UnityEngine.SceneManagement.SceneManager.LoadScene(
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
         );
@@ -135,10 +131,5 @@ public class SelectPopupManager : MonoBehaviour
         }
     }
 
-    public void ResetCounts()
-    {
-        successCount = 0;
-        failCount = 0;
-        stageCount = 1;
-    }
+    
 }

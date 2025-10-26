@@ -64,7 +64,8 @@ public class LogWindowManager : MonoBehaviour
         logText.rectTransform.anchorMin = new Vector2(0, 0);
         logText.rectTransform.anchorMax = new Vector2(1, 0);
 
-        Log("n번 피검사자 검사실에 배치..");
+        int stage = ScoreCount.stageCount;
+        Log($"{stage}번 피검사자 검사실에 배치..");
         Log(".......complete");
         Log("해당 피검사자 BioSearch system 연결..");
         Log(".......complete");

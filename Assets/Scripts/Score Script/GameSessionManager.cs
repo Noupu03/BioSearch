@@ -10,8 +10,8 @@ public class GameSessionManager : MonoBehaviour
     public static GameSessionManager Instance;
 
     [Header("Score")]
-    public int successCount = 0;
-    public int failCount = 0;
+    public int UIsuccessCount = 0;
+    public int UIfailCount = 0;
 
     private void Awake()
     {

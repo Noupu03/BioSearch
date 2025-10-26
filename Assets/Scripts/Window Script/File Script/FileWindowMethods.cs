@@ -156,4 +156,15 @@ public partial class FileWindow
         foreach (var child in folder.children) AddFolderAndFilesRecursive(child, list);
     }
 
+    /// <summary>
+    /// 현재 정신력에 따라 이상 확률 반환
+    /// </summary>
+    private float GetAbnormalProbabilityBySanity()
+    {
+        float sanity = SanityManager.currentSanityStatic;
+
+        if (sanity >= 70f) return 0.1f;   // 고 sanity 구간
+        else if (sanity >= 30f) return 0.2f; // 중간 sanity 구간
+        else return 0.5f; // 낮은 sanity 구간
+    }
 }

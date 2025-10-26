@@ -21,7 +21,7 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     private File file;
 
     // 기본 색상
-    private Color normalColor = Color.black;   // 정상 파일: 검정
+    private Color normalColor = Color.white;   // 정상 파일: 하양
     private Color abnormalColor = Color.red;   // 이상 파일: 빨강
     private Color selectedColor = Color.yellow;
 

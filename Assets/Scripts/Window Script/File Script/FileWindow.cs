@@ -43,7 +43,6 @@ public partial class FileWindow : MonoBehaviour
     [Header("Special Prefabs")]
     public GameObject upButtonPrefab;  // 상위 폴더로 이동하는 "..." 아이콘 프리팹
 
-
     // 현재 선택된 아이콘
     private FolderIcon selectedFolderIcon;
     private FileIcon selectedFileIcon;
@@ -55,15 +54,6 @@ public partial class FileWindow : MonoBehaviour
 
     // 현재 생성된 파일 목록
     private List<File> currentFolderFiles = new List<File>();
-
-    [System.Serializable]
-    public class DummyIcon
-    {
-        public string name;          // 아이콘 이름
-        public bool isFolder;        // 폴더인지 파일인지
-        public Folder parentFolder;  // 원본 아이콘의 부모 폴더
-        public GameObject uiObject;  // 실제 UI GameObject
-    }
 
     [Header("Dummy Icons")]
     public List<DummyIcon> dummyIcons = new List<DummyIcon>();
@@ -80,16 +70,16 @@ public partial class FileWindow : MonoBehaviour
 
         TMP_Text textComp = go.GetComponentInChildren<TMP_Text>();
         if (textComp != null)
+        {
             textComp.text = dummy.name;
+            textComp.color = Color.white;
+        }
+            
 
         Button btn = go.GetComponent<Button>();
         if (btn != null)
             btn.interactable = false;
     }
-
-
-
-
 
     void Awake()
     {
@@ -154,8 +144,6 @@ public partial class FileWindow : MonoBehaviour
             targetParent.files.Add(file);
         }
     }
-
-
 
     /// <summary>
     /// 기본 폴더 구조를 생성하고 UI 버튼과 연결
@@ -225,17 +213,5 @@ public partial class FileWindow : MonoBehaviour
     }
 
     public Folder GetCurrentFolder() => currentFolder;
-    /// <summary>
-    /// 현재 정신력에 따라 이상 확률 반환
-    /// </summary>
-    private float GetAbnormalProbabilityBySanity()
-    {
-        float sanity = SanityManager.currentSanityStatic;
-
-        if (sanity >= 70f) return 0.1f;   // 고 sanity 구간
-        else if (sanity >= 30f) return 0.2f; // 중간 sanity 구간
-        else return 0.5f; // 낮은 sanity 구간
-    }
-
 }
 

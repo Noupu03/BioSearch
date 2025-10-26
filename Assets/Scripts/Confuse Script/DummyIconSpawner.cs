@@ -17,8 +17,13 @@ public class DummyIconSpawner : MonoBehaviour
         if (timer < spawnInterval) return;
         timer = 0f;
 
-        float chance = 0.7f; // 70% 확률
-        if (Random.value < chance) return;
+        // 정신력 기반 확률 계산
+        float chance = GetDummySpawnProbabilityBySanity();
+        if (Random.value > chance) return;
+
+        Debug.Log("생성");
+        Debug.Log($"chance : {chance}");
+
 
         List<object> allItems = fileWindow.GetAllFilesAndFolders();
         if (allItems.Count == 0) return;
@@ -35,9 +40,9 @@ public class DummyIconSpawner : MonoBehaviour
         Folder targetFolder = allFolders[Random.Range(0, allFolders.Count)];
 
         // DummyIcon 생성 및 리스트에 추가
-        FileWindow.DummyIcon dummy = new FileWindow.DummyIcon
+        DummyIcon dummy = new DummyIcon
         {
-            name = (isFolder ? ((Folder)original).name : ((File)original).name) + "_dummy",
+            name = (isFolder ? ((Folder)original).name : ((File)original).name),
             isFolder = isFolder,
             parentFolder = targetFolder
         };
@@ -48,6 +53,20 @@ public class DummyIconSpawner : MonoBehaviour
         if (fileWindow.GetCurrentFolder() == targetFolder)
             fileWindow.CreateDummyIconUI(dummy, targetFolder);
     }
+
+    /// <summary>
+    /// 정신력에 따라 Dummy 아이콘 생성 확률 반환
+ 
+    /// </summary>
+    private float GetDummySpawnProbabilityBySanity()
+    {
+        float sanity = SanityManager.currentSanityStatic;
+
+        if (sanity <= 30f) return 0.4f;
+        else if (sanity <= 70f) return 0.2f;
+        else return 0.1f;
+    }
+
 
     private void CollectAllFolders(Folder folder, List<Folder> list)
     {

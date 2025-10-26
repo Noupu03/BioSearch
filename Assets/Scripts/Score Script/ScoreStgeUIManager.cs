@@ -7,6 +7,7 @@ public class ScoreStageUIManager : MonoBehaviour
     public TextMeshProUGUI successText;
     public TextMeshProUGUI failText;
     public TextMeshProUGUI stageText;
+    
 
     void Update()
     {
@@ -15,16 +16,16 @@ public class ScoreStageUIManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        SelectPopupManager spm = FindObjectOfType<SelectPopupManager>();
-        if (spm == null) return;
+        //SelectPopupManager spm = FindObjectOfType<SelectPopupManager>();
+        //if (scoreCount == null) return;
 
         if (successText != null)
-            successText.text = $"성공 : {SelectPopupManager.successCount}";
+            successText.text = $"성공 : {ScoreCount.successCount}";
 
         if (failText != null)
-            failText.text = $"실패 : {SelectPopupManager.failCount}";
+            failText.text = $"실패 : {ScoreCount.failCount}";
 
         if (stageText != null)
-            stageText.text = $"{SelectPopupManager.stageCount} 명째";
+            stageText.text = $"{ScoreCount.stageCount} 명째";
     }
 }
