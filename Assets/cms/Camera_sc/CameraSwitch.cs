@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using TMPro; // TMP_InputField용
 using System.Collections;
 
 public class CameraSwitch : MonoBehaviour
@@ -18,18 +17,13 @@ public class CameraSwitch : MonoBehaviour
     public Transform rightView;
 
     private Transform currentView;
-    private bool inView2 = false;
+    private bool inView2 = true; // S 상태 = view2
     private float targetFOV;
 
     [Header("URP Feature 설정")]
-    [SerializeField, Tooltip("인스펙터에서 단일 Renderer Data를 드래그하세요.")]
-    private UniversalRendererData rendererData;
-
-    [SerializeField, Tooltip("첫 번째 Feature 이름")]
-    private string featureName1;
-
-    [SerializeField, Tooltip("두 번째 Feature 이름")]
-    private string featureName2;
+    [SerializeField] private UniversalRendererData rendererData;
+    [SerializeField] private string featureName1;
+    [SerializeField] private string featureName2;
 
     public float switchDelay = 1.5f;
 
@@ -37,89 +31,55 @@ public class CameraSwitch : MonoBehaviour
     private ScriptableRendererFeature feature2;
     private Coroutine switchCoroutine;
 
-    [Header("UI")]
-    public TMP_InputField inputField; // TMP_InputField
-
     void Start()
     {
         currentView = view2;
         transform.position = view2.position;
         transform.rotation = view2.rotation;
-        inView2 = true;
         targetFOV = defaultFOV;
 
         if (targetCamera == null)
             targetCamera = GetComponent<Camera>();
 
-        // RendererData에서 Feature 찾기
         if (rendererData != null)
         {
             foreach (var feature in rendererData.rendererFeatures)
             {
                 if (feature != null)
                 {
-                    if (feature.name == featureName1)
-                        feature1 = feature;
-                    else if (feature.name == featureName2)
-                        feature2 = feature;
+                    if (feature.name == featureName1) feature1 = feature;
+                    else if (feature.name == featureName2) feature2 = feature;
                 }
             }
         }
 
-        // 시작 시 기본 상태: view2 → Feature1 ON, Feature2 OFF
         if (feature1 != null) feature1.SetActive(true);
         if (feature2 != null) feature2.SetActive(false);
+
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.OnWPressed += OnWPressed;
+            InputManager.Instance.OnSPressed += OnSPressed;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.OnWPressed -= OnWPressed;
+            InputManager.Instance.OnSPressed -= OnSPressed;
+        }
     }
 
     void Update()
     {
-        // W → view1 전환 + Feature1 OFF, Feature2 ON (딜레이)
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            if (!inView2) return; // S/D 상태에서는 W 무시
-            if (inView2 && currentView == view2)
-            {
-                currentView = view1;
-                inView2 = false;
-                targetFOV = zoomFOV;
-
-                if (switchCoroutine != null)
-                    StopCoroutine(switchCoroutine);
-
-                switchCoroutine = StartCoroutine(DelayedSwitchFeatures());
-            }
-        }
-
-        // S → view2 전환 + Feature1 ON, Feature2 OFF
-        // TMP_InputField 활성화시 무시
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            if (inputField != null && inputField.isFocused)
-                return; // 입력 중이면 무시
-
-            if (currentView != view2)
-            {
-                currentView = view2;
-                inView2 = true;
-                targetFOV = defaultFOV;
-
-                if (switchCoroutine != null)
-                {
-                    StopCoroutine(switchCoroutine);
-                    switchCoroutine = null;
-                }
-
-                SwitchFeatures(false);
-            }
-        }
-
-        // S 상태에서만 A/D 이동
+        // A/D 시점 전환 (S 상태(view2)에서만)
         if (inView2)
         {
-            if (Input.GetKeyDown(KeyCode.A) && currentView != leftView)
+            if (InputManager.Instance.APressed && currentView != leftView)
                 currentView = leftView;
-
-            if (Input.GetKeyDown(KeyCode.D) && currentView != rightView)
+            else if (InputManager.Instance.DPressed && currentView != rightView)
                 currentView = rightView;
         }
 
@@ -127,6 +87,36 @@ public class CameraSwitch : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, currentView.position, Time.deltaTime * transitionSpeed);
         transform.rotation = Quaternion.Lerp(transform.rotation, currentView.rotation, Time.deltaTime * transitionSpeed);
         targetCamera.fieldOfView = Mathf.Lerp(targetCamera.fieldOfView, targetFOV, Time.deltaTime * transitionSpeed);
+    }
+
+    private void OnWPressed()
+    {
+        // 반드시 S 상태(view2)에서만 W 허용
+        if (!inView2) return;
+
+        // A/D 입력 중이면 W 무시
+        if (InputManager.Instance.APressed || InputManager.Instance.DPressed) return;
+
+        currentView = view1;
+        inView2 = false;
+        targetFOV = zoomFOV;
+
+        if (switchCoroutine != null) StopCoroutine(switchCoroutine);
+        switchCoroutine = StartCoroutine(DelayedSwitchFeatures());
+    }
+
+    private void OnSPressed()
+    {
+        currentView = view2;
+        inView2 = true;
+        targetFOV = defaultFOV;
+
+        if (switchCoroutine != null)
+        {
+            StopCoroutine(switchCoroutine);
+            switchCoroutine = null;
+        }
+        SwitchFeatures(false);
     }
 
     IEnumerator DelayedSwitchFeatures()
@@ -142,13 +132,11 @@ public class CameraSwitch : MonoBehaviour
         {
             if (feature1 != null) feature1.SetActive(false);
             if (feature2 != null) feature2.SetActive(true);
-            Debug.Log("W 눌림 → Feature1 OFF, Feature2 ON");
         }
         else
         {
             if (feature1 != null) feature1.SetActive(true);
             if (feature2 != null) feature2.SetActive(false);
-            Debug.Log("S 눌림 → Feature1 ON, Feature2 OFF");
         }
     }
 }

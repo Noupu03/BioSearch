@@ -4739,7 +4739,6 @@ MonoBehaviour:
   featureName1: FullScreenPassRendererFeature2
   featureName2: FullScreenPassRendererFeature1
   switchDelay: 1.5
-  inputField: {fileID: 1666166031}
 --- !u!114 &919113287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5810,8 +5809,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera1: {fileID: 919113284}
   camera2: {fileID: 1110581901}
-  targetCanvas: {fileID: 1152194525}
-  targetInputField: {fileID: 1666166031}
   switchDelay: 1.5
 --- !u!4 &1135300293
 Transform:
@@ -9664,6 +9661,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6923977918440101870, guid: fbb23db43fd485143baea0caf3d0270d, type: 3}
   m_PrefabInstance: {fileID: 1261968539}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1948195243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1948195245}
+  - component: {fileID: 1948195244}
+  m_Layer: 0
+  m_Name: InputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1948195244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948195243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9bdfbbb3e354742a37f12e32dc04e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1948195245
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948195243}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.009404, y: 10.529362, z: 156.88596}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1951300651
 GameObject:
   m_ObjectHideFlags: 0
@@ -10350,3 +10391,4 @@ SceneRoots:
   - {fileID: 1062960633}
   - {fileID: 1369091289}
   - {fileID: 448714825}
+  - {fileID: 1948195245}
