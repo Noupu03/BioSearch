@@ -3591,8 +3591,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c180b32d2b5504fa74ace469eddad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  txtIconSprite: {fileID: -1765089774, guid: 44205ca73a15a8d4088408a4f33ba618, type: 3}
-  pngIconSprite: {fileID: -923340368, guid: 4b79d066d1eef3042b56e53e11b5433d, type: 3}
+  txtIconSprite: {fileID: -1660364447, guid: 19e538a036e791540a7661273d4849b5, type: 3}
+  pngIconSprite: {fileID: 1363230231, guid: 828650d6a123a33458ab2dde2773c3b6, type: 3}
   defaultIconSprite: {fileID: 0}
 --- !u!114 &693352158
 MonoBehaviour:
@@ -7178,7 +7178,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1369091287}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d9cddb2c5cf5fe4ca31a16f9d7b7ad8, type: 3}
   m_Name: 
@@ -9342,7 +9342,7 @@ MonoBehaviour:
   backButton: {fileID: 6551093433372594366}
   fileDatas:
   - fileName: cornea
-    extension: txt
+    extension: png
     textContent: 11
     imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
     isAbnormal: 0
