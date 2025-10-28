@@ -3591,8 +3591,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c180b32d2b5504fa74ace469eddad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  txtIconSprite: {fileID: 540261072, guid: 08d85cd9b325d58448a4a5a5f1405d29, type: 3}
-  pngIconSprite: {fileID: 495543960, guid: 1de2f2c741887174c8a794c8e2ff7775, type: 3}
+  txtIconSprite: {fileID: -1765089774, guid: 44205ca73a15a8d4088408a4f33ba618, type: 3}
+  pngIconSprite: {fileID: -923340368, guid: 4b79d066d1eef3042b56e53e11b5433d, type: 3}
   defaultIconSprite: {fileID: 0}
 --- !u!114 &693352158
 MonoBehaviour:
