@@ -10,6 +10,10 @@ public class CameraSwitch : MonoBehaviour
     public float zoomFOV = 40f;
     public float transitionSpeed = 5f;
 
+    [Header("좌/우 시점 FOV 설정")]
+    public float leftViewFOV = 55f;
+    public float rightViewFOV = 55f;
+
     [Header("시점 설정")]
     public Transform view1;
     public Transform view2;
@@ -78,9 +82,15 @@ public class CameraSwitch : MonoBehaviour
         if (inView2)
         {
             if (InputManager.Instance.APressed && currentView != leftView)
+            {
                 currentView = leftView;
+                targetFOV = leftViewFOV; //  왼쪽 전환 시 FOV 적용
+            }
             else if (InputManager.Instance.DPressed && currentView != rightView)
+            {
                 currentView = rightView;
+                targetFOV = rightViewFOV; //  오른쪽 전환 시 FOV 적용
+            }
         }
 
         // 카메라 이동/회전/FOV 보간
