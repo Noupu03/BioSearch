@@ -7160,7 +7160,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1369091289}
-  - component: {fileID: 1369091288}
+  - component: {fileID: 1369091290}
   m_Layer: 0
   m_Name: 00
   m_TagString: Untagged
@@ -7168,14 +7168,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1369091288
+--- !u!4 &1369091289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369091287}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.759273, y: -4001.741, z: 119.310425}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1369091290
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1369091287}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d9cddb2c5cf5fe4ca31a16f9d7b7ad8, type: 3}
   m_Name: 
@@ -7197,21 +7212,6 @@ MonoBehaviour:
   vignetteIntensity_Monitor: 0.3
   vignetteSmoothness_Monitor: 1
   filmGrainIntensity_Monitor: 1
---- !u!4 &1369091289
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1369091287}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.759273, y: -4001.741, z: 119.310425}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1371200034
 GameObject:
   m_ObjectHideFlags: 0
@@ -9690,6 +9690,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b9bdfbbb3e354742a37f12e32dc04e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockSPressedField: {fileID: 1666166031}
+  wSwitchDelay: 1.5
 --- !u!4 &1948195245
 Transform:
   m_ObjectHideFlags: 0

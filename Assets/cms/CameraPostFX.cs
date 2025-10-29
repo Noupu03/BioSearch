@@ -13,32 +13,32 @@ public class CameraPostFX : MonoBehaviour
     private FilmGrain filmGrain;
 
     [Header("전환 시간 (초)")]
-    public float transitionTime = 1.5f; // 전환 단계 시간
+    public float transitionTime = 1f; // 전환 단계 시간
     private Coroutine transitionCoroutine;
 
     // --- Room (기본 시점, S 상태) ---
     [Header("1 Room (S 시점)")]
-    public float bloomIntensity_Room = 1f;
-    public float bloomScatter_Room = 0.65f;
-    public float vignetteIntensity_Room = 0.25f;
+    public float bloomIntensity_Room = 3f;
+    public float bloomScatter_Room = 0.5f;
+    public float vignetteIntensity_Room = 0.33f;
     public float vignetteSmoothness_Room = 1f;
     public float filmGrainIntensity_Room = 1f;
 
     // --- Transition (이동 중) ---
     [Header("2 Transition (이동 중)")]
-    public float bloomIntensity_Transition = 0.6f;
-    public float bloomScatter_Transition = 0.45f;
-    public float vignetteIntensity_Transition = 0.4f;
-    public float vignetteSmoothness_Transition = 0.9f;
-    public float filmGrainIntensity_Transition = 0.7f;
+    public float bloomIntensity_Transition = 1f;
+    public float bloomScatter_Transition = 1f;
+    public float vignetteIntensity_Transition = 1f;
+    public float vignetteSmoothness_Transition = 1f;
+    public float filmGrainIntensity_Transition = 1f;
 
     // --- Monitor (도착 후, W 상태) ---
     [Header("3 Monitor (W 시점)")]
-    public float bloomIntensity_Monitor = 0.3f;
-    public float bloomScatter_Monitor = 0.3f;
-    public float vignetteIntensity_Monitor = 0.55f;
-    public float vignetteSmoothness_Monitor = 0.8f;
-    public float filmGrainIntensity_Monitor = 0.5f;
+    public float bloomIntensity_Monitor = 40f;
+    public float bloomScatter_Monitor = 0.65f;
+    public float vignetteIntensity_Monitor = 0.3f;
+    public float vignetteSmoothness_Monitor = 1f;
+    public float filmGrainIntensity_Monitor = 1f;
 
     void Start()
     {
@@ -54,66 +54,90 @@ public class CameraPostFX : MonoBehaviour
         }
 
         ApplyRoomValues(); // 시작 시 Room 상태
-    }
 
-    void Update()
-    {
-        // --- W 키: Transition → 일정 시간 후 Monitor ---
-        if (Input.GetKeyDown(KeyCode.W))
+        // --- InputManager 이벤트 연결 ---
+        if (InputManager.Instance != null)
         {
-            if (transitionCoroutine != null)
-                StopCoroutine(transitionCoroutine);
-            transitionCoroutine = StartCoroutine(TransitionToMonitor());
-        }
-
-        // --- S 키: Room으로 복귀 ---
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            if (transitionCoroutine != null)
-                StopCoroutine(transitionCoroutine);
-            transitionCoroutine = StartCoroutine(LerpToRoom());
+            InputManager.Instance.OnWPressed += OnWPressed;
+            InputManager.Instance.OnSPressed += OnSPressed;
         }
     }
 
-    // Room → Transition → Monitor 순서로 변화
-    IEnumerator TransitionToMonitor()
+    void OnDestroy()
     {
-        // 1단계: Transition 값 즉시 적용
-        ApplyTransitionValues();
-
-        // 2단계: 일정 시간 대기
-        yield return new WaitForSeconds(transitionTime);
-
-        // 3단계: 부드럽게 Monitor 값으로 전환
-        yield return StartCoroutine(LerpToMonitor());
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.OnWPressed -= OnWPressed;
+            InputManager.Instance.OnSPressed -= OnSPressed;
+        }
     }
 
-    IEnumerator LerpToMonitor()
+    // W 누를 때
+    private void OnWPressed()
+    {
+        if (transitionCoroutine != null)
+            StopCoroutine(transitionCoroutine);
+        transitionCoroutine = StartCoroutine(TransitionToMonitor());
+    }
+
+    // S 누를 때
+    private void OnSPressed()
+    {
+        if (transitionCoroutine != null)
+            StopCoroutine(transitionCoroutine);
+        transitionCoroutine = StartCoroutine(LerpToRoom());
+    }
+
+    // Room → Transition → Monitor 순서로 부드럽게 변화
+    private IEnumerator TransitionToMonitor()
     {
         float t = 0f;
 
+        // 1단계: Room → Transition → Monitor를 바로 연속 Lerp
         float startBloom = bloom.intensity.value;
         float startScatter = bloom.scatter.value;
         float startVignette = vignette.intensity.value;
         float startSmooth = vignette.smoothness.value;
         float startGrain = filmGrain.intensity.value;
 
+        // 목표값을 Monitor로 바로 잡고, Transition 값은 보정용으로 중간에서 계산
+        float targetBloom = bloomIntensity_Monitor;
+        float targetScatter = bloomScatter_Monitor;
+        float targetVignette = vignetteIntensity_Monitor;
+        float targetSmooth = vignetteSmoothness_Monitor;
+        float targetGrain = filmGrainIntensity_Monitor;
+
         while (t < 1f)
         {
             t += Time.deltaTime / transitionTime;
-            float easedT = Mathf.SmoothStep(0, 1, t); // 자연스러운 페이드
+            float easedT = Mathf.SmoothStep(0, 1, t);
 
-            bloom.intensity.value = Mathf.Lerp(startBloom, bloomIntensity_Monitor, easedT);
-            bloom.scatter.value = Mathf.Lerp(startScatter, bloomScatter_Monitor, easedT);
-            vignette.intensity.value = Mathf.Lerp(startVignette, vignetteIntensity_Monitor, easedT);
-            vignette.smoothness.value = Mathf.Lerp(startSmooth, vignetteSmoothness_Monitor, easedT);
-            filmGrain.intensity.value = Mathf.Lerp(startGrain, filmGrainIntensity_Monitor, easedT);
+            // 중간값(Trajectory) 계산
+            float midBloom = Mathf.Lerp(bloomIntensity_Room, bloomIntensity_Transition, easedT);
+            float midScatter = Mathf.Lerp(bloomScatter_Room, bloomScatter_Transition, easedT);
+            float midVignette = Mathf.Lerp(vignetteIntensity_Room, vignetteIntensity_Transition, easedT);
+            float midSmooth = Mathf.Lerp(vignetteSmoothness_Room, vignetteSmoothness_Transition, easedT);
+            float midGrain = Mathf.Lerp(filmGrainIntensity_Room, filmGrainIntensity_Transition, easedT);
+
+            // 최종 Lerp (Transition → Monitor)
+            bloom.intensity.value = Mathf.Lerp(midBloom, targetBloom, easedT);
+            bloom.scatter.value = Mathf.Lerp(midScatter, targetScatter, easedT);
+            vignette.intensity.value = Mathf.Lerp(midVignette, targetVignette, easedT);
+            vignette.smoothness.value = Mathf.Lerp(midSmooth, targetSmooth, easedT);
+            filmGrain.intensity.value = Mathf.Lerp(midGrain, targetGrain, easedT);
 
             yield return null;
         }
+
+        // 전환 종료 시점에 S 입력 해제
+        if (InputManager.Instance != null)
+            InputManager.Instance.LockSInput(false);
+
+        transitionCoroutine = null;
     }
 
-    IEnumerator LerpToRoom()
+
+    private IEnumerator LerpToRoom()
     {
         float t = 0f;
 
@@ -126,7 +150,7 @@ public class CameraPostFX : MonoBehaviour
         while (t < 1f)
         {
             t += Time.deltaTime / transitionTime;
-            float easedT = Mathf.SmoothStep(0, 1, t); // 자연스러운 복귀
+            float easedT = Mathf.SmoothStep(0, 1, t);
 
             bloom.intensity.value = Mathf.Lerp(startBloom, bloomIntensity_Room, easedT);
             bloom.scatter.value = Mathf.Lerp(startScatter, bloomScatter_Room, easedT);
@@ -136,10 +160,12 @@ public class CameraPostFX : MonoBehaviour
 
             yield return null;
         }
+
+        transitionCoroutine = null;
     }
 
     // --- 즉시 적용 함수 ---
-    void ApplyRoomValues()
+    private void ApplyRoomValues()
     {
         if (bloom == null) return;
         bloom.intensity.value = bloomIntensity_Room;
@@ -147,15 +173,5 @@ public class CameraPostFX : MonoBehaviour
         vignette.intensity.value = vignetteIntensity_Room;
         vignette.smoothness.value = vignetteSmoothness_Room;
         filmGrain.intensity.value = filmGrainIntensity_Room;
-    }
-
-    void ApplyTransitionValues()
-    {
-        if (bloom == null) return;
-        bloom.intensity.value = bloomIntensity_Transition;
-        bloom.scatter.value = bloomScatter_Transition;
-        vignette.intensity.value = vignetteIntensity_Transition;
-        vignette.smoothness.value = vignetteSmoothness_Transition;
-        filmGrain.intensity.value = filmGrainIntensity_Transition;
     }
 }

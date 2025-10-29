@@ -61,6 +61,7 @@ public class CameraSwitcher : MonoBehaviour
 
     private void OnSPressed()
     {
+        if (isSwitching) return; // W->전환 중이면 S 입력 무시
         if (activeCamera != camera2 || isSwitching) return;
 
         if (switchCoroutine != null) StopCoroutine(switchCoroutine);
@@ -78,6 +79,8 @@ public class CameraSwitcher : MonoBehaviour
         currentView = ViewMode.Front;
 
         isSwitching = false;
+        // 전환 완료 후 다시 S 허용
+        InputManager.Instance.LockSInput(false);
     }
 
     IEnumerator Switch2To1Routine()
@@ -90,6 +93,8 @@ public class CameraSwitcher : MonoBehaviour
         currentView = ViewMode.Front;
 
         isSwitching = false;
+        // 카메라 복귀 후에도 S 허용
+        InputManager.Instance.LockSInput(false);
         yield return null;
     }
 
@@ -101,4 +106,6 @@ public class CameraSwitcher : MonoBehaviour
         AudioListener listener = cam.GetComponent<AudioListener>();
         if (listener != null) listener.enabled = state;
     }
+
+
 }
