@@ -5,11 +5,11 @@ using System.Collections.Generic;
 [System.Serializable]
 public class BodyPart
 {
-    public string partName;       // 부위 이름
-    public Button button;         // 해당 부위 버튼
-    public Sprite normalSprite;   // 정상 스프라이트
-    public Sprite errorSprite;    // 고장 스프라이트
-    public bool isError;          // 고장 여부
+    public string partName;
+    public Button button;
+    public Sprite normalSprite;
+    public Sprite errorSprite;
+    public bool isError;
 }
 
 public class MachinePartViewer : MonoBehaviour
@@ -17,7 +17,9 @@ public class MachinePartViewer : MonoBehaviour
     [Header("왼쪽 카메라창")]
     [SerializeField] private Image cameraPanel;
 
-    // 내부에서 관리하는 신체 부위들
+    [Header("버튼 색상 관리 매니저")]
+    [SerializeField] private ButtonColorManager buttonManager;
+
     [SerializeField] private BodyPart Head = new BodyPart();
     [SerializeField] private BodyPart Chest = new BodyPart();
     [SerializeField] private BodyPart LeftUpperArm = new BodyPart();
@@ -45,7 +47,6 @@ public class MachinePartViewer : MonoBehaviour
 
     void Start()
     {
-        // 버튼 클릭 이벤트 등록
         foreach (var kvp in partDict)
         {
             var part = kvp.Value;
@@ -55,11 +56,12 @@ public class MachinePartViewer : MonoBehaviour
                 part.button.onClick.AddListener(() => ShowPart(nameCopy));
             }
         }
+        UpdateErrorButtonColors();
+        UpdateButtonVisuals();
     }
 
-    /// <summary>
-    /// BodyPart 이름-객체 매핑 초기화
-    /// </summary>
+
+
     private void InitializeDictionary()
     {
         partDict = new Dictionary<string, BodyPart>
@@ -82,19 +84,13 @@ public class MachinePartViewer : MonoBehaviour
             { "RightFoot", RightFoot }
         };
 
-        // 각 BodyPart의 이름 자동 지정
         foreach (var kvp in partDict)
-        {
             kvp.Value.partName = kvp.Key;
-        }
     }
 
-    /// <summary>
-    /// 씬 내 버튼 이름과 BodyPart 이름을 자동 매핑
-    /// </summary>
     private void AutoAssignBodyParts()
     {
-        Button[] allButtons = FindObjectsOfType<Button>(true); // 비활성 포함
+        Button[] allButtons = FindObjectsOfType<Button>(true);
         foreach (var button in allButtons)
         {
             if (partDict.TryGetValue(button.name, out var bodyPart))
@@ -104,9 +100,6 @@ public class MachinePartViewer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 클릭 시 해당 부위 스프라이트 표시
-    /// </summary>
     private void ShowPart(string partName)
     {
         if (!partDict.TryGetValue(partName, out var part))
@@ -121,9 +114,58 @@ public class MachinePartViewer : MonoBehaviour
             return;
         }
 
-        // 고장 여부에 따라 스프라이트 선택
         cameraPanel.sprite = part.isError && part.errorSprite != null
             ? part.errorSprite
             : part.normalSprite;
+
+        UpdateButtonVisuals();
     }
+
+    /// <summary>
+    /// 외부에서 고장 상태 변경 시 호출
+    /// </summary>
+    public void SetPartError(string partName, bool isError)
+    {
+        if (partDict.TryGetValue(partName, out var part))
+        {
+            part.isError = isError;
+            UpdateButtonVisuals();
+        }
+    }
+
+    /// <summary>
+    /// BodyButtonManager와 색상 동기화
+    /// </summary>
+    private void UpdateButtonVisuals()
+    {
+        if (buttonManager == null) return;
+
+        Dictionary<string, bool> errorStates = new Dictionary<string, bool>();
+        foreach (var kvp in partDict)
+        {
+            errorStates[kvp.Key] = kvp.Value.isError;
+        }
+
+        buttonManager.UpdateErrorButtonColors(errorStates);
+    }
+
+    private void UpdateErrorButtonColors()
+    {
+        foreach (var kvp in partDict)
+        {
+            var part = kvp.Value;
+            if (part.button == null) continue;
+
+            ColorBlock colors = part.button.colors;
+            if (part.isError)
+            {
+                colors.normalColor = Color.red;
+                colors.highlightedColor = Color.red;
+                colors.pressedColor = Color.red;
+                colors.selectedColor = Color.red;
+            }
+            part.button.colors = colors;
+        }
+    }
+
 }

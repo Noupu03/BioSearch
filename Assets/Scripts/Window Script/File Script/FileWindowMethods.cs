@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-
 /// <summary>
 /// FileWindow의 UI 동작 관련 메서드 모음.
 /// </summary>
@@ -10,9 +9,6 @@ public partial class FileWindow
 {
     /// <summary>
     /// 폴더 열기 및 UI 갱신
-    /// </summary>
-    /// <summary>
-    /// 폴더 열기 및 UI 갱신 (기존 기능 + 더미 아이콘 표시)
     /// </summary>
     public void OpenFolder(Folder folder, bool recordPrevious = true)
     {
@@ -71,11 +67,6 @@ public partial class FileWindow
             icon.Setup(file, this);
         }
 
-        // ---------------------------------------------
-        // 더미 아이콘 생성 (현재 폴더에 속한 것만)
-        // ---------------------------------------------
-        CreateDummyIconsForFolder(folder);
-
         // 뒤로가기 버튼 활성화
         if (backButton != null)
             backButton.gameObject.SetActive(true);
@@ -83,23 +74,6 @@ public partial class FileWindow
         // 경로 패널 업데이트
         pathPanelManager?.UpdatePathButtons();
     }
-
-    /// <summary>
-    /// 현재 폴더에 속한 더미 아이콘만 UI로 생성
-    /// </summary>
-    private void CreateDummyIconsForFolder(Folder folder)
-    {
-        foreach (var dummy in dummyIcons)
-        {
-            // 해당 폴더에 속한 더미 중 아직 UI가 생성되지 않은 것만 생성
-            if (dummy.parentFolder == folder && dummy.uiObject == null)
-            {
-                CreateDummyIconUI(dummy, folder);
-            }
-        }
-    }
-
-  
 
     /// <summary>
     /// 해당 폴더에 파일이 존재하는지 확인
@@ -141,19 +115,6 @@ public partial class FileWindow
         // 새로 선택
         selectedFileIcon = icon;
         selectedFileIcon?.SetSelected(true);
-    }
-    public List<object> GetAllFilesAndFolders()//더미 관련
-    {
-        List<object> result = new List<object>();
-        AddFolderAndFilesRecursive(rootFolder, result);
-        return result;
-    }
-
-    private void AddFolderAndFilesRecursive(Folder folder, List<object> list)//더미 관련
-    {
-        list.Add(folder);
-        foreach (var file in folder.files) list.Add(file);
-        foreach (var child in folder.children) AddFolderAndFilesRecursive(child, list);
     }
 
     /// <summary>

@@ -8,8 +8,6 @@ public partial class FileWindow : MonoBehaviour
     [Header("Prefabs")]
     public GameObject folderIconPrefab;
     public GameObject fileIconPrefab;
-    public GameObject dummyFolderIconPrefab;
-    public GameObject dummyFileIconPrefab;
 
     [Header("Scroll Area")]
     public Transform contentArea;
@@ -34,31 +32,6 @@ public partial class FileWindow : MonoBehaviour
     private Folder currentFolder;
     private Stack<Folder> folderHistory = new Stack<Folder>();
     private List<File> currentFolderFiles = new List<File>();
-
-    [Header("Dummy Icons")]
-    public List<DummyIcon> dummyIcons = new List<DummyIcon>();
-
-    public void CreateDummyIconUI(DummyIcon dummy, Folder parentFolder)
-    {
-        if (dummy == null) return;
-
-        GameObject prefab = dummy.isFolder ? dummyFolderIconPrefab : dummyFileIconPrefab;
-        if (prefab == null || contentArea == null) return;
-
-        GameObject go = Instantiate(prefab, contentArea);
-        dummy.uiObject = go;
-
-        TMP_Text textComp = go.GetComponentInChildren<TMP_Text>();
-        if (textComp != null)
-        {
-            textComp.text = dummy.name;
-            textComp.color = Color.white;
-        }
-
-        Button btn = go.GetComponent<Button>();
-        if (btn != null)
-            btn.interactable = false;
-    }
 
     void Awake()
     {
