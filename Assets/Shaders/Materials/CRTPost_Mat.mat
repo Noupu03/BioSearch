@@ -82,11 +82,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Aberration: 0.075
+    - _Aberration: 0.1
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _BandSpeed: 0.5
+    - _BandSpeed: 0.2
     - _BandStrength: 0.25
     - _BandThickness: 0.2
     - _Blend: 0
@@ -96,7 +96,7 @@ Material:
     - _BurstLen: 0.05
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _CornerRadius: 0.2
+    - _CornerRadius: 0.1
     - _Cull: 2
     - _Curvature: 0.05
     - _Cutoff: 0.5
@@ -107,14 +107,14 @@ Material:
     - _EnvironmentReflections: 1
     - _FlickerBase: 0.00075
     - _FlickerBurst: 0.01
-    - _Gamma: 1
+    - _Gamma: 1.5
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Jitter: 0.025
-    - _JitterBase: 0
+    - _JitterBase: 0.001
     - _JitterBurst: 1
-    - _MaskPixelSize: 1
+    - _MaskPixelSize: 4
     - _MaskStrength: 1
     - _Metallic: 0
     - _MicroJitterAmp: 1
@@ -125,7 +125,7 @@ Material:
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ScanlineCount: 1500
+    - _ScanlineCount: 100
     - _ScanlineIntensity: 0.25
     - _Seed: 100
     - _Smoothness: 0.5
