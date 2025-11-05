@@ -6,8 +6,8 @@ public class ProgramOpen : MonoBehaviour
 {
     [Header("Desktop Area")]
     public Transform desktopArea; // 바탕화면 아이콘 부모
-    
-[Header("아이콘 프리팹")]
+
+    [Header("아이콘 프리팹")]
     public GameObject cmdIconPrefab;
     public GameObject fileExplorerIconPrefab;
     public GameObject displayIconPrefab;
@@ -20,23 +20,35 @@ public class ProgramOpen : MonoBehaviour
     [Header("X 버튼 프리팹")]
     public GameObject xButtonPrefab;
 
-    private List<GameObject> icons = new List<GameObject>();
+    [Header("하단바 영역")]
+    public Transform taskbarArea; // 하단바 아이콘 부모
 
-    private float iconSpacing = 20f; // 아이콘 간격
+    [Header("하단바 아이콘 프리팹")]
+    public GameObject taskbarCmdIconPrefab;
+    public GameObject taskbarFileExplorerIconPrefab;
+    public GameObject taskbarDisplayIconPrefab;
+
+    private List<GameObject> icons = new List<GameObject>();
+    private List<GameObject> taskbarIcons = new List<GameObject>();
+
+    private float iconSpacing = 10f; // 아이콘 간격
+
+
     void Start()
     {
         CreateDesktopIcons();
+        CreateTaskbarIcons();
     }
 
     void CreateDesktopIcons()
     {
         // 아이콘 목록
         var iconInfos = new List<(GameObject iconPrefab, GameObject programPrefab)>
-    {
-        (cmdIconPrefab, cmdProgramPrefab),
-        (fileExplorerIconPrefab, fileExplorerProgramPrefab),
-        (displayIconPrefab, displayProgramPrefab)
-    };
+        {
+            (cmdIconPrefab, cmdProgramPrefab),
+            (fileExplorerIconPrefab, fileExplorerProgramPrefab),
+            (displayIconPrefab, displayProgramPrefab)
+        };
 
         float startY = 0f;
 
@@ -56,6 +68,38 @@ public class ProgramOpen : MonoBehaviour
             {
                 OpenProgram(info.programPrefab);
             };
+        }
+    }
+
+    void CreateTaskbarIcons()
+    {
+        // 하단바 아이콘 목록
+        var taskbarIconInfos = new List<(GameObject iconPrefab, GameObject programPrefab)>
+        {
+            (taskbarCmdIconPrefab, cmdProgramPrefab),
+            (taskbarFileExplorerIconPrefab, fileExplorerProgramPrefab),
+            (taskbarDisplayIconPrefab, displayProgramPrefab)
+        };
+
+        float startX = 0f;
+        float spacing = 5f; // 하단바 아이콘 간격
+
+        foreach (var info in taskbarIconInfos)
+        {
+            GameObject icon = Instantiate(info.iconPrefab, taskbarArea);
+            RectTransform rt = icon.GetComponent<RectTransform>();
+            rt.anchoredPosition = new Vector2(startX, 0);
+            startX += spacing;
+
+            taskbarIcons.Add(icon);
+
+            // 클릭 시 프로그램 활성화
+            Button btn = icon.GetComponent<Button>();
+            if (btn == null) btn = icon.AddComponent<Button>();
+            btn.onClick.AddListener(() =>
+            {
+                OpenProgram(info.programPrefab);
+            });
         }
     }
 
@@ -85,6 +129,4 @@ public class ProgramOpen : MonoBehaviour
             programPrefab.SetActive(false);
         });
     }
-
-
 }
