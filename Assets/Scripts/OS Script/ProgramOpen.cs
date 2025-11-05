@@ -31,7 +31,7 @@ public class ProgramOpen : MonoBehaviour
     private List<GameObject> icons = new List<GameObject>();
     private List<GameObject> taskbarIcons = new List<GameObject>();
 
-    private float iconSpacing = 10f; // 아이콘 간격
+    private float iconSpacing = 20f; // 아이콘 간격
 
 
     void Start()
