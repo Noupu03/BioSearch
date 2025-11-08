@@ -11,11 +11,13 @@ public class ProgramOpen : MonoBehaviour
     public GameObject cmdIconPrefab;
     public GameObject fileExplorerIconPrefab;
     public GameObject displayIconPrefab;
+    public GameObject messengerIconPrefab; // 메신저 아이콘 프리팹 추가
 
     [Header("프로그램 프리팹")]
     public GameObject cmdProgramPrefab;
     public GameObject fileExplorerProgramPrefab;
     public GameObject displayProgramPrefab;
+    public GameObject messengerProgramPrefab; // 메신저 프로그램 프리팹 추가
 
     [Header("X 버튼 프리팹")]
     public GameObject xButtonPrefab;
@@ -27,12 +29,12 @@ public class ProgramOpen : MonoBehaviour
     public GameObject taskbarCmdIconPrefab;
     public GameObject taskbarFileExplorerIconPrefab;
     public GameObject taskbarDisplayIconPrefab;
+    public GameObject taskbarMessengerIconPrefab; // 메신저 하단바 아이콘 프리팹 추가
 
     private List<GameObject> icons = new List<GameObject>();
     private List<GameObject> taskbarIcons = new List<GameObject>();
 
     private float iconSpacing = 20f; // 아이콘 간격
-
 
     void Start()
     {
@@ -47,7 +49,8 @@ public class ProgramOpen : MonoBehaviour
         {
             (cmdIconPrefab, cmdProgramPrefab),
             (fileExplorerIconPrefab, fileExplorerProgramPrefab),
-            (displayIconPrefab, displayProgramPrefab)
+            (displayIconPrefab, displayProgramPrefab),
+            (messengerIconPrefab, messengerProgramPrefab) // 메신저 추가
         };
 
         float startY = 0f;
@@ -78,7 +81,8 @@ public class ProgramOpen : MonoBehaviour
         {
             (taskbarCmdIconPrefab, cmdProgramPrefab),
             (taskbarFileExplorerIconPrefab, fileExplorerProgramPrefab),
-            (taskbarDisplayIconPrefab, displayProgramPrefab)
+            (taskbarDisplayIconPrefab, displayProgramPrefab),
+            (taskbarMessengerIconPrefab, messengerProgramPrefab) // 메신저 추가
         };
 
         float startX = 0f;

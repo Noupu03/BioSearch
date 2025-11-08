@@ -67,4 +67,8 @@ public class OSTimeManager : MonoBehaviour
         if (timeText != null)
             timeText.text = timeString;
     }
+    public GameDateTime GetCurrentGameTime()
+    {
+        return new GameDateTime(year, month, day, hour, minute);
+    }
 }
