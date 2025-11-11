@@ -18,6 +18,7 @@ public class ProgramOpen : MonoBehaviour
     public GameObject fileExplorerProgramPrefab;
     public GameObject displayProgramPrefab;
     public GameObject messengerProgramPrefab; // 메신저 프로그램 프리팹 추가
+    public GameObject messengerWindowprefab;
 
     [Header("X 버튼 프리팹")]
     public GameObject xButtonPrefab;
@@ -31,6 +32,8 @@ public class ProgramOpen : MonoBehaviour
     public GameObject taskbarDisplayIconPrefab;
     public GameObject taskbarMessengerIconPrefab; // 메신저 하단바 아이콘 프리팹 추가
 
+    
+
     private List<GameObject> icons = new List<GameObject>();
     private List<GameObject> taskbarIcons = new List<GameObject>();
 
@@ -40,6 +43,7 @@ public class ProgramOpen : MonoBehaviour
     {
         CreateDesktopIcons();
         CreateTaskbarIcons();
+
     }
 
     void CreateDesktopIcons()
@@ -132,5 +136,11 @@ public class ProgramOpen : MonoBehaviour
         {
             programPrefab.SetActive(false);
         });
+    }
+
+    public void MessangerWindowOpen()
+    {
+        Debug.Log(" MessangerWindowOpen() 호출됨!");
+        OpenProgram(messengerWindowprefab);
     }
 }
