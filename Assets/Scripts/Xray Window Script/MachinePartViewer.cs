@@ -167,5 +167,37 @@ public class MachinePartViewer : MonoBehaviour
             part.button.colors = colors;
         }
     }
+    /// <summary>
+    /// 프로그램 종료 시 초기화용 함수
+    /// 모든 버튼 색상을 기본 상태로 재설정하고 cameraPanel을 null로 설정
+    /// </summary>
+    public void DisplayInitialize()
+    {
+        // cameraPanel 초기화
+        cameraPanel = null;
+
+        // 버튼 색상 초기화
+        foreach (var kvp in partDict)
+        {
+            var part = kvp.Value;
+            if (part.button == null) continue;
+
+            ColorBlock colors = part.button.colors;
+
+            // 빨간색 상태는 유지
+            if (!part.isError)
+            {
+                // 기본 색상으로 초기화
+                colors.normalColor = Color.white;
+                colors.highlightedColor = Color.white;
+                colors.pressedColor = Color.white;
+                colors.selectedColor = Color.white;
+            }
+
+            part.button.colors = colors;
+        }
+
+        Debug.Log("[MachinePartViewer] DisplayInitialize() 실행됨");
+    }
 
 }

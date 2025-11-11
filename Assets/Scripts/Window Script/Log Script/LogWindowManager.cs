@@ -64,6 +64,18 @@ public class LogWindowManager : MonoBehaviour
         logText.rectTransform.anchorMin = new Vector2(0, 0);
         logText.rectTransform.anchorMax = new Vector2(1, 0);
 
+        startLog();
+
+    }
+    
+    public void CMDInitialize()
+	{
+        ClearLog();
+        startLog();
+	}
+
+    void startLog()
+	{
         int stage = ScoreCount.stageCount;
         Log($"{stage}번 피검사자 검사실에 배치..");
         Log(".......complete");
@@ -71,7 +83,6 @@ public class LogWindowManager : MonoBehaviour
         Log(".......complete");
         Log("BioSearch에서 사용자의 정신 연결..");
         Log(".......complete");
-
     }
 
     private void LateUpdate()

@@ -5,13 +5,8 @@ public class MessengerDataManager : MonoBehaviour
 {
     public static MessengerDataManager Instance;
 
-    // 전체 대화 목록
-    public Dictionary<string, List<MessengerProgram.MessageData>> conversations
-        = new Dictionary<string, List<MessengerProgram.MessageData>>();
-
-    // 예약 메시지
-    public List<MessengerProgram.MessageData> scheduledMessages
-        = new List<MessengerProgram.MessageData>();
+    public List<MessengerChatUI.MessageData> scheduledMessages = new List<MessengerChatUI.MessageData>();
+    public Dictionary<string, List<MessengerChatUI.MessageData>> conversations = new Dictionary<string, List<MessengerChatUI.MessageData>>();
 
     private void Awake()
     {
@@ -19,17 +14,18 @@ public class MessengerDataManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    public void AddMessage(MessengerProgram.MessageData msg)
+    public void AddMessage(MessengerChatUI.MessageData msg)
     {
         if (!conversations.ContainsKey(msg.sender))
-            conversations[msg.sender] = new List<MessengerProgram.MessageData>();
+            conversations[msg.sender] = new List<MessengerChatUI.MessageData>();
+
         conversations[msg.sender].Add(msg);
     }
 
-    public List<MessengerProgram.MessageData> GetConversation(string sender)
+    public List<MessengerChatUI.MessageData> GetConversation(string sender)
     {
         if (conversations.ContainsKey(sender))
             return conversations[sender];
-        return new List<MessengerProgram.MessageData>();
+        return new List<MessengerChatUI.MessageData>();
     }
 }

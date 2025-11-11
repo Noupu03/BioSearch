@@ -157,4 +157,35 @@ public partial class FileWindow : MonoBehaviour
 
     public Folder GetRootFolder() => rootFolder;
     public Folder GetCurrentFolder() => currentFolder;
+
+    /// <summary>
+    /// FileExplorer 초기화 함수
+    /// - 현재 폴더를 루트로 설정
+    /// - UI 갱신
+    /// </summary>
+    /// <summary>
+    /// 파일 탐색기 초기화: 경로 패널 0번(루트)으로 이동
+    /// </summary>
+    public void FileExplorerInitialize()
+    {
+        // 경로 패널이 있으면 0번 인덱스로 이동
+        if (pathPanelManager != null)
+        {
+            NavigateToPathIndex(0);
+            Debug.Log("[FileWindow] FileExplorerInitialize: 0번 인덱스로 이동 완료");
+        }
+        else
+        {
+            // 경로 패널이 없으면 그냥 루트 폴더 열기
+            if (rootFolder != null)
+            {
+                OpenFolder(rootFolder, false);
+                Debug.Log("[FileWindow] FileExplorerInitialize: 경로 패널 없으므로 rootFolder로 초기화");
+            }
+        }
+    }
+
+
+
+
 }

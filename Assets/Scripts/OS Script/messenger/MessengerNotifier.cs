@@ -8,45 +8,53 @@ public class MessengerNotifier : MonoBehaviour
     public GameObject popupUI;
     public TextMeshProUGUI popupText;
 
+    [Header("메신저 프로그램 참조")]
+    public GameObject messengerProgramPrefab; // 인스펙터에서 프리팹 연결
+
     private Dictionary<string, int> pendingMessages = new Dictionary<string, int>();
     private bool popupActive = false;
 
-    public void HandleMessageArrival(MessengerProgram.MessageData msg)
+    public void HandleMessageArrival(MessengerChatUI.MessageData msg)
     {
-        // 누적 메시지 기록
         if (!pendingMessages.ContainsKey(msg.sender))
             pendingMessages[msg.sender] = 0;
+
         pendingMessages[msg.sender]++;
 
+        // 팝업 표시
         ShowPopup();
     }
 
     private void ShowPopup()
     {
+        if (popupUI == null || popupText == null) return;
+
         popupUI.SetActive(true);
         popupText.text = BuildPopupText();
 
         if (!popupActive)
         {
             popupActive = true;
-            StartCoroutine(AutoHideIfProgramActive());
+            StartCoroutine(AutoHideWhenProgramActive());
         }
     }
 
-    private IEnumerator AutoHideIfProgramActive()
+    private IEnumerator AutoHideWhenProgramActive()
     {
         while (true)
         {
-            var program = FindObjectOfType<MessengerProgram>();
-            if (program != null && program.gameObject.activeInHierarchy)
+            if (messengerProgramPrefab != null && messengerProgramPrefab.activeInHierarchy)
             {
+                // 메신저가 켜져 있으면 5초 후 자동 숨김
                 yield return new WaitForSeconds(5f);
                 popupUI.SetActive(false);
-                popupActive = false;
                 pendingMessages.Clear();
+                popupActive = false;
                 yield break;
             }
-            yield return null; // 계속 확인
+
+            // 프로그램이 꺼져있으면 계속 대기
+            yield return null;
         }
     }
 
@@ -60,11 +68,12 @@ public class MessengerNotifier : MonoBehaviour
         return sb.ToString();
     }
 
-    // MessengerProgram이 활성화될 때 호출
     public void DeliverPendingMessages()
     {
-        popupUI.SetActive(false);
-        popupActive = false;
+        if (popupUI != null)
+            popupUI.SetActive(false);
+
         pendingMessages.Clear();
+        popupActive = false;
     }
 }

@@ -23,6 +23,9 @@ public class ProgramOpen : MonoBehaviour
     [Header("X 버튼 프리팹")]
     public GameObject xButtonPrefab;
 
+    [Header("최소화 버튼 프리팹")]
+    public GameObject minimizeButtonPrefab; // ★ 새로 추가
+
     [Header("하단바 영역")]
     public Transform taskbarArea; // 하단바 아이콘 부모
 
@@ -31,8 +34,6 @@ public class ProgramOpen : MonoBehaviour
     public GameObject taskbarFileExplorerIconPrefab;
     public GameObject taskbarDisplayIconPrefab;
     public GameObject taskbarMessengerIconPrefab; // 메신저 하단바 아이콘 프리팹 추가
-
-    
 
     private List<GameObject> icons = new List<GameObject>();
     private List<GameObject> taskbarIcons = new List<GameObject>();
@@ -43,7 +44,6 @@ public class ProgramOpen : MonoBehaviour
     {
         CreateDesktopIcons();
         CreateTaskbarIcons();
-
     }
 
     void CreateDesktopIcons()
@@ -118,29 +118,103 @@ public class ProgramOpen : MonoBehaviour
         // 프로그램 활성화
         programPrefab.SetActive(true);
 
-        // 이미 X버튼이 있으면 다시 만들지 않음
+        // X버튼 처리
         Transform existingX = programPrefab.transform.Find("X_Button");
-        if (existingX != null) return;
+        Button xBtn;
+        RectTransform xRt;
 
-        // X 버튼 생성
-        GameObject xBtnObj = Instantiate(xButtonPrefab, programPrefab.transform);
-        xBtnObj.name = "X_Button";
-        RectTransform rt = xBtnObj.GetComponent<RectTransform>();
-        rt.anchorMin = new Vector2(1, 1);
-        rt.anchorMax = new Vector2(1, 1);
-        rt.pivot = new Vector2(1, 1);
-        rt.anchoredPosition = new Vector2(0, 0); // 우측 상단 위치
+        if (existingX == null)
+        {
+            GameObject xBtnObj = Instantiate(xButtonPrefab, programPrefab.transform);
+            xBtnObj.name = "X_Button";
+            xRt = xBtnObj.GetComponent<RectTransform>();
+            xRt.anchorMin = new Vector2(1, 1);
+            xRt.anchorMax = new Vector2(1, 1);
+            xRt.pivot = new Vector2(1, 1);
+            xRt.anchoredPosition = new Vector2(0, 0);
 
-        Button xBtn = xBtnObj.GetComponent<Button>();
+            xBtn = xBtnObj.GetComponent<Button>();
+        }
+        else
+        {
+            xBtn = existingX.GetComponent<Button>();
+            xRt = existingX.GetComponent<RectTransform>();
+            xBtn.onClick.RemoveAllListeners(); // 기존 리스너 초기화
+        }
+
         xBtn.onClick.AddListener(() =>
         {
             programPrefab.SetActive(false);
+
+
+            // 재활성화될 때까지 대기 후 초기화
+            StartCoroutine(InvokeAfterActivation(programPrefab));
         });
+
+        // 최소화 버튼 처리
+        if (minimizeButtonPrefab != null)
+        {
+            Transform existingMin = programPrefab.transform.Find("Minimize_Button");
+            Button minBtn;
+            if (existingMin == null)
+            {
+                GameObject minBtnObj = Instantiate(minimizeButtonPrefab, programPrefab.transform);
+                minBtnObj.name = "Minimize_Button";
+                RectTransform minRt = minBtnObj.GetComponent<RectTransform>();
+                minRt.anchorMin = new Vector2(1, 1);
+                minRt.anchorMax = new Vector2(1, 1);
+                minRt.pivot = new Vector2(1, 1);
+                minRt.anchoredPosition = new Vector2(-xRt.sizeDelta.x - 15f, 0);
+
+                minBtn = minBtnObj.GetComponent<Button>();
+            }
+            else
+            {
+                minBtn = existingMin.GetComponent<Button>();
+                minBtn.onClick.RemoveAllListeners();
+            }
+
+            minBtn.onClick.AddListener(() =>
+            {
+                programPrefab.SetActive(false);
+            });
+        }
+        else
+        {
+            Debug.LogWarning("minimizeButtonPrefab이 연결되지 않았습니다.");
+        }
     }
+
+
+    private System.Collections.IEnumerator InvokeAfterActivation(GameObject programPrefab)
+    {
+        // 다음 프레임까지 대기 (SetActive가 적용된 후)
+        yield return null;
+
+        // programPrefab이 활성화될 때까지 대기
+        while (!programPrefab.activeInHierarchy)
+            yield return null;
+
+        // 활성화되면 초기화 호출
+
+        var CMD = programPrefab.GetComponent<LogWindowManager>();
+        if (CMD != null)
+            CMD.CMDInitialize();
+
+        var display = programPrefab.GetComponent<MachinePartViewer>();
+        if (display != null)
+            display.DisplayInitialize();
+
+        var fileExploer = programPrefab.GetComponent<FileWindow>();
+        if (fileExploer != null)
+            fileExploer.FileExplorerInitialize();
+    }
+
+
 
     public void MessangerWindowOpen()
     {
-        Debug.Log(" MessangerWindowOpen() 호출됨!");
+        Debug.Log("MessangerWindowOpen() 호출됨!");
         OpenProgram(messengerWindowprefab);
     }
 }
