@@ -42,4 +42,8 @@ public class FaxViewer : MonoBehaviour
         if (instant)
             faxVisual.position = worldPos;
     }
+    public bool IsExpanded()
+    {
+        return isExpanded;
+    }
 }
