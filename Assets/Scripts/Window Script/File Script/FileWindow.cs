@@ -3,40 +3,41 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
+/// <summary>
+/// 씬에 존재하는 FileWindow 오브젝트에 붙여서
+/// 데이터와 기능을 담당.
+/// FileProgram 프리팹은 OpenProgram()에서 생성될 때 연결됨.
+/// </summary>
 public partial class FileWindow : MonoBehaviour
 {
     [Header("Prefabs")]
     public GameObject folderIconPrefab;
     public GameObject fileIconPrefab;
-
-    [Header("Scroll Area")]
-    public Transform contentArea;
-    public TMP_Text emptyText;
-
-    [Header("Path Panel")]
-    public PathPanelManager pathPanelManager;
-
-    [Header("Back Button")]
-    public Button backButton;
+    public GameObject upButtonPrefab;
 
     [Header("Inspector File List")]
     public List<FileData> fileDatas = new List<FileData>();
 
-    [Header("Special Prefabs")]
-    public GameObject upButtonPrefab;
+    [Header("UI Components (Prefab에서 연결됨)")]
+    public Transform contentArea;
+    public TMP_Text emptyText;
+    public PathPanelManager pathPanelManager;
+    public Button backButton;
 
+    [Header("FileProgram Prefab (UI)")]
+    public GameObject fileProgramPrefab; // ProgramOpen에서 Instantiate할 프리팹
+
+    private FileProgram instantiatedFileProgram;
+
+    // 선택된 아이콘
     private FolderIcon selectedFolderIcon;
     private FileIcon selectedFileIcon;
 
+    // 폴더 및 파일 관리
     private Folder rootFolder;
     private Folder currentFolder;
     private Stack<Folder> folderHistory = new Stack<Folder>();
     private List<File> currentFolderFiles = new List<File>();
-
-    void Awake()
-    {
-        if (pathPanelManager != null) pathPanelManager.Initialize(this);
-    }
 
     void Start()
     {
@@ -54,9 +55,26 @@ public partial class FileWindow : MonoBehaviour
         OpenFolder(rootFolder, false);
     }
 
+    //  ProgramOpen에서 FileProgram이 Instantiate될 때 자동으로 연결됨
+    public void LinkWithProgram(FileProgram program)
+    {
+        instantiatedFileProgram = program;
+
+        if (contentArea == null) contentArea = program.contentArea;
+        if (emptyText == null) emptyText = program.emptyText;
+        if (pathPanelManager == null) pathPanelManager = program.pathPanelManager;
+        if (backButton == null) backButton = program.backButton;
+
+        if (pathPanelManager != null)
+            pathPanelManager.Initialize(this);
+
+        Debug.Log("[FileWindow] FileProgram과 연결 완료");
+    }
+
     private void InitializeFilesFromInspector()
     {
         float abnormalChance = GetAbnormalProbabilityBySanity();
+
         foreach (var data in fileDatas)
         {
             Folder targetParent = FindFolderByName(rootFolder, data.parentFolderName);
@@ -65,7 +83,9 @@ public partial class FileWindow : MonoBehaviour
                 Debug.LogWarning($"부모 폴더 '{data.parentFolderName}'을(를) 찾을 수 없습니다. Root에 추가합니다.");
                 targetParent = rootFolder;
             }
+
             bool randomAbnormal = Random.value < abnormalChance;
+
             File file = new File(
                 data.fileName,
                 data.extension,
@@ -74,6 +94,7 @@ public partial class FileWindow : MonoBehaviour
                 data.imageContent,
                 data.isAbnormal || randomAbnormal
             );
+
             currentFolderFiles.Add(file);
             targetParent.files.Add(file);
         }
@@ -81,7 +102,7 @@ public partial class FileWindow : MonoBehaviour
 
     void CreateDefaultFolders()
     {
-        // Head Folder
+        // (생략 없이 기존 코드 유지)
         Folder Head = new Folder("Head", rootFolder);
         Head.children.Add(new Folder("Eye", Head));
         Head.children.Add(new Folder("Ear", Head));
@@ -91,38 +112,32 @@ public partial class FileWindow : MonoBehaviour
         Head.children.Add(new Folder("Skull", Head));
         Head.children.Add(new Folder("Brain", Head));
 
-        // Body Folder
         Folder Body = new Folder("Body", rootFolder);
         Body.children.Add(new Folder("Chest", Body));
         Body.children.Add(new Folder("Abdomen", Body));
         Body.children.Add(new Folder("Back", Body));
         Body.children.Add(new Folder("Pelvis", Body));
 
-        // Left Arm Folder
         Folder LeftArm = new Folder("LeftArm", rootFolder);
         LeftArm.children.Add(new Folder("UpperArm", LeftArm));
         LeftArm.children.Add(new Folder("ForeArm", LeftArm));
         LeftArm.children.Add(new Folder("Hand", LeftArm));
 
-        // Right Arm Folder
         Folder RightArm = new Folder("RightArm", rootFolder);
         RightArm.children.Add(new Folder("UpperArm", RightArm));
         RightArm.children.Add(new Folder("ForeArm", RightArm));
         RightArm.children.Add(new Folder("Hand", RightArm));
 
-        // Left Leg Folder
         Folder LeftLeg = new Folder("LeftLeg", rootFolder);
         LeftLeg.children.Add(new Folder("Thigh", LeftLeg));
         LeftLeg.children.Add(new Folder("Calf", LeftLeg));
         LeftLeg.children.Add(new Folder("Foot", LeftLeg));
 
-        // Right Leg Folder
         Folder RightLeg = new Folder("RightLeg", rootFolder);
         RightLeg.children.Add(new Folder("Thigh", RightLeg));
         RightLeg.children.Add(new Folder("Calf", RightLeg));
         RightLeg.children.Add(new Folder("Foot", RightLeg));
 
-        // Organ Folder
         Folder Organ = new Folder("Organ", rootFolder);
         Organ.children.Add(new Folder("Heart", Organ));
         Organ.children.Add(new Folder("Lungs", Organ));
@@ -134,7 +149,9 @@ public partial class FileWindow : MonoBehaviour
         Organ.children.Add(new Folder("Spleen", Organ));
         Organ.children.Add(new Folder("Bladder", Organ));
 
-        rootFolder.children.AddRange(new List<Folder> { Head, Body, LeftArm, RightArm, LeftLeg, RightLeg, Organ });
+        rootFolder.children.AddRange(new List<Folder> {
+            Head, Body, LeftArm, RightArm, LeftLeg, RightLeg, Organ
+        });
     }
 
     void AssignAbnormalParameters(Folder folder)
@@ -148,12 +165,6 @@ public partial class FileWindow : MonoBehaviour
         }
     }
 
-    public Folder GetRootFolder() => rootFolder;
-    public Folder GetCurrentFolder() => currentFolder;
-
-    /// <summary>
-    /// 파일 탐색기 초기화: 경로 패널 0번(루트)으로 이동
-    /// </summary>
     public void FileExplorerInitialize()
     {
         Debug.Log("실행");
@@ -171,4 +182,44 @@ public partial class FileWindow : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// FileProgram을 외부에서 수동으로 초기화할 때 호출
+    /// </summary>
+    public void InitializeFileProgram()
+    {
+        if (fileProgramPrefab != null && instantiatedFileProgram == null)
+        {
+            GameObject go = Instantiate(fileProgramPrefab, this.transform);
+            instantiatedFileProgram = go.GetComponent<FileProgram>();
+
+            if (instantiatedFileProgram != null)
+            {
+                if (contentArea == null) contentArea = instantiatedFileProgram.contentArea;
+                if (emptyText == null) emptyText = instantiatedFileProgram.emptyText;
+                if (pathPanelManager == null) pathPanelManager = instantiatedFileProgram.pathPanelManager;
+                if (backButton == null) backButton = instantiatedFileProgram.backButton;
+
+                if (pathPanelManager != null)
+                    pathPanelManager.Initialize(this);
+            }
+
+            Debug.Log("[FileWindow] FileProgram 수동 초기화 완료");
+        }
+
+        // 이후 Start()에서 수행하던 초기화 루틴을 재호출
+        rootFolder = new Folder("Root");
+        CreateDefaultFolders();
+        InitializeFilesFromInspector();
+        AssignAbnormalParameters(rootFolder);
+
+        if (backButton != null)
+        {
+            backButton.onClick.AddListener(OnBackButtonClicked);
+            backButton.gameObject.SetActive(true);
+        }
+
+        OpenFolder(rootFolder, false);
+    }
+
+    // 나머지 기존 함수 (OpenFolder, NavigateToPathIndex 등) 그대로 유지
 }

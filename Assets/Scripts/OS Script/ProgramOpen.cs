@@ -37,11 +37,8 @@ public class ProgramOpen : MonoBehaviour
 
     private List<GameObject> icons = new List<GameObject>();
     private List<GameObject> taskbarIcons = new List<GameObject>();
-
-    // 기존 private Dictionary<GameObject, GameObject> activeInstances;
     private Dictionary<GameObject, GameObject> activeInstances = new Dictionary<GameObject, GameObject>();
 
-    // 외부에서 읽기 전용으로 접근 가능하게 프로퍼티 추가
     public GameObject GetActiveInstance(GameObject prefab)
     {
         if (activeInstances.ContainsKey(prefab))
@@ -137,23 +134,36 @@ public class ProgramOpen : MonoBehaviour
             return existing;
         }
 
-        // 처음 실행되는 경우
         GameObject instance = InstantiateProgram(programPrefab);
         activeInstances[programPrefab] = instance;
+
+        //  FileExplorerProgram 실행 시 FileWindow를 자동 생성 및 초기화
+        if (programPrefab == fileExplorerProgramPrefab && instance != null)
+        {
+            // FileWindow 생성
+            FileWindow fileWindowPrefab = Resources.Load<FileWindow>("FileWindow");
+            if (fileWindowPrefab != null)
+            {
+                FileWindow fileWindowInstance = Instantiate(fileWindowPrefab);
+                fileWindowInstance.InitializeFileProgram();
+            }
+            else
+            {
+                Debug.LogWarning("FileWindow 프리팹(Resources/FileWindow) 을 찾을 수 없습니다.");
+            }
+        }
+
         return instance;
     }
-
 
     GameObject InstantiateProgram(GameObject prefab)
     {
         GameObject instance = Instantiate(prefab, transform.parent);
         instance.name = prefab.name;
 
-        // X 버튼 생성
         Transform existingX = instance.transform.Find("X_Button");
         Button xBtn;
         RectTransform xRt;
-
 
         if (existingX == null)
         {
@@ -173,14 +183,12 @@ public class ProgramOpen : MonoBehaviour
             xBtn.onClick.RemoveAllListeners();
         }
 
-        // X 버튼 → 완전 삭제
         xBtn.onClick.AddListener(() =>
         {
             Destroy(instance);
             RemoveInstance(prefab: prefab);
         });
 
-        // 최소화 버튼 처리
         if (minimizeButtonPrefab != null)
         {
             Transform existingMin = instance.transform.Find("Minimize_Button");
@@ -225,17 +233,12 @@ public class ProgramOpen : MonoBehaviour
 
     public void MessangerWindowOpen()
     {
-        // messengerWindowprefab 인스턴스 열기
         GameObject instance = OpenProgram(messengerWindowprefab);
 
-        // Notifier에 실제 인스턴스 전달
         MessengerNotifier notifier = FindObjectOfType<MessengerNotifier>();
         if (notifier != null && instance != null)
         {
             notifier.SetMessengerProgramInstance(instance);
         }
     }
-
-
-
 }

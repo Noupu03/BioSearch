@@ -2157,10 +2157,6 @@ MonoBehaviour:
   folderIconPrefab: {fileID: 2148310354490608959, guid: 9a7fdc50c5a26794392b1db8b25953c8, type: 3}
   fileIconPrefab: {fileID: 2148310354490608959, guid: ba79f0571b26f804597d74c216fff8b6, type: 3}
   upButtonPrefab: {fileID: 7856131077749057725, guid: 7e50e978dcde1574c82c9676f3c521a0, type: 3}
-  contentArea: {fileID: 0}
-  emptyText: {fileID: 0}
-  pathPanelManager: {fileID: 0}
-  backButton: {fileID: 1393444203}
   fileDatas:
   - fileName: cornea
     extension: png
@@ -2210,7 +2206,11 @@ MonoBehaviour:
     imageContent: {fileID: 649674069, guid: d380b87045aebe64287ec973dbc5ab06, type: 3}
     isAbnormal: 0
     parentFolderName: Organ
-  fileWindowPrefab: {fileID: 5264846252831550521, guid: ca25a31091e3b164e97dafc32d1e3d7c, type: 3}
+  contentArea: {fileID: 0}
+  emptyText: {fileID: 0}
+  pathPanelManager: {fileID: 0}
+  backButton: {fileID: 0}
+  fileProgramPrefab: {fileID: 5264846252831550521, guid: ca25a31091e3b164e97dafc32d1e3d7c, type: 3}
 --- !u!114 &693352162
 MonoBehaviour:
   m_ObjectHideFlags: 0
