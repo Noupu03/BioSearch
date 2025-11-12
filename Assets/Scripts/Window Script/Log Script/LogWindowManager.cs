@@ -70,6 +70,7 @@ public class LogWindowManager : MonoBehaviour
     
     public void CMDInitialize()
 	{
+        Debug.Log("½ÇÇà");
         ClearLog();
         startLog();
 	}

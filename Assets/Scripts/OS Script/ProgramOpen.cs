@@ -5,40 +5,51 @@ using System.Collections.Generic;
 public class ProgramOpen : MonoBehaviour
 {
     [Header("Desktop Area")]
-    public Transform desktopArea; // 바탕화면 아이콘 부모
+    public Transform desktopArea;
 
     [Header("아이콘 프리팹")]
     public GameObject cmdIconPrefab;
     public GameObject fileExplorerIconPrefab;
     public GameObject displayIconPrefab;
-    public GameObject messengerIconPrefab; // 메신저 아이콘 프리팹 추가
+    public GameObject messengerIconPrefab;
 
     [Header("프로그램 프리팹")]
     public GameObject cmdProgramPrefab;
     public GameObject fileExplorerProgramPrefab;
     public GameObject displayProgramPrefab;
-    public GameObject messengerProgramPrefab; // 메신저 프로그램 프리팹 추가
+    public GameObject messengerProgramPrefab;
     public GameObject messengerWindowprefab;
 
     [Header("X 버튼 프리팹")]
     public GameObject xButtonPrefab;
 
     [Header("최소화 버튼 프리팹")]
-    public GameObject minimizeButtonPrefab; // ★ 새로 추가
+    public GameObject minimizeButtonPrefab;
 
     [Header("하단바 영역")]
-    public Transform taskbarArea; // 하단바 아이콘 부모
+    public Transform taskbarArea;
 
     [Header("하단바 아이콘 프리팹")]
     public GameObject taskbarCmdIconPrefab;
     public GameObject taskbarFileExplorerIconPrefab;
     public GameObject taskbarDisplayIconPrefab;
-    public GameObject taskbarMessengerIconPrefab; // 메신저 하단바 아이콘 프리팹 추가
+    public GameObject taskbarMessengerIconPrefab;
 
     private List<GameObject> icons = new List<GameObject>();
     private List<GameObject> taskbarIcons = new List<GameObject>();
 
-    private float iconSpacing = 20f; // 아이콘 간격
+    // 기존 private Dictionary<GameObject, GameObject> activeInstances;
+    private Dictionary<GameObject, GameObject> activeInstances = new Dictionary<GameObject, GameObject>();
+
+    // 외부에서 읽기 전용으로 접근 가능하게 프로퍼티 추가
+    public GameObject GetActiveInstance(GameObject prefab)
+    {
+        if (activeInstances.ContainsKey(prefab))
+            return activeInstances[prefab];
+        return null;
+    }
+
+    private float iconSpacing = 20f;
 
     void Start()
     {
@@ -48,13 +59,12 @@ public class ProgramOpen : MonoBehaviour
 
     void CreateDesktopIcons()
     {
-        // 아이콘 목록
         var iconInfos = new List<(GameObject iconPrefab, GameObject programPrefab)>
         {
             (cmdIconPrefab, cmdProgramPrefab),
             (fileExplorerIconPrefab, fileExplorerProgramPrefab),
             (displayIconPrefab, displayProgramPrefab),
-            (messengerIconPrefab, messengerProgramPrefab) // 메신저 추가
+            (messengerIconPrefab, messengerProgramPrefab)
         };
 
         float startY = 0f;
@@ -68,7 +78,6 @@ public class ProgramOpen : MonoBehaviour
 
             icons.Add(icon);
 
-            // 더블클릭 처리
             IconClickHandler clickHandler = icon.GetComponent<IconClickHandler>();
             if (clickHandler == null) clickHandler = icon.AddComponent<IconClickHandler>();
             clickHandler.onDoubleClick = () =>
@@ -80,17 +89,16 @@ public class ProgramOpen : MonoBehaviour
 
     void CreateTaskbarIcons()
     {
-        // 하단바 아이콘 목록
         var taskbarIconInfos = new List<(GameObject iconPrefab, GameObject programPrefab)>
         {
             (taskbarCmdIconPrefab, cmdProgramPrefab),
             (taskbarFileExplorerIconPrefab, fileExplorerProgramPrefab),
             (taskbarDisplayIconPrefab, displayProgramPrefab),
-            (taskbarMessengerIconPrefab, messengerProgramPrefab) // 메신저 추가
+            (taskbarMessengerIconPrefab, messengerProgramPrefab)
         };
 
         float startX = 0f;
-        float spacing = 5f; // 하단바 아이콘 간격
+        float spacing = 5f;
 
         foreach (var info in taskbarIconInfos)
         {
@@ -101,7 +109,6 @@ public class ProgramOpen : MonoBehaviour
 
             taskbarIcons.Add(icon);
 
-            // 클릭 시 프로그램 활성화
             Button btn = icon.GetComponent<Button>();
             if (btn == null) btn = icon.AddComponent<Button>();
             btn.onClick.AddListener(() =>
@@ -111,61 +118,82 @@ public class ProgramOpen : MonoBehaviour
         }
     }
 
-    void OpenProgram(GameObject programPrefab)
+    GameObject OpenProgram(GameObject programPrefab)
     {
-        if (programPrefab == null) return;
+        if (programPrefab == null) return null;
 
-        // 프로그램 활성화
-        programPrefab.SetActive(true);
+        if (activeInstances.ContainsKey(programPrefab))
+        {
+            var existing = activeInstances[programPrefab];
+            if (existing == null)
+            {
+                existing = InstantiateProgram(programPrefab);
+                activeInstances[programPrefab] = existing;
+            }
+            else if (!existing.activeSelf)
+            {
+                existing.SetActive(true);
+            }
+            return existing;
+        }
 
-        // X버튼 처리
-        Transform existingX = programPrefab.transform.Find("X_Button");
+        // 처음 실행되는 경우
+        GameObject instance = InstantiateProgram(programPrefab);
+        activeInstances[programPrefab] = instance;
+        return instance;
+    }
+
+
+    GameObject InstantiateProgram(GameObject prefab)
+    {
+        GameObject instance = Instantiate(prefab, transform.parent);
+        instance.name = prefab.name;
+
+        // X 버튼 생성
+        Transform existingX = instance.transform.Find("X_Button");
         Button xBtn;
         RectTransform xRt;
 
+
         if (existingX == null)
         {
-            GameObject xBtnObj = Instantiate(xButtonPrefab, programPrefab.transform);
+            GameObject xBtnObj = Instantiate(xButtonPrefab, instance.transform);
             xBtnObj.name = "X_Button";
             xRt = xBtnObj.GetComponent<RectTransform>();
             xRt.anchorMin = new Vector2(1, 1);
             xRt.anchorMax = new Vector2(1, 1);
             xRt.pivot = new Vector2(1, 1);
             xRt.anchoredPosition = new Vector2(0, 0);
-
             xBtn = xBtnObj.GetComponent<Button>();
         }
         else
         {
             xBtn = existingX.GetComponent<Button>();
             xRt = existingX.GetComponent<RectTransform>();
-            xBtn.onClick.RemoveAllListeners(); // 기존 리스너 초기화
+            xBtn.onClick.RemoveAllListeners();
         }
 
+        // X 버튼 → 완전 삭제
         xBtn.onClick.AddListener(() =>
         {
-            programPrefab.SetActive(false);
-
-
-            // 재활성화될 때까지 대기 후 초기화
-            StartCoroutine(InvokeAfterActivation(programPrefab));
+            Destroy(instance);
+            RemoveInstance(prefab: prefab);
         });
 
         // 최소화 버튼 처리
         if (minimizeButtonPrefab != null)
         {
-            Transform existingMin = programPrefab.transform.Find("Minimize_Button");
+            Transform existingMin = instance.transform.Find("Minimize_Button");
             Button minBtn;
             if (existingMin == null)
             {
-                GameObject minBtnObj = Instantiate(minimizeButtonPrefab, programPrefab.transform);
+                GameObject minBtnObj = Instantiate(minimizeButtonPrefab, instance.transform);
                 minBtnObj.name = "Minimize_Button";
                 RectTransform minRt = minBtnObj.GetComponent<RectTransform>();
                 minRt.anchorMin = new Vector2(1, 1);
                 minRt.anchorMax = new Vector2(1, 1);
                 minRt.pivot = new Vector2(1, 1);
                 minRt.anchoredPosition = new Vector2(-xRt.sizeDelta.x - 15f, 0);
-
                 minBtn = minBtnObj.GetComponent<Button>();
             }
             else
@@ -176,45 +204,38 @@ public class ProgramOpen : MonoBehaviour
 
             minBtn.onClick.AddListener(() =>
             {
-                programPrefab.SetActive(false);
+                instance.SetActive(false);
             });
         }
         else
         {
             Debug.LogWarning("minimizeButtonPrefab이 연결되지 않았습니다.");
         }
+
+        return instance;
     }
 
-
-    private System.Collections.IEnumerator InvokeAfterActivation(GameObject programPrefab)
+    void RemoveInstance(GameObject prefab)
     {
-        // 다음 프레임까지 대기 (SetActive가 적용된 후)
-        yield return null;
-
-        // programPrefab이 활성화될 때까지 대기
-        while (!programPrefab.activeInHierarchy)
-            yield return null;
-
-        // 활성화되면 초기화 호출
-
-        var CMD = programPrefab.GetComponent<LogWindowManager>();
-        if (CMD != null)
-            CMD.CMDInitialize();
-
-        var display = programPrefab.GetComponent<MachinePartViewer>();
-        if (display != null)
-            display.DisplayInitialize();
-
-        var fileExploer = programPrefab.GetComponent<FileWindow>();
-        if (fileExploer != null)
-            fileExploer.FileExplorerInitialize();
+        if (activeInstances.ContainsKey(prefab))
+        {
+            activeInstances.Remove(prefab);
+        }
     }
-
-
 
     public void MessangerWindowOpen()
     {
-        Debug.Log("MessangerWindowOpen() 호출됨!");
-        OpenProgram(messengerWindowprefab);
+        // messengerWindowprefab 인스턴스 열기
+        GameObject instance = OpenProgram(messengerWindowprefab);
+
+        // Notifier에 실제 인스턴스 전달
+        MessengerNotifier notifier = FindObjectOfType<MessengerNotifier>();
+        if (notifier != null && instance != null)
+        {
+            notifier.SetMessengerProgramInstance(instance);
+        }
     }
+
+
+
 }

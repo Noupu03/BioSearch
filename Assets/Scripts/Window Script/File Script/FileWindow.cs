@@ -35,8 +35,7 @@ public partial class FileWindow : MonoBehaviour
 
     void Awake()
     {
-        if (pathPanelManager != null)
-            pathPanelManager.Initialize(this);
+        if (pathPanelManager != null) pathPanelManager.Initialize(this);
     }
 
     void Start()
@@ -58,7 +57,6 @@ public partial class FileWindow : MonoBehaviour
     private void InitializeFilesFromInspector()
     {
         float abnormalChance = GetAbnormalProbabilityBySanity();
-
         foreach (var data in fileDatas)
         {
             Folder targetParent = FindFolderByName(rootFolder, data.parentFolderName);
@@ -67,9 +65,7 @@ public partial class FileWindow : MonoBehaviour
                 Debug.LogWarning($"부모 폴더 '{data.parentFolderName}'을(를) 찾을 수 없습니다. Root에 추가합니다.");
                 targetParent = rootFolder;
             }
-
             bool randomAbnormal = Random.value < abnormalChance;
-
             File file = new File(
                 data.fileName,
                 data.extension,
@@ -78,7 +74,6 @@ public partial class FileWindow : MonoBehaviour
                 data.imageContent,
                 data.isAbnormal || randomAbnormal
             );
-
             currentFolderFiles.Add(file);
             targetParent.files.Add(file);
         }
@@ -86,7 +81,7 @@ public partial class FileWindow : MonoBehaviour
 
     void CreateDefaultFolders()
     {
-        // Head
+        // Head Folder
         Folder Head = new Folder("Head", rootFolder);
         Head.children.Add(new Folder("Eye", Head));
         Head.children.Add(new Folder("Ear", Head));
@@ -96,38 +91,38 @@ public partial class FileWindow : MonoBehaviour
         Head.children.Add(new Folder("Skull", Head));
         Head.children.Add(new Folder("Brain", Head));
 
-        // Body
+        // Body Folder
         Folder Body = new Folder("Body", rootFolder);
         Body.children.Add(new Folder("Chest", Body));
         Body.children.Add(new Folder("Abdomen", Body));
         Body.children.Add(new Folder("Back", Body));
         Body.children.Add(new Folder("Pelvis", Body));
 
-        // Left Arm
+        // Left Arm Folder
         Folder LeftArm = new Folder("LeftArm", rootFolder);
         LeftArm.children.Add(new Folder("UpperArm", LeftArm));
         LeftArm.children.Add(new Folder("ForeArm", LeftArm));
         LeftArm.children.Add(new Folder("Hand", LeftArm));
 
-        // Right Arm
+        // Right Arm Folder
         Folder RightArm = new Folder("RightArm", rootFolder);
         RightArm.children.Add(new Folder("UpperArm", RightArm));
         RightArm.children.Add(new Folder("ForeArm", RightArm));
         RightArm.children.Add(new Folder("Hand", RightArm));
 
-        // Left Leg
+        // Left Leg Folder
         Folder LeftLeg = new Folder("LeftLeg", rootFolder);
         LeftLeg.children.Add(new Folder("Thigh", LeftLeg));
         LeftLeg.children.Add(new Folder("Calf", LeftLeg));
         LeftLeg.children.Add(new Folder("Foot", LeftLeg));
 
-        // Right Leg
+        // Right Leg Folder
         Folder RightLeg = new Folder("RightLeg", rootFolder);
         RightLeg.children.Add(new Folder("Thigh", RightLeg));
         RightLeg.children.Add(new Folder("Calf", RightLeg));
         RightLeg.children.Add(new Folder("Foot", RightLeg));
 
-        // Organ
+        // Organ Folder
         Folder Organ = new Folder("Organ", rootFolder);
         Organ.children.Add(new Folder("Heart", Organ));
         Organ.children.Add(new Folder("Lungs", Organ));
@@ -139,9 +134,7 @@ public partial class FileWindow : MonoBehaviour
         Organ.children.Add(new Folder("Spleen", Organ));
         Organ.children.Add(new Folder("Bladder", Organ));
 
-        rootFolder.children.AddRange(new List<Folder> {
-            Head, Body, LeftArm, RightArm, LeftLeg, RightLeg, Organ
-        });
+        rootFolder.children.AddRange(new List<Folder> { Head, Body, LeftArm, RightArm, LeftLeg, RightLeg, Organ });
     }
 
     void AssignAbnormalParameters(Folder folder)
@@ -159,16 +152,11 @@ public partial class FileWindow : MonoBehaviour
     public Folder GetCurrentFolder() => currentFolder;
 
     /// <summary>
-    /// FileExplorer 초기화 함수
-    /// - 현재 폴더를 루트로 설정
-    /// - UI 갱신
-    /// </summary>
-    /// <summary>
     /// 파일 탐색기 초기화: 경로 패널 0번(루트)으로 이동
     /// </summary>
     public void FileExplorerInitialize()
     {
-        // 경로 패널이 있으면 0번 인덱스로 이동
+        Debug.Log("실행");
         if (pathPanelManager != null)
         {
             NavigateToPathIndex(0);
@@ -176,7 +164,6 @@ public partial class FileWindow : MonoBehaviour
         }
         else
         {
-            // 경로 패널이 없으면 그냥 루트 폴더 열기
             if (rootFolder != null)
             {
                 OpenFolder(rootFolder, false);
@@ -184,8 +171,4 @@ public partial class FileWindow : MonoBehaviour
             }
         }
     }
-
-
-
-
 }
