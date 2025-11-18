@@ -157,6 +157,19 @@ public class FilePopupManager : MonoBehaviour
                 Debug.LogWarning($"{file.name}.{file.extension} : 지원되지 않는 파일 형식");
                 break;
         }
+        if (CheckList.Instance != null)
+        {
+            string fullName = file.name + "." + file.extension;
+
+            // 파일 이름만 전달 (항목 리스트는 MessageSetup에서 전달)
+            CheckList.Instance.ApplyStrikeForFile(file.name);
+        }
+        else
+        {
+            Debug.LogWarning("CheckList 인스턴스 없음. 체크리스트 갱신 실패.");
+        }
+
+
     }
 
     /// <summary>

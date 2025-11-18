@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e307c82aae3e4a94d86b7d5a65c944dc, type: 3}
+  m_Name: FileDataSO
+  m_EditorClassIdentifier: 
+  fileDatas:
+  - fileName: "\uB179\uC2AC\uC5C8\uC744\uB54C"
+    extension: txt
+    textContent: "\uB179\uC774 \uC2AC\uC5C8\uC744\uB54C\uB294...."
+    imageContent: {fileID: -676040328, guid: ce5ac3b861fd726499c348d175d47ba1, type: 3}
+    isAbnormal: 1
+    parentFolderName: Generator

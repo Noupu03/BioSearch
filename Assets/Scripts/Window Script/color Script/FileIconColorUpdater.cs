@@ -25,7 +25,7 @@ public class FileIconColorUpdater : MonoBehaviour
         if (fileIcon == null || text == null || gcm == null) return;
 
         Folder folder = fileIcon.GetFolder();
-        if (folder != null && folder.isAbnormal)
+        if (folder != null && folder.isImportant)
             text.color = gcm.abnormalFolderTextColor;
     }
 }

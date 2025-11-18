@@ -32,4 +32,5 @@ public struct GameDateTime : IComparable<GameDateTime>
     {
         return $"{year}/{month}/{day} {hour:00}:{minute:00}";
     }
+
 }

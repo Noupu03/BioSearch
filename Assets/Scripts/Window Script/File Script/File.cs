@@ -20,7 +20,7 @@ public class File
 
     //  인스펙터에서 직접 지정할 수 있는 이상 여부
     //  true일 경우, 비정상 파일로 표시됨
-    public bool isAbnormal = false;
+    public bool isImportant = false;
 
     // 파일 생성자
     // name : 파일 이름
@@ -28,14 +28,14 @@ public class File
     // parent : 부모 폴더
     // textContent : 텍스트 파일 내용
     // imageContent : 이미지 파일 내용
-    // isAbnormal : 이상 여부 (기본값 false)
-    public File(string name, string extension, Folder parent = null, string textContent = null, Sprite imageContent = null, bool isAbnormal = false)
+    // isImportant : 이상 여부 (기본값 false)
+    public File(string name, string extension, Folder parent = null, string textContent = null, Sprite imageContent = null, bool isImportant = false)
     {
         this.name = name;
         this.extension = extension;
         this.parent = parent;
         this.textContent = textContent;
         this.imageContent = imageContent;
-        this.isAbnormal = isAbnormal;
+        this.isImportant = isImportant;
     }
 }

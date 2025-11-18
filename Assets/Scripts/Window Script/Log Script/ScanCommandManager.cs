@@ -193,11 +193,11 @@ public class ScanCommandManager : MonoBehaviour
     /// </summary>
     private int CountAbnormal(Folder folder)
     {
-        int count = folder.isAbnormal ? 1 : 0;
+        int count = folder.isImportant ? 1 : 0;
         foreach (var child in folder.children)
             count += CountAbnormal(child);
         foreach (var file in folder.files)
-            if (file.isAbnormal) count++;
+            if (file.isImportant) count++;
         return count;
     }
 }
@@ -225,13 +225,13 @@ public static class AbnormalDetector
     {
         if (folder == null) return 0;
 
-        int count = folder.isAbnormal ? 1 : 0;
+        int count = folder.isImportant ? 1 : 0;
 
         foreach (var child in folder.children)
             count += GetAbnormalCount(child);
 
         foreach (var file in folder.files)
-            if (file.isAbnormal) count++;
+            if (file.isImportant) count++;
 
         return count;
     }

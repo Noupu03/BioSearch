@@ -53,7 +53,7 @@ public partial class FileWindow
         {
             GameObject iconObj = Instantiate(folderIconPrefab, contentArea);
             FolderIcon icon = iconObj.GetComponent<FolderIcon>();
-            icon.Setup(child, this, child.isAbnormal);
+            icon.Setup(child, this, child.isImportant);
         }
 
         // ---------------------------------------------
@@ -120,12 +120,12 @@ public partial class FileWindow
     /// <summary>
     /// 현재 정신력에 따라 이상 확률 반환
     /// </summary>
-    private float GetAbnormalProbabilityBySanity()
+    /*private float GetAbnormalProbabilityBySanity()
     {
         float sanity = SanityManager.currentSanityStatic;
 
         if (sanity >= 70f) return 0.03f;   // 고 sanity 구간
         else if (sanity >= 30f) return 0.08f; // 중간 sanity 구간
         else return 0.2f; // 낮은 sanity 구간
-    }
+    }*/
 }

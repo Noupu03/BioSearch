@@ -15,8 +15,9 @@ public partial class FileWindow : MonoBehaviour
     public GameObject fileIconPrefab;
     public GameObject upButtonPrefab;
 
-    [Header("Inspector File List")]
-    public List<FileData> fileDatas = new List<FileData>();
+    [Header("ScriptableObject File List")]
+    public FileDataSO fileDataSO;
+
 
     [Header("UI Components (Prefab에서 연결됨)")]
     public Transform contentArea;
@@ -43,7 +44,7 @@ public partial class FileWindow : MonoBehaviour
     {
         rootFolder = new Folder("Root");
         CreateDefaultFolders();
-        InitializeFilesFromInspector();
+        InitializeFilesFromSO();
         AssignAbnormalParameters(rootFolder);
 
         if (backButton != null)
@@ -71,11 +72,23 @@ public partial class FileWindow : MonoBehaviour
         Debug.Log("[FileWindow] FileProgram과 연결 완료");
     }
 
-    private void InitializeFilesFromInspector()
+    private void InitializeFilesFromSO()
     {
-        float abnormalChance = GetAbnormalProbabilityBySanity();
+        // FileDataSO가 없거나 내부 리스트가 없으면 아무 것도 안 함
+        if (fileDataSO == null)
+        {
+            Debug.LogWarning("[FileWindow] fileDataSO가 할당되어 있지 않습니다. 파일 초기화를 건너뜁니다.");
+            return;
+        }
 
-        foreach (var data in fileDatas)
+        if (fileDataSO.fileDatas == null || fileDataSO.fileDatas.Count == 0)
+        {
+            Debug.Log("[FileWindow] fileDataSO에 파일 데이터가 없습니다.");
+            return;
+        }
+
+        // (원본 InitializeFilesFromInspector 동작 유지)
+        foreach (var data in fileDataSO.fileDatas)
         {
             Folder targetParent = FindFolderByName(rootFolder, data.parentFolderName);
             if (targetParent == null)
@@ -84,21 +97,23 @@ public partial class FileWindow : MonoBehaviour
                 targetParent = rootFolder;
             }
 
-            bool randomAbnormal = Random.value < abnormalChance;
-
             File file = new File(
                 data.fileName,
                 data.extension,
                 targetParent,
                 data.textContent,
-                data.imageContent,
-                data.isAbnormal || randomAbnormal
+                data.imageContent
             );
 
             currentFolderFiles.Add(file);
             targetParent.files.Add(file);
         }
+
+        Debug.Log($"[FileWindow] InitializeFilesFromSO: {fileDataSO.fileDatas.Count}개 파일 로드 완료.");
     }
+
+
+
 
     void CreateDefaultFolders()
     {
@@ -107,6 +122,7 @@ public partial class FileWindow : MonoBehaviour
 
         Folder Machine = new Folder("Machine", rootFolder);
         Machine.children.Add(new Folder("Generator", Machine));
+        Machine.isImportant = true;
 
         Folder Fax = new Folder("Fax", rootFolder);
         
@@ -121,11 +137,11 @@ public partial class FileWindow : MonoBehaviour
 
     void AssignAbnormalParameters(Folder folder)
     {
-        float abnormalChance = GetAbnormalProbabilityBySanity();
+        //float abnormalChance = GetAbnormalProbabilityBySanity();
         foreach (var child in folder.children)
         {
-            child.abnormalParameter = abnormalChance;
-            child.AssignAbnormalByParameter();
+            //child.importantParameter = abnormalChance;
+            //child.AssignAbnormalByParameter();
             AssignAbnormalParameters(child);
         }
     }
@@ -174,7 +190,7 @@ public partial class FileWindow : MonoBehaviour
         // 이후 Start()에서 수행하던 초기화 루틴을 재호출
         rootFolder = new Folder("Root");
         CreateDefaultFolders();
-        InitializeFilesFromInspector();
+        InitializeFilesFromSO();
         AssignAbnormalParameters(rootFolder);
 
         if (backButton != null)

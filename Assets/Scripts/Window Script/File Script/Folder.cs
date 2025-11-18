@@ -15,10 +15,10 @@ public class Folder
     public Folder parent;
 
     // 이상 폴더 여부
-    public bool isAbnormal = false;
+    public bool isImportant = false;
 
     // 이상 폴더 탐색용 파라미터 (0~1 범위, 외부에서 설정 가능)
-    public float abnormalParameter = 0f;
+    public float importantParameter = 0f;
 
     // 연결된 신체 버튼
     public Button linkedBodyButton;
@@ -31,9 +31,9 @@ public class Folder
     }
 
     // 확률에 따라 이상 여부 결정 (자식 폴더 포함)
-    public void AssignAbnormalByParameter()
+    /*public void AssignAbnormalByParameter()
     {
-        isAbnormal = Random.value < abnormalParameter;
+        isImportant = Random.value < importantParameter;
 
         // 자식 폴더도 재귀적으로 이상 여부 결정
         foreach (var child in children)
@@ -44,16 +44,16 @@ public class Folder
         // 버튼 색상 갱신 (자신과 부모까지)
         UpdateLinkedButtonColor();
         UpdateParentButtonColor();
-    }
+    }*/
     // 연결된 버튼 색상 업데이트 (자식 폴더까지 포함)
-    public void UpdateLinkedButtonColor()
+    /*public void UpdateLinkedButtonColor()
     {
         if (linkedBodyButton != null)
         {
             var colors = linkedBodyButton.colors;
 
             // 자신 또는 자식 중 하나라도 이상이면 빨간색
-            bool shouldBeRed = isAbnormal || HasAbnormalInChildren();
+            bool shouldBeRed = isImportant || HasAbnormalInChildren();
             Color targetColor = shouldBeRed ? Color.red : Color.white;
 
             colors.normalColor = targetColor;
@@ -63,14 +63,14 @@ public class Folder
 
             linkedBodyButton.colors = colors;
         }
-    }
+    }*/
 
     // 부모 버튼 색상도 갱신
-    private void UpdateParentButtonColor()
+    /*private void UpdateParentButtonColor()
     {
         parent?.UpdateLinkedButtonColor();
         parent?.UpdateParentButtonColor();
-    }
+    }*/
 
     // 재귀적으로 자식 폴더 이상 여부 확인
     // 재귀적으로 자식 폴더 + 파일 이상 여부 확인
@@ -79,14 +79,14 @@ public class Folder
         // 1) 파일 먼저 검사
         foreach (var file in files)
         {
-            if (file.isAbnormal)    // 파일에 이상이 하나라도 있으면 이상 처리
+            if (file.isImportant)    // 파일에 이상이 하나라도 있으면 이상 처리
                 return true;
         }
 
         // 2) 자식 폴더 검사
         foreach (var child in children)
         {
-            if (child.isAbnormal || child.HasAbnormalInChildren())
+            if (child.isImportant || child.HasAbnormalInChildren())
                 return true;
         }
 

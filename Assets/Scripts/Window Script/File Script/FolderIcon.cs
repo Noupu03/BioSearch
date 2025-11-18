@@ -27,6 +27,7 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
     // 선택되었을 때의 색상
     private Color selectedColor = Color.yellow;
 
+    bool isautoed = true;
     /// <summary>
     /// FolderIcon 초기 설정
     /// </summary>
@@ -39,7 +40,7 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
         this.fileWindow = window;
 
         // 현재 폴더 또는 부모 폴더 중 하나라도 비정상(abnormal)일 경우
-        bool isAbnormal = parentAbnormal || folder.isAbnormal;
+        bool isAbnormal = parentAbnormal || folder.isImportant;
 
         // 폴더 이름 표시
         if (fileNameText != null)
@@ -48,9 +49,13 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
         // 초기에는 선택되지 않은 상태
         SetSelected(false);
 
+
         // 비정상 폴더의 경우 폰트 색상을 빨간색으로 표시
-        if (fileNameText != null && isAbnormal)
-            fileNameText.color = Color.red;
+        if (isautoed = true)
+        {
+            if (fileNameText != null && isAbnormal)
+                fileNameText.color = Color.red;
+        }
     }
 
     /// <summary>
@@ -64,7 +69,7 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
     public void SetSelected(bool selected)
     {
         if (fileNameText == null) return;
-        if (folder != null && folder.isAbnormal) return; // 비정상 폴더는 색상 변경 X
+        if (folder != null && folder.isImportant) return; // 비정상 폴더는 색상 변경 X
         fileNameText.color = selected ? selectedColor : normalColor;
     }
 
