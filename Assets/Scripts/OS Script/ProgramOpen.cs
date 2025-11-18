@@ -37,16 +37,20 @@ public class ProgramOpen : MonoBehaviour
 
     private List<GameObject> icons = new List<GameObject>();
     private List<GameObject> taskbarIcons = new List<GameObject>();
-    private Dictionary<GameObject, GameObject> activeInstances = new Dictionary<GameObject, GameObject>();
 
-    public GameObject GetActiveInstance(GameObject prefab)
+    // 프로그램 이름(key) → 인스턴스
+    private Dictionary<string, GameObject> activeInstances = new Dictionary<string, GameObject>();
+
+    private float iconSpacing = 8f;
+
+    void Awake()
     {
-        if (activeInstances.ContainsKey(prefab))
-            return activeInstances[prefab];
-        return null;
+        // TaskbarManager 연결
+        if (TaskbarManager.Instance == null)
+        {
+            Debug.LogError("TaskbarManager가 씬에 존재하지 않습니다!");
+        }
     }
-
-    private float iconSpacing = 20f;
 
     void Start()
     {
@@ -54,6 +58,9 @@ public class ProgramOpen : MonoBehaviour
         CreateTaskbarIcons();
     }
 
+    // =========================================
+    // DESKTOP 아이콘 생성
+    // =========================================
     void CreateDesktopIcons()
     {
         var iconInfos = new List<(GameObject iconPrefab, GameObject programPrefab)>
@@ -65,7 +72,6 @@ public class ProgramOpen : MonoBehaviour
         };
 
         float startY = 0f;
-
         foreach (var info in iconInfos)
         {
             GameObject icon = Instantiate(info.iconPrefab, desktopArea);
@@ -76,14 +82,20 @@ public class ProgramOpen : MonoBehaviour
             icons.Add(icon);
 
             IconClickHandler clickHandler = icon.GetComponent<IconClickHandler>();
-            if (clickHandler == null) clickHandler = icon.AddComponent<IconClickHandler>();
+            if (clickHandler == null)
+                clickHandler = icon.AddComponent<IconClickHandler>();
+
+            GameObject capturedPrefab = info.programPrefab;
             clickHandler.onDoubleClick = () =>
             {
-                OpenProgram(info.programPrefab);
+                OpenProgram(capturedPrefab);
             };
         }
     }
 
+    // =========================================
+    // TASKBAR 아이콘 생성
+    // =========================================
     void CreateTaskbarIcons()
     {
         var taskbarIconInfos = new List<(GameObject iconPrefab, GameObject programPrefab)>
@@ -107,60 +119,74 @@ public class ProgramOpen : MonoBehaviour
             taskbarIcons.Add(icon);
 
             Button btn = icon.GetComponent<Button>();
-            if (btn == null) btn = icon.AddComponent<Button>();
+            if (btn == null)
+                btn = icon.AddComponent<Button>();
+
+            GameObject capturedPrefab = info.programPrefab;
             btn.onClick.AddListener(() =>
             {
-                OpenProgram(info.programPrefab);
+                OpenProgram(capturedPrefab);
             });
         }
     }
 
-    GameObject OpenProgram(GameObject programPrefab)
+    // =========================================
+    // PROGRAM OPEN
+    // =========================================
+    public GameObject OpenProgram(GameObject prefab)
     {
-        if (programPrefab == null) return null;
+        if (prefab == null) return null;
 
-        if (activeInstances.ContainsKey(programPrefab))
+        string key = prefab.name;
+
+        // 이미 열려있으면 활성화
+        if (activeInstances.ContainsKey(key))
         {
-            var existing = activeInstances[programPrefab];
-            if (existing == null)
-            {
-                existing = InstantiateProgram(programPrefab);
-                activeInstances[programPrefab] = existing;
-            }
-            else if (!existing.activeSelf)
+            GameObject existing = activeInstances[key];
+            if (existing != null)
             {
                 existing.SetActive(true);
+                existing.transform.SetAsLastSibling();
             }
             return existing;
         }
 
-        GameObject instance = InstantiateProgram(programPrefab);
-        activeInstances[programPrefab] = instance;
+        // 새 인스턴스 생성
+        GameObject instance = InstantiateProgram(prefab);
+        activeInstances[key] = instance;
 
-        //  FileExplorerProgram 실행 시 FileWindow를 자동 생성 및 초기화
-        if (programPrefab == fileExplorerProgramPrefab && instance != null)
+        // FileExplorer 추가 기능
+        if (prefab == fileExplorerProgramPrefab && instance != null)
         {
-            // FileWindow 생성
             FileWindow fileWindowPrefab = Resources.Load<FileWindow>("FileWindow");
             if (fileWindowPrefab != null)
             {
                 FileWindow fileWindowInstance = Instantiate(fileWindowPrefab);
                 fileWindowInstance.InitializeFileProgram();
             }
-            else
-            {
-                Debug.LogWarning("FileWindow 프리팹(Resources/FileWindow) 을 찾을 수 없습니다.");
-            }
         }
+
+        // OpenProgram 내부
+        if (TaskbarManager.Instance != null)
+        {
+            TaskbarManager.Instance.AddTaskbarButton(key, instance);
+        }
+
 
         return instance;
     }
 
+    // =========================================
+    // PROGRAM INSTANTIATE
+    // =========================================
     GameObject InstantiateProgram(GameObject prefab)
     {
         GameObject instance = Instantiate(prefab, transform.parent);
         instance.name = prefab.name;
+        instance.SetActive(true);
+        instance.transform.SetAsLastSibling();
 
+        // X 버튼
         Transform existingX = instance.transform.Find("X_Button");
         Button xBtn;
         RectTransform xRt;
@@ -183,16 +209,22 @@ public class ProgramOpen : MonoBehaviour
             xBtn.onClick.RemoveAllListeners();
         }
 
+        string key = prefab.name;
+
         xBtn.onClick.AddListener(() =>
         {
             Destroy(instance);
-            RemoveInstance(prefab: prefab);
+            if (TaskbarManager.Instance != null)
+                TaskbarManager.Instance.RemoveTaskbarButton(instance);
+            RemoveInstance(key);
         });
 
+        // Minimize 버튼
         if (minimizeButtonPrefab != null)
         {
             Transform existingMin = instance.transform.Find("Minimize_Button");
             Button minBtn;
+
             if (existingMin == null)
             {
                 GameObject minBtnObj = Instantiate(minimizeButtonPrefab, instance.transform);
@@ -215,22 +247,49 @@ public class ProgramOpen : MonoBehaviour
                 instance.SetActive(false);
             });
         }
-        else
-        {
-            Debug.LogWarning("minimizeButtonPrefab이 연결되지 않았습니다.");
-        }
 
         return instance;
     }
 
-    void RemoveInstance(GameObject prefab)
+    // =========================================
+    // INSTANCE REMOVE
+    // =========================================
+    void RemoveInstance(string key)
     {
-        if (activeInstances.ContainsKey(prefab))
+        if (activeInstances.ContainsKey(key))
+            activeInstances.Remove(key);
+    }
+
+    // =========================================
+    // SHOW PROGRAM BY KEY
+    // =========================================
+    public void ShowProgram(string key)
+    {
+        if (activeInstances.ContainsKey(key))
         {
-            activeInstances.Remove(prefab);
+            GameObject instance = activeInstances[key];
+            if (instance != null)
+            {
+                instance.SetActive(true);
+                instance.transform.SetAsLastSibling();
+            }
         }
     }
 
+    // =========================================
+    // 기존 GetActiveInstance 유지
+    // =========================================
+    public GameObject GetActiveInstance(GameObject prefab)
+    {
+        string key = prefab.name;
+        if (activeInstances.ContainsKey(key))
+            return activeInstances[key];
+        return null;
+    }
+
+    // =========================================
+    // Messenger 전용
+    // =========================================
     public void MessangerWindowOpen()
     {
         GameObject instance = OpenProgram(messengerWindowprefab);
