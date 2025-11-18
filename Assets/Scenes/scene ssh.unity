@@ -1920,7 +1920,7 @@ MonoBehaviour:
   folderIconPrefab: {fileID: 2148310354490608959, guid: 9a7fdc50c5a26794392b1db8b25953c8, type: 3}
   fileIconPrefab: {fileID: 2148310354490608959, guid: ba79f0571b26f804597d74c216fff8b6, type: 3}
   upButtonPrefab: {fileID: 7856131077749057725, guid: 7e50e978dcde1574c82c9676f3c521a0, type: 3}
-  fileDataSO: {fileID: 0}
+  fileDataSO: {fileID: 11400000, guid: 00416af0d314f114ba456ec042e2c29f, type: 2}
   contentArea: {fileID: 0}
   emptyText: {fileID: 0}
   pathPanelManager: {fileID: 0}
