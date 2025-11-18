@@ -103,54 +103,19 @@ public partial class FileWindow : MonoBehaviour
     void CreateDefaultFolders()
     {
         // (생략 없이 기존 코드 유지)
-        Folder Head = new Folder("Head", rootFolder);
-        Head.children.Add(new Folder("Eye", Head));
-        Head.children.Add(new Folder("Ear", Head));
-        Head.children.Add(new Folder("Nose", Head));
-        Head.children.Add(new Folder("Mouth", Head));
-        Head.children.Add(new Folder("Jaw", Head));
-        Head.children.Add(new Folder("Skull", Head));
-        Head.children.Add(new Folder("Brain", Head));
+        Folder Work_Base = new Folder("Work_Base", rootFolder);
 
-        Folder Body = new Folder("Body", rootFolder);
-        Body.children.Add(new Folder("Chest", Body));
-        Body.children.Add(new Folder("Abdomen", Body));
-        Body.children.Add(new Folder("Back", Body));
-        Body.children.Add(new Folder("Pelvis", Body));
+        Folder Machine = new Folder("Machine", rootFolder);
+        Machine.children.Add(new Folder("Generator", Machine));
 
-        Folder LeftArm = new Folder("LeftArm", rootFolder);
-        LeftArm.children.Add(new Folder("UpperArm", LeftArm));
-        LeftArm.children.Add(new Folder("ForeArm", LeftArm));
-        LeftArm.children.Add(new Folder("Hand", LeftArm));
+        Folder Fax = new Folder("Fax", rootFolder);
+        
 
-        Folder RightArm = new Folder("RightArm", rootFolder);
-        RightArm.children.Add(new Folder("UpperArm", RightArm));
-        RightArm.children.Add(new Folder("ForeArm", RightArm));
-        RightArm.children.Add(new Folder("Hand", RightArm));
-
-        Folder LeftLeg = new Folder("LeftLeg", rootFolder);
-        LeftLeg.children.Add(new Folder("Thigh", LeftLeg));
-        LeftLeg.children.Add(new Folder("Calf", LeftLeg));
-        LeftLeg.children.Add(new Folder("Foot", LeftLeg));
-
-        Folder RightLeg = new Folder("RightLeg", rootFolder);
-        RightLeg.children.Add(new Folder("Thigh", RightLeg));
-        RightLeg.children.Add(new Folder("Calf", RightLeg));
-        RightLeg.children.Add(new Folder("Foot", RightLeg));
-
-        Folder Organ = new Folder("Organ", rootFolder);
-        Organ.children.Add(new Folder("Heart", Organ));
-        Organ.children.Add(new Folder("Lungs", Organ));
-        Organ.children.Add(new Folder("Liver", Organ));
-        Organ.children.Add(new Folder("Stomach", Organ));
-        Organ.children.Add(new Folder("Intestine", Organ));
-        Organ.children.Add(new Folder("Kidneys", Organ));
-        Organ.children.Add(new Folder("Pancreas", Organ));
-        Organ.children.Add(new Folder("Spleen", Organ));
-        Organ.children.Add(new Folder("Bladder", Organ));
-
+        Folder Computer = new Folder("Computer", rootFolder);
+     
+        
         rootFolder.children.AddRange(new List<Folder> {
-            Head, Body, LeftArm, RightArm, LeftLeg, RightLeg, Organ
+            Work_Base, Machine, Fax, Computer
         });
     }
 
