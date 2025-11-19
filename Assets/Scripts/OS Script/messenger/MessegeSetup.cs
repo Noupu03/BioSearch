@@ -15,5 +15,9 @@ public class MessageSetup : MonoBehaviour
         scheduler.ScheduleMessage(new MessengerChatUI.MessageData(
             new GameDateTime(25, 1, 1, 8, 30), "전임자", "신입, 점심 같이 가자!"
         ));
+
+        scheduler.ScheduleMessage(new MessengerChatUI.MessageData(
+            new GameDateTime(25, 1, 1, 8, 10), "전임자", "펙스 도착 확인바람"
+        ));
     }
 }
