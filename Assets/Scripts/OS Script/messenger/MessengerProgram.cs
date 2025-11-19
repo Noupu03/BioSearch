@@ -31,7 +31,10 @@ public class MessengerProgram : MonoBehaviour
 
         chatUI.SetTarget(targetName);
 
-        
+        // --- 추가: 해당 상대의 메시지들에서 체크리스트 매핑을 UI로 추가 ---
+        if (MessengerDataManager.Instance != null)
+        {
+            MessengerDataManager.Instance.CreateChecklistsForTarget(targetName);
+        }
     }
 }
-

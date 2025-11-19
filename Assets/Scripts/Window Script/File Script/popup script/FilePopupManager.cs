@@ -157,12 +157,14 @@ public class FilePopupManager : MonoBehaviour
                 Debug.LogWarning($"{file.name}.{file.extension} : 지원되지 않는 파일 형식");
                 break;
         }
+        // (원본 OpenFile 메서드 안 부분에서)
         if (CheckList.Instance != null)
         {
             string fullName = file.name + "." + file.extension;
 
-            // 파일 이름만 전달 (항목 리스트는 MessageSetup에서 전달)
-            CheckList.Instance.ApplyStrikeForFile(file.name);
+            // 이전: CheckList.Instance.ApplyStrikeForFile(file.name);
+            // 이제: 메시지 ↔ 체크리스트 흐름에 맞게 파일 오픈 시 체크 완료 처리
+            CheckList.Instance.MarkCompleteByFileName(file.name);
         }
         else
         {

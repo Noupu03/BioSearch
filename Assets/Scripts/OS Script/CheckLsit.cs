@@ -2,76 +2,99 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 
+/// <summary>
+/// CheckList: 이제 메시지 기반 체크리스트를 관리합니다.
+/// - AddCheckFromMessage(messageKey, text, linkedFileName)
+/// - MarkCompleteByFileName(fileName)
+/// </summary>
 public class CheckList : MonoBehaviour
 {
     public TMP_Text checkListText;
-    private List<string> items = new List<string>();
+    private List<CheckItem> items = new List<CheckItem>();
 
     public static CheckList Instance;
-
-    // 파일명 → 항목 리스트 매핑 저장
-    private Dictionary<string, List<string>> strikeMapping
-        = new Dictionary<string, List<string>>();
 
     private void Awake()
     {
         Instance = this;
     }
 
-    // ============================================
-    // 체크리스트 항목 추가
-    // ============================================
-    public void AddCheckList(string text)
-    {
-        if (string.IsNullOrEmpty(text)) return;
-        items.Add(text);
-        UpdateText();
-    }
+    // 내부 매핑: messageKey -> index in items
+    private Dictionary<string, int> messageKeyToIndex = new Dictionary<string, int>();
 
     // ============================================
-    // 체크리스트 항목 취소선 적용
+    // 메시지 기반으로 체크리스트 추가
+    // (openChat에서 호출되어 체크리스트를 UI에 표시)
     // ============================================
-    public void StrikeCheckList(string text)
+    public void AddCheckFromMessage(string messageKey, string itemText, string linkedFileName)
     {
-        int index = items.IndexOf(text);
-        if (index >= 0)
+        if (string.IsNullOrEmpty(itemText)) return;
+        if (messageKeyToIndex.ContainsKey(messageKey))
         {
-            items[index] = $"<s>{text}</s>";
-            UpdateText();
-        }
-    }
-
-    // ============================================
-    // [중요] 파일명 + 항목 매핑 등록
-    // 예: RegisterStrikeMapping("발전기녹제거", "발전기 의 녹을 제거할 방법 찾기");
-    // ============================================
-    public void RegisterStrikeMapping(string fileNameKey, string itemName)
-    {
-        if (!strikeMapping.ContainsKey(fileNameKey))
-            strikeMapping[fileNameKey] = new List<string>();
-
-        if (!strikeMapping[fileNameKey].Contains(itemName))
-            strikeMapping[fileNameKey].Add(itemName);
-
-        Debug.Log($"[CheckList] Mapping registered: {fileNameKey} → {itemName}");
-    }
-
-    // ============================================
-    // 파일이 열렸을 때 해당 파일의 매핑된 항목들 취소선 처리
-    // ============================================
-    public void ApplyStrikeForFile(string fileNameKey)
-    {
-        if (!strikeMapping.ContainsKey(fileNameKey))
-        {
-            Debug.Log($"[CheckList] No mapping found for '{fileNameKey}'");
+            // 이미 추가됨
+            Debug.Log($"[CheckList] Already added check for message {messageKey}");
             return;
         }
 
-        foreach (var item in strikeMapping[fileNameKey])
+        CheckItem ci = new CheckItem
         {
-            StrikeCheckList(item);
-            Debug.Log($"[CheckList] Struck due to file open: {item}");
+            messageKey = messageKey,
+            text = itemText,
+            linkedFileName = linkedFileName,
+            completed = false
+        };
+
+        items.Add(ci);
+        messageKeyToIndex[messageKey] = items.Count - 1;
+        UpdateText();
+
+        Debug.Log($"[CheckList] Added check: {itemText} (linked: {linkedFileName})");
+    }
+
+    // ============================================
+    // 파일을 열었을 때 해당 파일에 매핑된 체크리스트를 완료 처리
+    // ============================================
+    public void MarkCompleteByFileName(string fileName)
+    {
+        bool anyChanged = false;
+        for (int i = 0; i < items.Count; i++)
+        {
+            var it = items[i];
+            if (!it.completed && !string.IsNullOrEmpty(it.linkedFileName))
+            {
+                if (string.Equals(it.linkedFileName, fileName, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    items[i].completed = true;
+                    anyChanged = true;
+                    Debug.Log($"[CheckList] Marked completed: {it.text} for file {fileName}");
+                }
+            }
         }
+
+        if (anyChanged)
+        {
+            UpdateText();
+        }
+
+        // 또한 MessengerDataManager에도 완료 표시를 남김
+        if (MessengerDataManager.Instance != null)
+            MessengerDataManager.Instance.MarkMappingCompletedByFile(fileName);
+    }
+
+    // ============================================
+    // 단일 항목에 취소선 적용(외부 호출용)
+    // ============================================
+    public void StrikeCheckList(string text)
+    {
+        // 기존 동작을 유지하려면 텍스트 매칭으로 처리
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i].text == text)
+            {
+                items[i].completed = true;
+            }
+        }
+        UpdateText();
     }
 
     private void UpdateText()
@@ -79,7 +102,24 @@ public class CheckList : MonoBehaviour
         if (checkListText == null) return;
 
         checkListText.richText = true;
-        checkListText.text = string.Join("\n", items);
+        List<string> lines = new List<string>();
+        foreach (var it in items)
+        {
+            if (it.completed)
+                lines.Add($"<s>{it.text}</s>");
+            else
+                lines.Add(it.text);
+        }
+
+        checkListText.text = string.Join("\n", lines);
         checkListText.ForceMeshUpdate();
+    }
+
+    class CheckItem
+    {
+        public string messageKey;
+        public string text;
+        public string linkedFileName;
+        public bool completed;
     }
 }

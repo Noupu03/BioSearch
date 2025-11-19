@@ -46,10 +46,10 @@ public class ProgramOpen : MonoBehaviour
     void Awake()
     {
         // TaskbarManager 연결
-        if (TaskbarManager.Instance == null)
-        {
-            Debug.LogError("TaskbarManager가 씬에 존재하지 않습니다!");
-        }
+        //if (TaskbarManager.Instance == null)
+        //{
+        //    Debug.LogError("TaskbarManager가 씬에 존재하지 않습니다!");
+        //}
     }
 
     void Start()
