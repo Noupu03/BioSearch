@@ -1789,6 +1789,7 @@ GameObject:
   - component: {fileID: 693352166}
   - component: {fileID: 693352167}
   - component: {fileID: 693352168}
+  - component: {fileID: 693352169}
   m_Layer: 5
   m_Name: CanvasManager
   m_TagString: Untagged
@@ -2043,6 +2044,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskbarContentArea: {fileID: 764503576}
   taskbarButtonPrefab: {fileID: 9156314021790887401, guid: 7f347d1afb9038c449198ed218cd121d, type: 3}
+--- !u!114 &693352169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693352153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a513270551df9a4486d87f4395ef296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &708220948
 GameObject:
   m_ObjectHideFlags: 0
