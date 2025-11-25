@@ -22,7 +22,7 @@ public class File
     //  true일 경우, 비정상 파일로 표시됨
     public bool isImportant = false;
     public bool isChecked = false;
-
+    public bool isCorrect; // 정답 여부
     // 파일 생성자
     // name : 파일 이름
     // extension : 확장자
@@ -40,5 +40,12 @@ public class File
         this.isImportant = isImportant;
         // 기본값 false
         this.isChecked = false;
+        this.isCorrect = false; // 정답 여부
+}
+    public void InitializeFileState()
+    {
+        // 상태 초기화
+        isImportant = false;
+        isChecked = false;
     }
 }

@@ -36,9 +36,9 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     /// <summary>
     /// 아이콘 초기화
     /// </summary>
-    public void Setup(File fileData, FileWindow window)
+    public void Setup(File File, FileWindow window)
     {
-        file = fileData;
+        file = File;
         fileWindow = window;
 
         if (fileNameText != null)
@@ -47,12 +47,12 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
         if (iconImage != null && ExtensionManager.Instance != null)
             iconImage.sprite = ExtensionManager.Instance.GetIconForExtension(file.extension);
 
-        //  파일 이상 여부 반영(빨간색)
+        /*  파일 이상 여부 반영(빨간색)
         if (isautoed == true)
         {
             if (fileNameText != null)
                 fileNameText.color = file.isImportant ? abnormalColor : normalColor;
-        }
+        }*/
 
         SetSelected(false);
         // 추가됨: 체크표시 초기 상태 반영

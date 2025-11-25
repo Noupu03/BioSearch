@@ -73,4 +73,39 @@ public partial class FileWindow
         }
         return null;
     }
+    /// <summary>
+    /// 파일 이름으로 FileData 검색
+    /// </summary>
+    public File FindFileByName(string fileName)
+    {
+        if (rootFolder == null) return null;
+        return SearchFileRecursive(rootFolder, fileName);
+    }
+
+    private File SearchFileRecursive(Folder folder, string fileName)
+    {
+        // 1) 현재 폴더의 파일들 검사
+        if (folder.files != null)
+        {
+            foreach (var file in folder.files)
+            {
+                if (file.name.Equals(fileName, System.StringComparison.OrdinalIgnoreCase))
+                    return file;
+            }
+        }
+
+        // 2) 하위 폴더 재귀 검사
+        if (folder.children != null)
+        {
+            foreach (var child in folder.children)
+            {
+                var result = SearchFileRecursive(child, fileName);
+                if (result != null)
+                    return result;
+            }
+        }
+
+        return null;
+    }
+
 }

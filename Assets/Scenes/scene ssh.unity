@@ -1926,6 +1926,7 @@ MonoBehaviour:
   pathPanelManager: {fileID: 0}
   backButton: {fileID: 0}
   fileProgramPrefab: {fileID: 5264846252831550521, guid: ca25a31091e3b164e97dafc32d1e3d7c, type: 3}
+  allFiles: []
 --- !u!114 &693352162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4011,7 +4012,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1369091289
 Transform:
   m_ObjectHideFlags: 0

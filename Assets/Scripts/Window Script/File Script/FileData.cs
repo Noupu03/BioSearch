@@ -16,8 +16,6 @@ public class FileData
     // 이미지 파일의 내용 (Sprite로 참조)
     public Sprite imageContent;
 
-    // 이상 여부 (true일 경우 비정상 파일로 표시됨)
-    public bool isAbnormal = false;
 
     [Header("부모 폴더 이름 (Root 기준)")]
     // 부모 폴더 이름 (실제 Folder 객체 대신 문자열로 저장)

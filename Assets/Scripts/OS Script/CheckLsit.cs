@@ -122,4 +122,25 @@ public class CheckList : MonoBehaviour
         public string linkedFileName;
         public bool completed;
     }
+
+    // ============================================
+    // ★ 체크리스트 전체 초기화
+    // MessageScheduler → InitializeAllStates()에서 호출됨
+    // ============================================
+    public void ResetCheckListAndText()
+    {
+        // 모든 체크 항목 초기화
+        items.Clear();
+        messageKeyToIndex.Clear();
+
+        // UI 텍스트 초기화
+        if (checkListText != null)
+        {
+            checkListText.text = "";
+            checkListText.ForceMeshUpdate();
+        }
+
+        Debug.Log("[CheckList] 체크리스트 전체 초기화 완료");
+    }
+
 }

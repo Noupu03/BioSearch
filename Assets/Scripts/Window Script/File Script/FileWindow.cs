@@ -10,6 +10,13 @@ using System.Collections.Generic;
 /// </summary>
 public partial class FileWindow : MonoBehaviour
 {
+    public static FileWindow Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     [Header("Prefabs")]
     public GameObject folderIconPrefab;
     public GameObject fileIconPrefab;
@@ -104,6 +111,7 @@ public partial class FileWindow : MonoBehaviour
                 data.textContent,
                 data.imageContent
             );
+            RegisterFile(file);
 
             currentFolderFiles.Add(file);
             targetParent.files.Add(file);
@@ -122,7 +130,7 @@ public partial class FileWindow : MonoBehaviour
 
         Folder Machine = new Folder("Machine", rootFolder);
         Machine.children.Add(new Folder("Generator", Machine));
-        Machine.isImportant = true;
+        //Machine.isImportant = true;
 
         Folder Fax = new Folder("Fax", rootFolder);
         
@@ -203,4 +211,21 @@ public partial class FileWindow : MonoBehaviour
     }
 
     // 나머지 기존 함수 (OpenFolder, NavigateToPathIndex 등) 그대로 유지
+    // 모든 File 객체를 관리하는 리스트
+    public List<File> allFiles = new List<File>();
+
+    public void RegisterFile(File file)
+    {
+        if (file != null && !allFiles.Contains(file))
+            allFiles.Add(file);
+    }
+    public void InitializeAllFileState()
+    {
+        foreach (var file in allFiles) // allFiles는 FileWindow에서 관리하는 모든 File 객체 리스트
+        {
+            file.InitializeFileState(); // File.cs 안에서 isImportant, isChecked 초기화
+        }
+
+        Debug.Log("[FileWindow] 모든 파일 상태 초기화 완료");
+    }
 }

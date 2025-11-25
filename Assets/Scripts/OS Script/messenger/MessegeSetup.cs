@@ -6,6 +6,7 @@ public class MessageSetup : MonoBehaviour
     public MessageScheduler scheduler;
     public CheckList checkList;
 
+
     //────────────────────────────────────────────
     // ① 랜덤 메시지 템플릿 구조
     //────────────────────────────────────────────
@@ -96,6 +97,14 @@ public class MessageSetup : MonoBehaviour
         GameDateTime t2 = new GameDateTime(25, 1, 1, 8, 12);
         scheduler.ScheduleMessage(new MessengerChatUI.MessageData(t2, "상사", "체크리스트 작성 꼭 하고."));
 
+        scheduler.ScheduleRandomErrors(t1);
+
+        GameDateTime t3 = new GameDateTime(25, 1, 1, 8, 30);
+        GameDateTime t4 = new GameDateTime(25, 1, 1, 8, 31);
+        scheduler.ScheduleInitializeAllStates(t4);
+        scheduler.ScheduleSubmissionCheck(t3);
+
+
     }
 
     //────────────────────────────────────────────
@@ -105,21 +114,19 @@ public class MessageSetup : MonoBehaviour
     {
         if (scheduler == null) return;
 
-        // 랜덤 선택
+        // 1) 랜덤 메시지 선택
         int index = Random.Range(0, randomTemplates.Count);
         MessageTemplate chosen = randomTemplates[index];
 
-        // 메시지 생성
+        // 2) 메시지 생성 및 예약
         MessengerChatUI.MessageData msg = new MessengerChatUI.MessageData(
             time,
             chosen.sender,
             chosen.message
         );
-
-        // 메시지 예약
         scheduler.ScheduleMessage(msg);
 
-        // 체크리스트 매핑 자동 등록
+        // 3) 메시지 → 체크리스트 매핑 등록
         MessengerDataManager.Instance.RegisterMapping(
             time.ToString(),
             chosen.sender,
@@ -128,8 +135,31 @@ public class MessageSetup : MonoBehaviour
             chosen.linkedFileName
         );
 
+        //────────────────────────────────────────────
+        // 4) ★ 파일 중요 표시 (isImportant = true)
+        //────────────────────────────────────────────
+        // 파일 탐색 (프로젝트 파일 구조에 맞춰 함수명 수정)
+        File file = FileWindow.Instance.FindFileByName(chosen.linkedFileName);
+
+        if (file != null)
+        {
+            file.isImportant = true;
+
 #if UNITY_EDITOR
-        Debug.Log($"[Random MSG] '{chosen.sender}' : '{chosen.message}' 예약됨 → 매핑 {chosen.checklistText}");
+            Debug.Log($"[File Important] '{chosen.linkedFileName}' 파일의 isImportant = true");
+#endif
+        }
+        else
+        {
+#if UNITY_EDITOR
+            Debug.LogWarning($"[File Important] 파일 '{chosen.linkedFileName}' 을 찾을 수 없습니다!");
+#endif
+        }
+
+#if UNITY_EDITOR
+        Debug.Log($"[Random MSG] '{chosen.sender}' : '{chosen.message}' 예약됨 → 중요파일 {chosen.linkedFileName}");
 #endif
     }
+
+
 }

@@ -13,10 +13,18 @@ public class BodyPart
 
     // 추가됨: 클릭 토글 여부
     public bool isChecked = false;
+
+    public void InitializeBodyPartState()
+    {
+        isError = false;
+        isChecked = false;
+    }
 }
 
 public class MachinePartViewer : MonoBehaviour
 {
+    public static MachinePartViewer Instance; // 싱글톤 추가
+
     [Header("왼쪽 카메라창")]
     [SerializeField] private Image cameraPanel;
 
@@ -44,6 +52,16 @@ public class MachinePartViewer : MonoBehaviour
 
     void Awake()
     {
+        InitializeDictionary();
+        AutoAssignBodyParts();
+        // 싱글톤 초기화
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+
         InitializeDictionary();
         AutoAssignBodyParts();
     }
@@ -196,5 +214,46 @@ public class MachinePartViewer : MonoBehaviour
             part.button.colors = colors;
         }
     }
+    public void InitializeViewerState()
+    {
+        if (partDict == null)
+            return;
+
+        foreach (var kvp in partDict)
+        {
+            BodyPart part = kvp.Value;
+            if (part != null)
+                part.InitializeBodyPartState();
+        }
+
+        // 초기화 후 버튼 색상도 초기 상태로 갱신
+        UpdateButtonVisuals();
+    }
+    public void RandomlySetErrors(float errorChance = 0.1f)
+    {
+        if (partDict == null) return;
+
+        foreach (var kvp in partDict)
+        {
+            BodyPart part = kvp.Value;
+            if (part != null)
+            {
+                // 각 부위가 독립적으로 errorChance 확률로 true
+                part.isError = (UnityEngine.Random.value < errorChance);
+            }
+        }
+
+        // 버튼 색상 또는 UI 즉시 갱신
+        UpdateButtonVisuals();
+
+#if UNITY_EDITOR
+        Debug.Log("[MachinePartViewer] 랜덤 에러 적용 완료 (확률: " + (errorChance * 100f) + "%)");
+#endif
+    }
+    public Dictionary<string, BodyPart> GetPartDict()
+    {
+        return partDict;
+    }
+
 }
 
