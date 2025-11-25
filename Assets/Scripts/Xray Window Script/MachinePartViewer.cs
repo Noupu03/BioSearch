@@ -10,6 +10,9 @@ public class BodyPart
     public Sprite normalSprite;
     public Sprite errorSprite;
     public bool isError;
+
+    // 추가됨: 클릭 토글 여부
+    public bool isChecked = false;
 }
 
 public class MachinePartViewer : MonoBehaviour
@@ -53,14 +56,15 @@ public class MachinePartViewer : MonoBehaviour
             if (part.button != null)
             {
                 string nameCopy = part.partName;
-                part.button.onClick.AddListener(() => ShowPart(nameCopy));
+                part.button.onClick.AddListener(() => OnPartClicked(nameCopy));
             }
         }
-        UpdateErrorButtonColors();
+
+        // 기존 빨간색 적용 기능 제거
+        // UpdateErrorButtonColors();  <-- 삭제됨
+
         UpdateButtonVisuals();
     }
-
-
 
     private void InitializeDictionary()
     {
@@ -100,94 +104,69 @@ public class MachinePartViewer : MonoBehaviour
         }
     }
 
+    // ========================= 클릭 이벤트 =========================
+    private void OnPartClicked(string partName)
+    {
+        // 1) 해당 이미지 표시 (UpdateButtonVisuals 호출 X)
+        ShowPart(partName);
+
+        // 2) 체크 토글
+        if (partDict.TryGetValue(partName, out var part))
+        {
+            part.isChecked = !part.isChecked;
+        }
+
+        // 3) 색상 1번만 업데이트 → 깜빡임 제거
+        UpdateButtonVisuals();
+    }
+    // ===============================================================
+
     private void ShowPart(string partName)
     {
         if (!partDict.TryGetValue(partName, out var part))
-        {
-            Debug.LogWarning("해당 부위를 찾을 수 없습니다: " + partName);
             return;
-        }
 
         if (cameraPanel == null)
-        {
-            Debug.LogWarning("cameraPanel이 설정되지 않았습니다.");
             return;
-        }
 
+        // 에러면 에러 스프라이트 표시, 아니면 정상 표시
         cameraPanel.sprite = part.isError && part.errorSprite != null
             ? part.errorSprite
             : part.normalSprite;
 
-        UpdateButtonVisuals();
+        // ※ 여기에 UpdateButtonVisuals() 호출했던 것이 깜빡임 원인 → 제거됨
     }
 
-    /// <summary>
-    /// 외부에서 고장 상태 변경 시 호출
-    /// </summary>
     public void SetPartError(string partName, bool isError)
     {
         if (partDict.TryGetValue(partName, out var part))
         {
             part.isError = isError;
-            UpdateButtonVisuals();
+            // 버튼 색과 무관, 갱신 필요 없음
         }
     }
 
-    /// <summary>
-    /// BodyButtonManager와 색상 동기화
-    /// </summary>
     private void UpdateButtonVisuals()
     {
-        if (buttonManager == null) return;
-
-        Dictionary<string, bool> errorStates = new Dictionary<string, bool>();
-        foreach (var kvp in partDict)
-        {
-            errorStates[kvp.Key] = kvp.Value.isError;
-        }
-
-        buttonManager.UpdateErrorButtonColors(errorStates);
-    }
-
-    private void UpdateErrorButtonColors()
-    {
         foreach (var kvp in partDict)
         {
             var part = kvp.Value;
             if (part.button == null) continue;
 
             ColorBlock colors = part.button.colors;
-            if (part.isError)
+
+            // 에러도 색 바꾸지 않음 → isChecked만 적용
+            if (part.isChecked)
             {
-                colors.normalColor = Color.red;
-                colors.highlightedColor = Color.red;
-                colors.pressedColor = Color.red;
-                colors.selectedColor = Color.red;
+                // 초록색
+                colors.normalColor = Color.green;
+                colors.highlightedColor = Color.green;
+                colors.pressedColor = Color.green;
+                colors.selectedColor = Color.green;
             }
-            part.button.colors = colors;
-        }
-    }
-    /// <summary>
-    /// 프로그램 종료 시 초기화용 함수
-    /// 모든 버튼 색상을 기본 상태로 재설정하고 cameraPanel을 null로 설정
-    /// </summary>
-    public void DisplayInitialize()
-    {
-        // cameraPanel 초기화
-        cameraPanel = null;
-
-        // 버튼 색상 초기화
-        foreach (var kvp in partDict)
-        {
-            var part = kvp.Value;
-            if (part.button == null) continue;
-
-            ColorBlock colors = part.button.colors;
-
-            // 빨간색 상태는 유지
-            if (!part.isError)
+            else
             {
-                // 기본 색상으로 초기화
+                // 기본 흰색
                 colors.normalColor = Color.white;
                 colors.highlightedColor = Color.white;
                 colors.pressedColor = Color.white;
@@ -196,8 +175,26 @@ public class MachinePartViewer : MonoBehaviour
 
             part.button.colors = colors;
         }
-
-        Debug.Log("[MachinePartViewer] DisplayInitialize() 실행됨");
     }
 
+    public void DisplayInitialize()
+    {
+        cameraPanel = null;
+
+        foreach (var kvp in partDict)
+        {
+            var part = kvp.Value;
+            if (part.button == null) continue;
+
+            ColorBlock colors = part.button.colors;
+
+            colors.normalColor = Color.white;
+            colors.highlightedColor = Color.white;
+            colors.pressedColor = Color.white;
+            colors.selectedColor = Color.white;
+
+            part.button.colors = colors;
+        }
+    }
 }
+
