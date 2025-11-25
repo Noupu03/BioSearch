@@ -21,6 +21,7 @@ public class File
     //  인스펙터에서 직접 지정할 수 있는 이상 여부
     //  true일 경우, 비정상 파일로 표시됨
     public bool isImportant = false;
+    public bool isChecked = false;
 
     // 파일 생성자
     // name : 파일 이름
@@ -37,5 +38,7 @@ public class File
         this.textContent = textContent;
         this.imageContent = imageContent;
         this.isImportant = isImportant;
+        // 기본값 false
+        this.isChecked = false;
     }
 }

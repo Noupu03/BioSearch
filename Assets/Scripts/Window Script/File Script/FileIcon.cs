@@ -18,6 +18,9 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     public Image iconImage;          // 아이콘 이미지
     public TMP_Text fileNameText;    // 파일 이름 표시
 
+    public Image checkMarkImage;     // 체크 표시 이미지 (Inspector에서 연결)
+
+
     private FileWindow fileWindow;
     private File file;
 
@@ -25,6 +28,9 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     private Color normalColor = Color.white;   // 정상 파일: 하양
     private Color abnormalColor = Color.red;   // 이상 파일: 빨강
     private Color selectedColor = Color.yellow;
+    // 추가됨: 체크 상태 색상
+    private Color checkedColor = Color.green;
+
 
     bool isautoed = true;
     /// <summary>
@@ -49,6 +55,8 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
         }
 
         SetSelected(false);
+        // 추가됨: 체크표시 초기 상태 반영
+        ApplyCheckStateUI();
     }
 
     public File GetFile() => file;
@@ -72,11 +80,41 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     {
         fileWindow.SetSelectedFileIcon(this);
 
+        // 추가됨: 우클릭 시 체크 토글
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            ToggleCheckState();
+            return;
+        }
+
+        // 기존 더블클릭 파일 열기
         if (eventData.clickCount == 2)
         {
-            // 더블클릭 시 PopupManager 통해 파일 열기
             if (FilePopupManager.Instance != null && file != null)
                 FilePopupManager.Instance.OpenFile(file);
+        }
+    }
+    private void ToggleCheckState()
+    {
+        file.isChecked = !file.isChecked;
+        ApplyCheckStateUI();
+    }
+
+    private void ApplyCheckStateUI()
+    {
+        if (checkMarkImage != null)
+            checkMarkImage.gameObject.SetActive(file.isChecked);
+
+        if (iconImage != null)
+        {
+            if (file.isChecked)
+            {
+                iconImage.color = checkedColor;
+            }
+            else
+            {
+                iconImage.color = Color.white;
+            }
         }
     }
 
@@ -101,7 +139,7 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     }
 
     #endregion
-    // FileIcon.cs
+    /* FileIcon.cs
     public void SetupDummy(string dummyName)
     {
         if (fileNameText != null)
@@ -111,6 +149,6 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
         Button btn = GetComponent<Button>();
         if (btn != null)
             btn.interactable = false;
-    }
-
+    }삭제예정
+    */
 }
