@@ -3,71 +3,60 @@ using System.Collections;
 
 public class FaxDeleteButton : MonoBehaviour
 {
-    [Tooltip("삭제할 팩스 오브젝트 (보통 부모 오브젝트)")]
-    public GameObject faxObject;
+    public Camera targetCamera;           // Spawner에서 자동 주입
+    public FaxViewer viewer;             // 자동 할당
+    public GameObject faxObject;         // 자동 할당
 
-    [Tooltip("클릭 감지 카메라 (RoomCamera, FaxCamera 등)")]
-    public Camera targetCamera;
-
-    [Header("삭제 애니메이션 설정")]
-    public float shrinkDuration = 0.4f;  // 축소 속도
-    public float destroyDelay = 0.5f;    // 완전 삭제 딜레이
-
-    [Header("연결된 팩스 상태 스크립트")]
-    public FaxViewer faxViewer;          // 팩스의 열림 상태를 확인하기 위함
+    public float shrinkDuration = 0.4f;
+    public float destroyDelay = 0.5f;
 
     private bool isDeleting = false;
-    private Renderer[] faxRenderers;
+    private Renderer[] renderers;
 
     void Start()
     {
         if (faxObject == null)
-            faxObject = transform.parent.gameObject;
+            faxObject = transform.root.gameObject;
 
-        if (faxViewer == null)
-            faxViewer = faxObject.GetComponent<FaxViewer>();
+        if (viewer == null)
+            viewer = faxObject.GetComponent<FaxViewer>();
 
-        if (targetCamera == null)
-            Debug.LogWarning("[FaxDeleteButton] targetCamera가 설정되어 있지 않습니다! 인스펙터에서 지정하세요.");
-
-        faxRenderers = faxObject.GetComponentsInChildren<Renderer>();
+        renderers = faxObject.GetComponentsInChildren<Renderer>();
     }
 
     void Update()
     {
-        // 팩스가 팝업되지 않은 상태라면 클릭 차단
-        if (faxViewer != null && !faxViewer.IsExpanded())
-            return;
+        if (isDeleting) return;
+        if (targetCamera == null) return;
+        if (!viewer.IsExpanded()) return;
 
-        if (Input.GetMouseButtonDown(0) && targetCamera != null && !isDeleting)
+        if (Input.GetMouseButtonDown(0))
         {
             Ray ray = targetCamera.ScreenPointToRay(Input.mousePosition);
-
             if (Physics.Raycast(ray, out RaycastHit hit, 100f))
             {
-                if (hit.collider != null && hit.collider.gameObject == gameObject)
+                if (hit.collider != null && hit.collider.gameObject == this.gameObject)
                 {
-                    Debug.Log("[FAX] 팩스 열림 상태에서 삭제 버튼 클릭됨 → 삭제 애니메이션 시작");
-                    StartCoroutine(DeleteFaxRoutine());
+                    StartCoroutine(DeleteRoutine());
                 }
             }
         }
     }
 
-    IEnumerator DeleteFaxRoutine()
+    IEnumerator DeleteRoutine()
     {
         isDeleting = true;
 
-        float t = 0f;
         Vector3 startScale = faxObject.transform.localScale;
+        float t = 0;
         Material[] mats = GetAllMaterials();
 
         while (t < 1f)
         {
             t += Time.deltaTime / shrinkDuration;
-            faxObject.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+            float alpha = 1f - t;
 
-            float alpha = Mathf.Lerp(1f, 0f, t);
+            faxObject.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
             SetAlpha(mats, alpha);
 
             yield return null;
@@ -80,7 +69,7 @@ public class FaxDeleteButton : MonoBehaviour
     Material[] GetAllMaterials()
     {
         var list = new System.Collections.Generic.List<Material>();
-        foreach (Renderer r in faxRenderers)
+        foreach (Renderer r in renderers)
             list.AddRange(r.materials);
         return list.ToArray();
     }

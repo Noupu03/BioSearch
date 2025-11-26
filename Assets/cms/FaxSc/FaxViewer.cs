@@ -4,25 +4,30 @@ public class FaxViewer : MonoBehaviour
 {
     public Camera viewCamera;
     public Transform faxVisual;
+
     public float minimizedY = 0.05f;
     public float expandedY = 0.45f;
     public float distance = 1.5f;
     public float moveSpeed = 8f;
 
-    private bool isExpanded;
+    private bool isExpanded = false;
     private float currentY;
 
     void Start()
     {
-        if (viewCamera == null) viewCamera = Camera.main;
         currentY = minimizedY;
-        UpdateFaxPosition(true);
+
+        if (viewCamera != null)
+            UpdateFaxPosition(true);
     }
 
     void Update()
     {
+        if (viewCamera == null) return;
+
         float targetY = isExpanded ? expandedY : minimizedY;
         currentY = Mathf.Lerp(currentY, targetY, Time.deltaTime * moveSpeed);
+
         UpdateFaxPosition(false);
     }
 
@@ -38,10 +43,8 @@ public class FaxViewer : MonoBehaviour
 
         faxVisual.position = worldPos;
         faxVisual.rotation = Quaternion.LookRotation(viewCamera.transform.forward);
-
-        if (instant)
-            faxVisual.position = worldPos;
     }
+
     public bool IsExpanded()
     {
         return isExpanded;
