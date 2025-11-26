@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class FaxScheduleManager : MonoBehaviour
@@ -10,25 +11,28 @@ public class FaxScheduleManager : MonoBehaviour
     public GameObject faxPrefab;
 
     [Header("팩스를 보여줄 카메라")]
-    public Camera roomCamera;   // 여기다가 Room Camera 넣기
+    public Camera roomCamera;
 
     [Header("팩스 생성 위치")]
     public Vector3 spawnPosition = Vector3.zero;
+
+    [Header("UI 버튼 (씬에 존재하는 버튼)")]
+    public Button faxUIButton;
 
     public List<GameDateTime> faxSchedule = new List<GameDateTime>();
     private HashSet<string> spawnedFax = new HashSet<string>();
 
     void Update()
     {
+        if (timeManager == null) return;
+
         GameDateTime now = timeManager.GetCurrentGameTime();
 
         foreach (var targetTime in faxSchedule)
         {
             string key = targetTime.ToString();
-            if (spawnedFax.Contains(key))
-                continue;
 
-            if (now >= targetTime)
+            if (!spawnedFax.Contains(key) && now >= targetTime)
             {
                 SpawnFax();
                 spawnedFax.Add(key);
@@ -38,22 +42,42 @@ public class FaxScheduleManager : MonoBehaviour
 
     void SpawnFax()
     {
+        //  팩스 생성
         GameObject fax = Instantiate(faxPrefab, spawnPosition, Quaternion.identity);
-        Debug.Log("[FAX] 특정 시간에 팩스가 생성되었습니다!");
+        Debug.Log($"[FAX] {fax.name} 생성됨!");
 
-       
+        //  Viewer 연결
         FaxViewer viewer = fax.GetComponent<FaxViewer>();
         if (viewer != null)
         {
-            viewer.viewCamera = roomCamera;          //  카메라 주입
+            viewer.viewCamera = roomCamera;
+            Debug.Log("[FAX] Viewer 카메라 연결 완료");
+        }
+        else
+        {
+            Debug.LogError("[FAX ERROR] FaxViewer 컴포넌트를 찾지 못함!");
         }
 
-        FaxDeleteButton deleteBtn = fax.GetComponentInChildren<FaxDeleteButton>();
+        // 3) 삭제 버튼 처리 (world click delete)
+        FaxDeleteButton deleteBtn = fax.GetComponentInChildren<FaxDeleteButton>(true);
         if (deleteBtn != null)
         {
-            deleteBtn.targetCamera = roomCamera;     //  버튼용 카메라도 주입
+            deleteBtn.targetCamera = roomCamera;
             deleteBtn.faxObject = fax;
+            Debug.Log("[FAX] 삭제 버튼 세팅 완료");
         }
-     
+
+        //  UI 버튼 자동 연결 (씬 버튼)
+        if (faxUIButton != null)
+        {
+            faxUIButton.onClick.RemoveAllListeners();
+            faxUIButton.onClick.AddListener(() => viewer.TriggerExpand());
+
+            Debug.Log($"[FAX UI] '{faxUIButton.name}' 버튼 → 새 FaxViewer에 자동 연결됨");
+        }
+        else
+        {
+            Debug.LogWarning("[FAX WARNING] UI 버튼이 배정되지 않음 → Inspector에 지정 필요");
+        }
     }
 }

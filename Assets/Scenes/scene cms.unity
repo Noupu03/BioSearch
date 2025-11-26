@@ -2483,6 +2483,7 @@ GameObject:
   - component: {fileID: 918165125}
   - component: {fileID: 918165124}
   - component: {fileID: 918165123}
+  - component: {fileID: 918165126}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -2566,18 +2567,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FaxViewer, Assembly-CSharp
-        m_MethodName: TriggerExpand
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &918165124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2616,6 +2605,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 918165121}
   m_CullTransparentMesh: 1
+--- !u!114 &918165126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918165121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01eed2cb7062f1541b2165f27ec0a791, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewer: {fileID: 2900343786603337661, guid: 388aa1cfadd423a4da8a65ca25d84d3d, type: 3}
+  targetCamera: {fileID: 919113284}
 --- !u!1 &919113281
 GameObject:
   m_ObjectHideFlags: 0
@@ -4131,6 +4134,7 @@ MonoBehaviour:
   faxPrefab: {fileID: 5844519550629814756, guid: 388aa1cfadd423a4da8a65ca25d84d3d, type: 3}
   roomCamera: {fileID: 919113284}
   spawnPosition: {x: 11.44147, y: -4001.347, z: 118.4432}
+  faxUIButton: {fileID: 918165123}
   faxSchedule:
   - year: 25
     month: 1
@@ -4151,7 +4155,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faxPrefab: {fileID: 5844519550629814756, guid: 388aa1cfadd423a4da8a65ca25d84d3d, type: 3}
   roomCamera: {fileID: 919113284}
-  spawnPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1393444201
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ public class FaxViewer : MonoBehaviour
 {
     public Camera viewCamera;
     public Transform faxVisual;
+
     public float minimizedY = 0.05f;
     public float expandedY = 0.45f;
     public float distance = 1.5f;
@@ -30,7 +31,6 @@ public class FaxViewer : MonoBehaviour
         UpdateFaxPosition(false);
     }
 
-   
     public void TriggerExpand()
     {
         isExpanded = !isExpanded;
