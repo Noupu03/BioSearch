@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42e8d65efa6e5c64e998fa70a9cac5d6, type: 3}
+  m_Name: BodyPartsData
+  m_EditorClassIdentifier: 
+  parts:
+  - partName: Head
+    normalSprite: {fileID: 3268088999247695847, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: Chest
+    normalSprite: {fileID: -1815619245687911704, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: LeftUpperArm
+    normalSprite: {fileID: -5416169975054468354, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: LeftForeArm
+    normalSprite: {fileID: 6291997655773393107, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: LeftHand
+    normalSprite: {fileID: 9018584137585695871, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: RightUpperArm
+    normalSprite: {fileID: -490559209378469048, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: RightForeArm
+    normalSprite: {fileID: 7351145842376587709, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: RightHand
+    normalSprite: {fileID: 4028686686412714270, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: Stomach
+    normalSprite: {fileID: -4125930406922088296, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: Pelvis
+    normalSprite: {fileID: 5848297672640764631, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: LeftThigh
+    normalSprite: {fileID: -8257026136701261364, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: LeftCalf
+    normalSprite: {fileID: 109030216071418993, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: LeftFoot
+    normalSprite: {fileID: 4084119551876583126, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: RightThigh
+    normalSprite: {fileID: -1815619245687911704, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: RightCalf
+    normalSprite: {fileID: -1485771795141626812, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1
+  - partName: RightFoot
+    normalSprite: {fileID: 7041780618830506114, guid: a1245c05400f9634db3c666e6414539a, type: 3}
+    errorSprite: {fileID: 0}
+    isError: 0
+    isChecked: 1

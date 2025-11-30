@@ -4,9 +4,17 @@ using System.Collections.Generic;
 
 public class MessageScheduler : MonoBehaviour
 {
+    [Header("시간 관리")]
     public OSTimeManager timeManager;
+
+    [Header("노티파이어")]
     public MessengerNotifier notifier;
-    SubmissionChecker submissionChecker;
+
+    [Header("체크 상태 관리")]
+    public SubmissionChecker submissionChecker; // 인스펙터에서 할당
+
+    [Header("BodyPartsData 참조")]
+    public BodyPartsData bodyPartsData; // 인스펙터에서 할당
 
     // 예약 메시지 저장
     private List<MessengerChatUI.MessageData> scheduledMessages = new List<MessengerChatUI.MessageData>();
@@ -24,7 +32,8 @@ public class MessageScheduler : MonoBehaviour
     // ===============================
     public void ScheduleMessage(MessengerChatUI.MessageData msg)
     {
-            scheduledMessages.Add(msg);
+
+        scheduledMessages.Add(msg);
     }
 
     // ===============================
@@ -35,6 +44,7 @@ public class MessageScheduler : MonoBehaviour
         if (callback == null) return;
         scheduledActions.Add(new ScheduledAction { time = time, action = callback });
     }
+
     //===========================================================
     // ★ MessageSetup에서 사용: 초기화 스케줄 예약 전용 함수
     //===========================================================
@@ -54,12 +64,11 @@ public class MessageScheduler : MonoBehaviour
     //===========================================================
     private void InitializeAllStates()
     {
-        
         // 1. 체크리스트 및 메시지 텍스트 초기화
         CheckList.Instance?.ResetCheckListAndText();
 
-        // 2. Body Parts Viewer 초기화
-        MachinePartViewer.Instance?.InitializeViewerState();
+        // 2. BodyPartsData 초기화
+        bodyPartsData?.InitializeAllParts();
 
         // 3. File 전체 초기화
         FileWindow.Instance?.InitializeAllFileState();
@@ -68,15 +77,15 @@ public class MessageScheduler : MonoBehaviour
     }
 
     // =====================================
-    // ★ 지정 시간에 MachinePartViewer 랜덤 에러 적용
+    // ★ 지정 시간에 BodyPartsData 랜덤 에러 적용
     // =====================================
     public void ScheduleRandomErrors(GameDateTime time, float errorChance = 0.1f)
     {
         ScheduleAction(time, () =>
         {
-            if (MachinePartViewer.Instance != null)
+            if (bodyPartsData != null)
             {
-                MachinePartViewer.Instance.RandomlySetErrors(errorChance);
+                bodyPartsData.RandomlySetErrors(errorChance);
 #if UNITY_EDITOR
                 Debug.Log($"[Scheduler] {time}에 랜덤 에러 적용 완료 (확률: {errorChance * 100}%)");
 #endif
@@ -88,22 +97,22 @@ public class MessageScheduler : MonoBehaviour
     /// 지정 시간에 파일 및 부품 체크 상태를 점검하고 결과 로그 출력
     /// </summary>
     public void ScheduleSubmissionCheck(GameDateTime time)
+{
+    ScheduleAction(time, () =>
     {
-        ScheduleAction(time, () =>
-        {
-            Debug.Log("[Submission Check] =====");
+        Debug.Log("[Submission Check] =====");
 
-            // 1) 파일 체크 상태 출력
-            string fileStatus = SubmissionChecker.CheckFilesStatus();
-            Debug.Log(fileStatus);
+        // 1) 파일 체크 상태 출력
+        string fileStatus = SubmissionChecker.CheckFilesStatus();
+        Debug.Log(fileStatus);
 
-            // 2) 부품 체크 상태 출력
-            string partStatus = SubmissionChecker.CheckPartsStatus();
-            Debug.Log(partStatus);
+        // 2) 부품 체크 상태 출력
+        string partStatus = submissionChecker.CheckPartsStatus(); // static 사용
+        Debug.Log(partStatus);
 
-            Debug.Log("[Submission Check] ===== 완료");
-        });
-    }
+        Debug.Log("[Submission Check] ===== 완료");
+    });
+}
 
 
     // ===============================
@@ -118,20 +127,14 @@ public class MessageScheduler : MonoBehaviour
         // ------------------------
         // 예약 메시지 처리
         // ------------------------
-        var messagesToProcess = new List<MessengerChatUI.MessageData>();
-        foreach (var msg in scheduledMessages)
-        {
-            if (msg.dateTime <= now)
-                messagesToProcess.Add(msg);
-        }
-
+        var messagesToProcess = scheduledMessages.FindAll(msg => msg.dateTime <= now);
         foreach (var msg in messagesToProcess)
         {
+ 
             string conversationKey = msg.sender;
-            MessengerDataManager.Instance.AddMessage(msg, conversationKey);
+            MessengerDataManager.Instance?.AddMessage(msg, conversationKey);
 
-            if (notifier != null)
-                notifier.HandleMessageArrival(msg);
+            notifier?.HandleMessageArrival(msg);
 
             scheduledMessages.Remove(msg);
         }
@@ -139,17 +142,15 @@ public class MessageScheduler : MonoBehaviour
         // ------------------------
         // 예약 액션 처리
         // ------------------------
-        var actionsToExecute = new List<ScheduledAction>();
-        foreach (var sa in scheduledActions)
-        {
-            if (sa.time <= now)
-                actionsToExecute.Add(sa);
-        }
-
+        var actionsToExecute = scheduledActions.FindAll(sa => sa.time <= now);
         foreach (var sa in actionsToExecute)
         {
             sa.action?.Invoke();
             scheduledActions.Remove(sa);
         }
     }
+	private void Awake()
+	{
+		bodyPartsData?.InitializeAllParts();
+	}
 }

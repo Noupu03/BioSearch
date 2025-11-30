@@ -2,258 +2,107 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class BodyPart
-{
-    public string partName;
-    public Button button;
-    public Sprite normalSprite;
-    public Sprite errorSprite;
-    public bool isError;
-
-    // 추가됨: 클릭 토글 여부
-    public bool isChecked = false;
-
-    public void InitializeBodyPartState()
-    {
-        isError = false;
-        isChecked = false;
-    }
-}
-
 public class MachinePartViewer : MonoBehaviour
 {
-    public static MachinePartViewer Instance; // 싱글톤 추가
+    public static MachinePartViewer Instance;
 
-    [Header("왼쪽 카메라창")]
+    [Header("좌측 카메라창")]
     [SerializeField] private Image cameraPanel;
 
-    [Header("버튼 색상 관리 매니저")]
-    [SerializeField] private ButtonColorManager buttonManager;
+    [Header("BodyPartsData 참조")]
+    [SerializeField] private BodyPartsData bodyPartsData;
 
-    [SerializeField] private BodyPart Head = new BodyPart();
-    [SerializeField] private BodyPart Chest = new BodyPart();
-    [SerializeField] private BodyPart LeftUpperArm = new BodyPart();
-    [SerializeField] private BodyPart LeftForeArm = new BodyPart();
-    [SerializeField] private BodyPart LeftHand = new BodyPart();
-    [SerializeField] private BodyPart RightUpperArm = new BodyPart();
-    [SerializeField] private BodyPart RightForeArm = new BodyPart();
-    [SerializeField] private BodyPart RightHand = new BodyPart();
-    [SerializeField] private BodyPart Stomach = new BodyPart();
-    [SerializeField] private BodyPart Pelvis = new BodyPart();
-    [SerializeField] private BodyPart LeftThigh = new BodyPart();
-    [SerializeField] private BodyPart LeftCalf = new BodyPart();
-    [SerializeField] private BodyPart LeftFoot = new BodyPart();
-    [SerializeField] private BodyPart RightThigh = new BodyPart();
-    [SerializeField] private BodyPart RightCalf = new BodyPart();
-    [SerializeField] private BodyPart RightFoot = new BodyPart();
+    [Header("각 BodyPart와 매핑될 버튼들")]
+    [SerializeField] private Button HeadBtn;
+    [SerializeField] private Button ChestBtn;
+    [SerializeField] private Button LeftUpperArmBtn;
+    [SerializeField] private Button LeftForeArmBtn;
+    [SerializeField] private Button LeftHandBtn;
+    [SerializeField] private Button RightUpperArmBtn;
+    [SerializeField] private Button RightForeArmBtn;
+    [SerializeField] private Button RightHandBtn;
+    [SerializeField] private Button StomachBtn;
+    [SerializeField] private Button PelvisBtn;
+    [SerializeField] private Button LeftThighBtn;
+    [SerializeField] private Button LeftCalfBtn;
+    [SerializeField] private Button LeftFootBtn;
+    [SerializeField] private Button RightThighBtn;
+    [SerializeField] private Button RightCalfBtn;
+    [SerializeField] private Button RightFootBtn;
 
-    private Dictionary<string, BodyPart> partDict;
+    private Dictionary<string, Button> buttonDict;
 
-    void Awake()
+    private void Awake()
     {
-        InitializeDictionary();
-        AutoAssignBodyParts();
-        // 싱글톤 초기화
-        if (Instance != null && Instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
         Instance = this;
-
-        InitializeDictionary();
-        AutoAssignBodyParts();
+        BuildButtonDict();
+        RegisterButtonEvents();
     }
 
-    void Start()
+    private void BuildButtonDict()
     {
-        foreach (var kvp in partDict)
+        buttonDict = new Dictionary<string, Button>
         {
-            var part = kvp.Value;
-            if (part.button != null)
-            {
-                string nameCopy = part.partName;
-                part.button.onClick.AddListener(() => OnPartClicked(nameCopy));
-            }
-        }
-
-        // 기존 빨간색 적용 기능 제거
-        // UpdateErrorButtonColors();  <-- 삭제됨
-
-        UpdateButtonVisuals();
-    }
-
-    private void InitializeDictionary()
-    {
-        partDict = new Dictionary<string, BodyPart>
-        {
-            { "Head", Head },
-            { "Chest", Chest },
-            { "LeftUpperArm", LeftUpperArm },
-            { "LeftForeArm", LeftForeArm },
-            { "LeftHand", LeftHand },
-            { "RightUpperArm", RightUpperArm },
-            { "RightForeArm", RightForeArm },
-            { "RightHand", RightHand },
-            { "Stomach", Stomach },
-            { "Pelvis", Pelvis },
-            { "LeftThigh", LeftThigh },
-            { "LeftCalf", LeftCalf },
-            { "LeftFoot", LeftFoot },
-            { "RightThigh", RightThigh },
-            { "RightCalf", RightCalf },
-            { "RightFoot", RightFoot }
+            { "Head", HeadBtn },
+            { "Chest", ChestBtn },
+            { "LeftUpperArm", LeftUpperArmBtn },
+            { "LeftForeArm", LeftForeArmBtn },
+            { "LeftHand", LeftHandBtn },
+            { "RightUpperArm", RightUpperArmBtn },
+            { "RightForeArm", RightForeArmBtn },
+            { "RightHand", RightHandBtn },
+            { "Stomach", StomachBtn },
+            { "Pelvis", PelvisBtn },
+            { "LeftThigh", LeftThighBtn },
+            { "LeftCalf", LeftCalfBtn },
+            { "LeftFoot", LeftFootBtn },
+            { "RightThigh", RightThighBtn },
+            { "RightCalf", RightCalfBtn },
+            { "RightFoot", RightFootBtn }
         };
-
-        foreach (var kvp in partDict)
-            kvp.Value.partName = kvp.Key;
     }
 
-    private void AutoAssignBodyParts()
+    private void RegisterButtonEvents()
     {
-        Button[] allButtons = FindObjectsOfType<Button>(true);
-        foreach (var button in allButtons)
+        foreach (var kvp in buttonDict)
         {
-            if (partDict.TryGetValue(button.name, out var bodyPart))
-            {
-                bodyPart.button = button;
-            }
+            string partName = kvp.Key;
+            Button btn = kvp.Value;
+
+            if (btn != null)
+                btn.onClick.AddListener(() => OnPartClicked(partName));
         }
     }
 
-    // ========================= 클릭 이벤트 =========================
     private void OnPartClicked(string partName)
     {
-        // 1) 해당 이미지 표시 (UpdateButtonVisuals 호출 X)
-        ShowPart(partName);
+        BodyPartDataObject part = bodyPartsData.GetPart(partName);
+        if (part == null) return;
 
-        // 2) 체크 토글
-        if (partDict.TryGetValue(partName, out var part))
-        {
-            part.isChecked = !part.isChecked;
-        }
+        part.isChecked = !part.isChecked;
 
-        // 3) 색상 1번만 업데이트 → 깜빡임 제거
-        UpdateButtonVisuals();
+        UpdateButtonVisual(partName, part.isChecked);
+
+        cameraPanel.sprite =
+            part.isError ? part.errorSprite : part.normalSprite;
     }
-    // ===============================================================
 
-    private void ShowPart(string partName)
+    private void UpdateButtonVisual(string name, bool isChecked)
     {
-        if (!partDict.TryGetValue(partName, out var part))
+        if (!buttonDict.TryGetValue(name, out Button btn))
             return;
 
-        if (cameraPanel == null)
-            return;
-
-        // 에러면 에러 스프라이트 표시, 아니면 정상 표시
-        cameraPanel.sprite = part.isError && part.errorSprite != null
-            ? part.errorSprite
-            : part.normalSprite;
-
-        // ※ 여기에 UpdateButtonVisuals() 호출했던 것이 깜빡임 원인 → 제거됨
-    }
-
-    public void SetPartError(string partName, bool isError)
-    {
-        if (partDict.TryGetValue(partName, out var part))
+        ColorBlock c = btn.colors;
+        if (isChecked)
         {
-            part.isError = isError;
-            // 버튼 색과 무관, 갱신 필요 없음
+            c.normalColor = Color.green;
+            c.highlightedColor = Color.green;
         }
-    }
-
-    private void UpdateButtonVisuals()
-    {
-        foreach (var kvp in partDict)
+        else
         {
-            var part = kvp.Value;
-            if (part.button == null) continue;
-
-            ColorBlock colors = part.button.colors;
-
-            // 에러도 색 바꾸지 않음 → isChecked만 적용
-            if (part.isChecked)
-            {
-                // 초록색
-                colors.normalColor = Color.green;
-                colors.highlightedColor = Color.green;
-                colors.pressedColor = Color.green;
-                colors.selectedColor = Color.green;
-            }
-            else
-            {
-                // 기본 흰색
-                colors.normalColor = Color.white;
-                colors.highlightedColor = Color.white;
-                colors.pressedColor = Color.white;
-                colors.selectedColor = Color.white;
-            }
-
-            part.button.colors = colors;
+            c.normalColor = Color.white;
+            c.highlightedColor = Color.white;
         }
+        btn.colors = c;
     }
-
-    public void DisplayInitialize()
-    {
-        cameraPanel = null;
-
-        foreach (var kvp in partDict)
-        {
-            var part = kvp.Value;
-            if (part.button == null) continue;
-
-            ColorBlock colors = part.button.colors;
-
-            colors.normalColor = Color.white;
-            colors.highlightedColor = Color.white;
-            colors.pressedColor = Color.white;
-            colors.selectedColor = Color.white;
-
-            part.button.colors = colors;
-        }
-    }
-    public void InitializeViewerState()
-    {
-        if (partDict == null)
-            return;
-
-        foreach (var kvp in partDict)
-        {
-            BodyPart part = kvp.Value;
-            if (part != null)
-                part.InitializeBodyPartState();
-        }
-
-        // 초기화 후 버튼 색상도 초기 상태로 갱신
-        UpdateButtonVisuals();
-    }
-    public void RandomlySetErrors(float errorChance = 0.1f)
-    {
-        if (partDict == null) return;
-
-        foreach (var kvp in partDict)
-        {
-            BodyPart part = kvp.Value;
-            if (part != null)
-            {
-                // 각 부위가 독립적으로 errorChance 확률로 true
-                part.isError = (UnityEngine.Random.value < errorChance);
-            }
-        }
-
-        // 버튼 색상 또는 UI 즉시 갱신
-        UpdateButtonVisuals();
-
-#if UNITY_EDITOR
-        Debug.Log("[MachinePartViewer] 랜덤 에러 적용 완료 (확률: " + (errorChance * 100f) + "%)");
-#endif
-    }
-    public Dictionary<string, BodyPart> GetPartDict()
-    {
-        return partDict;
-    }
-
 }
-

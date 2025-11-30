@@ -2004,6 +2004,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeManager: {fileID: 693352163}
   notifier: {fileID: 693352164}
+  submissionChecker: {fileID: 693352169}
+  bodyPartsData: {fileID: 11400000, guid: 4e3aa65f747ed8d41939fcd338b67994, type: 2}
 --- !u!114 &693352166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2053,9 +2055,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 693352153}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a513270551df9a4486d87f4395ef296, type: 3}
+  m_Script: {fileID: 11500000, guid: 3fa5457230eff464186b14f0a4aafb94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bodyPartsData: {fileID: 11400000, guid: 4e3aa65f747ed8d41939fcd338b67994, type: 2}
 --- !u!1 &708220948
 GameObject:
   m_ObjectHideFlags: 0

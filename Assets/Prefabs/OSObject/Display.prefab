@@ -321,119 +321,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraPanel: {fileID: 2519555107578228536}
-  buttonManager: {fileID: 0}
-  Head:
-    partName: Head
-    button: {fileID: 0}
-    normalSprite: {fileID: 3268088999247695847, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: 7554081887815554642, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 1
-    isChecked: 0
-  Chest:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: -1815619245687911704, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -4007138934062044658, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  LeftUpperArm:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: -5416169975054468354, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -8101024369921961375, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  LeftForeArm:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 6291997655773393107, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -157549510005892087, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  LeftHand:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 9018584137585695871, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -9216204628304268561, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  RightUpperArm:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: -490559209378469048, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: 4762444790048372390, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  RightForeArm:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 7351145842376587709, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -8185521743036022162, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  RightHand:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 4028686686412714270, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -8799196499061323905, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  Stomach:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: -4125930406922088296, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: 8655614853811240966, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  Pelvis:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 5848297672640764631, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -7357880386289002116, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  LeftThigh:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: -8257026136701261364, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -2106550886600061387, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  LeftCalf:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 109030216071418993, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: 6480756135111272375, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  LeftFoot:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 4084119551876583126, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: -6854195068405016518, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  RightThigh:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 2013042794411418729, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: 3515152896312081359, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  RightCalf:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: -1485771795141626812, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: 2423580262689623597, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
-  RightFoot:
-    partName: 
-    button: {fileID: 0}
-    normalSprite: {fileID: 7041780618830506114, guid: a1245c05400f9634db3c666e6414539a, type: 3}
-    errorSprite: {fileID: 7431994355932896196, guid: 013aa57e17da99c41b64e45f362fadff, type: 3}
-    isError: 0
-    isChecked: 0
+  bodyPartsData: {fileID: 11400000, guid: 4e3aa65f747ed8d41939fcd338b67994, type: 2}
+  HeadBtn: {fileID: 7126863009982063226}
+  ChestBtn: {fileID: 5004043680650299109}
+  LeftUpperArmBtn: {fileID: 5628263527961177155}
+  LeftForeArmBtn: {fileID: 4018479821723802635}
+  LeftHandBtn: {fileID: 8864428601146364591}
+  RightUpperArmBtn: {fileID: 5851171193180350996}
+  RightForeArmBtn: {fileID: 5489039618606657481}
+  RightHandBtn: {fileID: 3477946695440762659}
+  StomachBtn: {fileID: 6348522216496107492}
+  PelvisBtn: {fileID: 5848458651091353793}
+  LeftThighBtn: {fileID: 127297283007446014}
+  LeftCalfBtn: {fileID: 3448699549476484098}
+  LeftFootBtn: {fileID: 4245838090018502325}
+  RightThighBtn: {fileID: 1952250185897778253}
+  RightCalfBtn: {fileID: 2156329420271242909}
+  RightFootBtn: {fileID: 2077940544567095524}
 --- !u!1 &1431335699483648259
 GameObject:
   m_ObjectHideFlags: 0
