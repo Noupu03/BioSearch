@@ -101,8 +101,7 @@ public class MessageSetup : MonoBehaviour
 
         GameDateTime t3 = new GameDateTime(25, 1, 1, 8, 30);
         GameDateTime t4 = new GameDateTime(25, 1, 1, 8, 31);
-        scheduler.ScheduleInitializeAllStates(t4);
-        scheduler.ScheduleSubmissionCheck(t3);
+        //scheduler.ScheduleInitializeAllStates(t4);
 
 
     }

@@ -46,7 +46,7 @@ public class ExeIcon : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         // 한 번 클릭 → 선택
-        //FileWindow.Instance.SetSelectedExeIcon(this);
+        FileWindow.Instance.SetSelectedExeIcon(this);
 
         // 더블클릭 판정
         if (Time.time - lastClickTime <= doubleClickThreshold)

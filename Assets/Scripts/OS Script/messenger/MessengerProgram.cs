@@ -6,6 +6,7 @@ public class MessengerProgram : MonoBehaviour
     public Button bossButton;
     public Button predecessorButton;
     public ProgramOpen programOpen;
+    public Button submitButton;   // ★ 제출 버튼 추가
 
     void Awake()
     {
@@ -19,6 +20,8 @@ public class MessengerProgram : MonoBehaviour
             bossButton.onClick.AddListener(() => OpenChat("상사"));
         if (predecessorButton != null)
             predecessorButton.onClick.AddListener(() => OpenChat("전임자"));
+        if (submitButton != null)
+            submitButton.onClick.AddListener(OpenSubmitWindow); // ★ 추가
     }
 
     void OpenChat(string targetName)
@@ -36,5 +39,10 @@ public class MessengerProgram : MonoBehaviour
         {
             MessengerDataManager.Instance.CreateChecklistsForTarget(targetName);
         }
+    }
+    // ★ 제출창 열기
+    void OpenSubmitWindow()
+    {
+        programOpen.OpenSubmitWindow();
     }
 }

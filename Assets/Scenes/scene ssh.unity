@@ -1960,6 +1960,7 @@ MonoBehaviour:
   taskbarFileExplorerIconPrefab: {fileID: 5233949057885484975, guid: 2ca7157de42490341b5efc4d8055e8dc, type: 3}
   taskbarDisplayIconPrefab: {fileID: 3588713957477613665, guid: d98b5e8ddc7b6fd4a8499c2173a98d17, type: 3}
   taskbarMessengerIconPrefab: {fileID: 3723984751974451465, guid: f018ad3409671c44e8d04bb53e80c6bf, type: 3}
+  submitWindowPrefab: {fileID: 3303460904244485609, guid: f29f7e75097c25748a6daf67350242d3, type: 3}
 --- !u!114 &693352163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2062,6 +2063,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyPartsData: {fileID: 11400000, guid: 4e3aa65f747ed8d41939fcd338b67994, type: 2}
+  dailyScores: []
+  timeManager: {fileID: 693352163}
 --- !u!114 &693352170
 MonoBehaviour:
   m_ObjectHideFlags: 0

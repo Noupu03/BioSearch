@@ -102,13 +102,7 @@ public class MessageScheduler : MonoBehaviour
     {
         Debug.Log("[Submission Check] =====");
 
-        // 1) 파일 체크 상태 출력
-        string fileStatus = SubmissionChecker.CheckFilesStatus();
-        Debug.Log(fileStatus);
-
-        // 2) 부품 체크 상태 출력
-        string partStatus = submissionChecker.CheckPartsStatus(); // static 사용
-        Debug.Log(partStatus);
+        submissionChecker.SaveTodayScore();
 
         Debug.Log("[Submission Check] ===== 완료");
     });

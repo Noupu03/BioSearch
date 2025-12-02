@@ -32,5 +32,34 @@ public struct GameDateTime : IComparable<GameDateTime>
     {
         return $"{year}/{month}/{day} {hour:00}:{minute:00}";
     }
+    public void NormalizeTime()
+    {
+        // 분 정리
+        if (minute >= 60)
+        {
+            hour += minute / 60;
+            minute %= 60;
+        }
+
+        // 시간 정리
+        if (hour >= 24)
+        {
+            day += hour / 24;
+            hour %= 24;
+        }
+
+        // 간단히 31일 기준
+        if (day > 31)
+        {
+            day = 1;
+            month++;
+        }
+
+        if (month > 12)
+        {
+            month = 1;
+            year++;
+        }
+    }
 
 }

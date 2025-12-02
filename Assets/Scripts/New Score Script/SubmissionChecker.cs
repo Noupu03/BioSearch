@@ -1,41 +1,72 @@
 using UnityEngine;
-
 public class SubmissionChecker : MonoBehaviour
 {
     [Header("BodyPartsData 참조")]
     public BodyPartsData bodyPartsData;
 
-    // 파일 체크 통계
-    public static string CheckFilesStatus()
+    [Header("날짜별 점수 기록")]
+    public ScoreData[] dailyScores;
+    public OSTimeManager timeManager;
+
+    private const int baseYear = 25;
+    private const int daysPerMonth = 31;
+    private const int monthsPerYear = 12;
+
+    void Awake()
     {
+        // 안전하게 최소 배열 길이 확보
+        if (dailyScores == null || dailyScores.Length < 4000)
+            dailyScores = new ScoreData[4000];
+    }
+
+    // 기준일 25/01/01 기준으로 배열 인덱스 계산
+    private int GetDateIndex(GameDateTime dt)
+    {
+        int yearDiff = dt.year - baseYear;
+        int monthDiff = dt.month - 1; // 1월 = 0
+        int dayDiff = dt.day - 1;     // 1일 = 0
+
+        int index = yearDiff * monthsPerYear * daysPerMonth + monthDiff * daysPerMonth + dayDiff;
+
+        if (index < 0) index = 0;
+
+        return index;
+    }
+
+    // ------------------------------
+    // 파일 체크 개수 계산
+    // ------------------------------
+    public (int must, int correct) GetFileStats()
+    {
+        int mustSubmit = 0;
+        int correctChecked = 0;
+
         if (FileWindow.Instance == null)
-            return "FileWindow 미설정";
+            return (0, 0);
 
-        int mustSubmit = 0;       // isImportant = true
-        int correctChecked = 0;   // isImportant && isChecked
-
-        foreach (var filedata in FileWindow.Instance.allFiles)
+        foreach (var file in FileWindow.Instance.allFiles)
         {
-            if (filedata.isImportant)
+            if (file.isImportant)
             {
                 mustSubmit++;
-
-                if (filedata.isChecked)
+                if (file.isChecked)
                     correctChecked++;
             }
         }
 
-        return $"제출해야할 파일 개수 : {mustSubmit}, 맞게 제출한 파일 개수 : {correctChecked}";
+        return (mustSubmit, correctChecked);
     }
 
-    // 부품 체크 통계 (BodyPartsData 기반)
-    public string CheckPartsStatus()
+    // ------------------------------
+    // 부품 체크 개수 계산
+    // ------------------------------
+    public (int errorCount, int correctChecked) GetPartStats()
     {
-        if (bodyPartsData == null)
-            return "BodyPartsData 미설정";
-
-        int totalErrorParts = 0;
+        int errorCount = 0;
         int correctChecked = 0;
+
+        if (bodyPartsData == null)
+            return (0, 0);
 
         foreach (var part in bodyPartsData.GetAllParts())
         {
@@ -43,19 +74,59 @@ public class SubmissionChecker : MonoBehaviour
 
             if (part.isError)
             {
-                totalErrorParts++;
+                errorCount++;
                 if (part.isChecked)
                     correctChecked++;
             }
         }
 
-        return $"오류가 생긴 부품 개수 : {totalErrorParts}, 맞게 체크한 부품 개수 : {correctChecked}";
+        return (errorCount, correctChecked);
     }
 
-    // 전체 통계 출력
-    public void PrintSubmissionStatus()
+    // ------------------------------
+    // 최종 날짜별 점수 저장
+    // ------------------------------
+    public void SaveTodayScore()
     {
-        Debug.Log(CheckFilesStatus());
-        Debug.Log(CheckPartsStatus());
+        if (timeManager == null)
+        {
+            Debug.LogError("OSTimeManager 미설정!");
+            return;
+        }
+
+        GameDateTime now = timeManager.GetCurrentGameTime();
+        int idx = GetDateIndex(now);
+
+        // 배열 부족 시 자동 확장
+        if (idx >= dailyScores.Length)
+        {
+            System.Array.Resize(ref dailyScores, idx + 1);
+        }
+
+        // 파일 통계
+        var fileStat = GetFileStats();
+        int fileMust = fileStat.must;
+        int fileCorrect = fileStat.correct;
+        int fileWrong = fileMust - fileCorrect;
+
+        // 부품 통계
+        var partStat = GetPartStats();
+        int partError = partStat.errorCount;
+        int partCorrect = partStat.correctChecked;
+        int partWrong = partError - partCorrect;
+
+        // 저장
+        dailyScores[idx] = new ScoreData
+        {
+            fileMust = fileMust,
+            fileCorrect = fileCorrect,
+            fileWrong = fileWrong,
+
+            partErrorCount = partError,
+            partCorrect = partCorrect,
+            partWrong = partWrong
+        };
+
+        Debug.Log($"[{idx}] 점수 저장 완료: 파일({fileCorrect}/{fileMust}), 부품({partCorrect}/{partError})");
     }
 }

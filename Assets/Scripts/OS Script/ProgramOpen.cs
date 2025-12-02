@@ -35,6 +35,9 @@ public class ProgramOpen : MonoBehaviour
     public GameObject taskbarDisplayIconPrefab;
     public GameObject taskbarMessengerIconPrefab;
 
+    [Header("제출창 프리팹")]
+    public GameObject submitWindowPrefab;
+
     private List<GameObject> icons = new List<GameObject>();
     private List<GameObject> taskbarIcons = new List<GameObject>();
 
@@ -299,5 +302,11 @@ public class ProgramOpen : MonoBehaviour
         {
             notifier.SetMessengerProgramInstance(instance);
         }
+    }
+    public void OpenSubmitWindow()
+    {
+        GameObject instance = OpenProgram(submitWindowPrefab);
+
+        // 필요한 초기화가 있으면 여기 추가 예정
     }
 }
