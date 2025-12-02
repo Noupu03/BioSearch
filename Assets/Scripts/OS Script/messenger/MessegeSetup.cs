@@ -100,7 +100,7 @@ public class MessageSetup : MonoBehaviour
         scheduler.ScheduleRandomErrors(t1);
 
         GameDateTime t3 = new GameDateTime(25, 1, 1, 8, 30);
-        GameDateTime t4 = new GameDateTime(25, 1, 1, 8, 31);
+        GameDateTime t4 = new GameDateTime(25, 1, 1, 21, 0);
         scheduler.ScheduleInitializeAllStates(t4);
 
 
