@@ -5,7 +5,7 @@ public class MessageSetup : MonoBehaviour
 {
     public MessageScheduler scheduler;
     public CheckList checkList;
-
+    public OSTimeManager timeManager; // 인스펙터에서 할당
 
     //────────────────────────────────────────────
     // ① 랜덤 메시지 템플릿 구조
@@ -101,7 +101,7 @@ public class MessageSetup : MonoBehaviour
 
         GameDateTime t3 = new GameDateTime(25, 1, 1, 8, 30);
         GameDateTime t4 = new GameDateTime(25, 1, 1, 8, 31);
-        //scheduler.ScheduleInitializeAllStates(t4);
+        scheduler.ScheduleInitializeAllStates(t4);
 
 
     }
@@ -125,14 +125,23 @@ public class MessageSetup : MonoBehaviour
         );
         scheduler.ScheduleMessage(msg);
 
-        // 3) 메시지 → 체크리스트 매핑 등록
-        MessengerDataManager.Instance.RegisterMapping(
-            time.ToString(),
-            chosen.sender,
-            chosen.message,
-            chosen.checklistText,
-            chosen.linkedFileName
-        );
+        var now = timeManager.GetCurrentGameTime();
+
+        if (time.year > now.year || time.month > now.month || time.day >= now.day)
+        {
+            MessengerDataManager.Instance.RegisterMapping(
+                msg.dateTime,        // GameDateTime 그대로
+                chosen.sender,
+                chosen.message,
+                chosen.checklistText,
+                chosen.linkedFileName
+            );
+        }
+        else
+        {
+            Debug.Log($"[SpawnRandomScheduledMessage] 하루가 지난 메시지이므로 체크리스트 등록 무시: {chosen.message}"); 
+        }
+        
 
         //────────────────────────────────────────────
         // 4) ★ 파일 중요 표시 (isImportant = true)

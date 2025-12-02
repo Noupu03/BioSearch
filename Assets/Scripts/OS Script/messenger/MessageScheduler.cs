@@ -147,4 +147,5 @@ public class MessageScheduler : MonoBehaviour
 	{
 		bodyPartsData?.InitializeAllParts();
 	}
+
 }

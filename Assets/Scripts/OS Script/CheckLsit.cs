@@ -13,7 +13,7 @@ public class CheckList : MonoBehaviour
     private List<CheckItem> items = new List<CheckItem>();
 
     public static CheckList Instance;
-
+    public OSTimeManager timeManager; // 인스펙터에서 할당
     private void Awake()
     {
         Instance = this;
@@ -26,15 +26,21 @@ public class CheckList : MonoBehaviour
     // 메시지 기반으로 체크리스트 추가
     // (openChat에서 호출되어 체크리스트를 UI에 표시)
     // ============================================
-    public void AddCheckFromMessage(string messageKey, string itemText, string linkedFileName)
+    public void AddCheckFromMessage(string messageKey, string itemText, string linkedFileName, GameDateTime messageTime)
     {
-        if (string.IsNullOrEmpty(itemText)) return;
-        if (messageKeyToIndex.ContainsKey(messageKey))
+        var now = timeManager.GetCurrentGameTime();
+
+        // 하루가 지난 메시지는 추가하지 않음 (day 비교)
+        if (messageTime.year < now.year ||
+            messageTime.month < now.month ||
+            messageTime.day < now.day)
         {
-            // 이미 추가됨
-            Debug.Log($"[CheckList] Already added check for message {messageKey}");
+            Debug.Log($"[CheckList] Skipped adding past-day message {messageKey}");
             return;
         }
+
+        if (string.IsNullOrEmpty(itemText)) return;
+        if (messageKeyToIndex.ContainsKey(messageKey)) return;
 
         CheckItem ci = new CheckItem
         {
@@ -50,6 +56,10 @@ public class CheckList : MonoBehaviour
 
         Debug.Log($"[CheckList] Added check: {itemText} (linked: {linkedFileName})");
     }
+
+
+
+
 
     // ============================================
     // 파일을 열었을 때 해당 파일에 매핑된 체크리스트를 완료 처리

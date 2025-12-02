@@ -64,4 +64,9 @@ public class InputManager : MonoBehaviour
         yield return new WaitForSeconds(wSwitchDelay);
         LockSInput(false);
     }
+    // 외부에서 S키 강제 트리거
+    public void TriggerS()
+    {
+        OnSPressed?.Invoke();
+    }
 }

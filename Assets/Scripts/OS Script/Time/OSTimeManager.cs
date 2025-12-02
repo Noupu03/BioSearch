@@ -55,7 +55,7 @@ public class OSTimeManager : MonoBehaviour
         }
     }
 
-    void UpdateDisplay()
+    public void UpdateDisplay()
     {
         // 12시간제 변환
         int displayHour = hour % 12;
