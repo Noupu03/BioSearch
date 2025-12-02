@@ -30,6 +30,7 @@ public class Folder
         this.linkedBodyButton = linkedButton;
     }
 
+    
     // 확률에 따라 이상 여부 결정 (자식 폴더 포함)
     /*public void AssignAbnormalByParameter()
     {
@@ -134,4 +135,5 @@ public class Folder
             file.parent = null;
         }
     }
+    public List<Exe> exes = new List<Exe>();
 }

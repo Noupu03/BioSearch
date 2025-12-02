@@ -66,6 +66,18 @@ public partial class FileWindow
             FileIcon icon = iconObj.GetComponent<FileIcon>();
             icon.Setup(file, this);
         }
+        if (folder.exes != null)
+        {
+            foreach (var exe in folder.exes)
+            {
+                GameObject exeObj = Instantiate(exeIconPrefab, contentArea);
+                ExeIcon exeIcon = exeObj.GetComponent<ExeIcon>();
+
+                // 여기서 반드시 Setup 호출
+                exeIcon.Setup(exe, this);
+            }
+        }
+
 
         // 뒤로가기 버튼 활성화
         if (backButton != null)

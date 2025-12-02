@@ -36,6 +36,13 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     /// <summary>
     /// 아이콘 초기화
     /// </summary>
+    /// 
+
+    public string FileName
+    {
+        get { return file != null ? file.name : string.Empty; }
+    }
+
     public void Setup(File File, FileWindow window)
     {
         file = File;
@@ -136,6 +143,13 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     {
         if (FolderDragManager.Instance != null)
             FolderDragManager.Instance.EndDrag();
+    }
+
+    // (선택적으로 버튼에서 직접 호출할 수 있는 메서드 제공)
+    public void OnClickIconButton()
+    {
+        // UI Button에서 이 메서드를 연결하면 동일 동작
+        fileWindow.SetSelectedFileIcon(this);
     }
 
     #endregion

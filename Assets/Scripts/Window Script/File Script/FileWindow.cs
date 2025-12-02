@@ -26,6 +26,11 @@ public partial class FileWindow : MonoBehaviour
     public FileDataSO fileDataSO;
 
 
+    [Header("ScriptableObject Exe List")]
+    public ExeDataSO exeDataSO;
+    public GameObject exeIconPrefab;
+
+
     [Header("UI Components (Prefab에서 연결됨)")]
     public Transform contentArea;
     public TMP_Text emptyText;
@@ -40,6 +45,7 @@ public partial class FileWindow : MonoBehaviour
     // 선택된 아이콘
     private FolderIcon selectedFolderIcon;
     private FileIcon selectedFileIcon;
+    private ExeIcon selectedExeIcon;
 
     // 폴더 및 파일 관리
     private Folder rootFolder;
@@ -52,6 +58,7 @@ public partial class FileWindow : MonoBehaviour
         rootFolder = new Folder("Root");
         CreateDefaultFolders();
         InitializeFilesFromSO();
+        InitializeExeFromSO();
         AssignAbnormalParameters(rootFolder);
 
         if (backButton != null)
@@ -228,4 +235,77 @@ public partial class FileWindow : MonoBehaviour
 
         Debug.Log("[FileWindow] 모든 파일 상태 초기화 완료");
     }
+
+    // EXE 아이콘 선택 함수 (ExeIcon 전용)
+    public void SetSelectedExeIcon(ExeIcon exeIcon)
+    {
+        if (exeIcon == null)
+        {
+            Debug.LogWarning("[FileWindow] SetSelectedExeIcon 호출됨, 하지만 exeIcon이 null입니다.");
+            return;
+        }
+
+        // 기존 파일/폴더 선택 해제
+        if (selectedFileIcon != null)
+        {
+            selectedFileIcon.SetSelected(false);
+            selectedFileIcon = null;
+        }
+        if (selectedFolderIcon != null)
+        {
+            selectedFolderIcon.SetSelected(false);
+            selectedFolderIcon = null;
+        }
+
+        // 기존 EXE 선택 해제
+        if (selectedExeIcon != null && selectedExeIcon != exeIcon)
+        {
+            selectedExeIcon.SetSelected(false);
+        }
+
+        selectedExeIcon = exeIcon;
+        selectedExeIcon.SetSelected(true);
+
+        Debug.Log("[FileWindow] EXE 아이콘 선택됨: " + (exeIcon != null && exeIcon.GetExe() != null ? exeIcon.GetExe().name : "(unknown)"));
+    }
+
+    private List<Exe> allExeList = new List<Exe>();
+
+    private void InitializeExeFromSO()
+    {
+        if (exeDataSO == null)
+        {
+            Debug.LogWarning("[FileWindow] exeDataSO가 비어 있습니다.");
+            return;
+        }
+
+        if (exeDataSO.exeDatas == null || exeDataSO.exeDatas.Count == 0)
+        {
+            Debug.Log("[FileWindow] exeDataSO 안에 EXE 데이터가 없습니다.");
+            return;
+        }
+
+        foreach (var data in exeDataSO.exeDatas)
+        {
+            Folder targetParent = FindFolderByName(rootFolder, data.parentFolderName);
+            if (targetParent == null)
+            {
+                Debug.LogWarning($"EXE 부모 폴더 '{data.parentFolderName}'을 찾을 수 없어 Root에 추가합니다.");
+                targetParent = rootFolder;
+            }
+
+            Exe exe = new Exe
+            {
+                name = data.exeName,
+                parent = targetParent,
+                exeContent = data.exeContent
+            };
+
+            allExeList.Add(exe);
+            targetParent.exes.Add(exe);
+        }
+
+        Debug.Log($"[FileWindow] InitializeExeFromSO: {exeDataSO.exeDatas.Count}개 EXE 로드 완료");
+    }
+
 }

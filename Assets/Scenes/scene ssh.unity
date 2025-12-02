@@ -1790,6 +1790,7 @@ GameObject:
   - component: {fileID: 693352167}
   - component: {fileID: 693352168}
   - component: {fileID: 693352169}
+  - component: {fileID: 693352170}
   m_Layer: 5
   m_Name: CanvasManager
   m_TagString: Untagged
@@ -1922,6 +1923,8 @@ MonoBehaviour:
   fileIconPrefab: {fileID: 2148310354490608959, guid: ba79f0571b26f804597d74c216fff8b6, type: 3}
   upButtonPrefab: {fileID: 7856131077749057725, guid: 7e50e978dcde1574c82c9676f3c521a0, type: 3}
   fileDataSO: {fileID: 11400000, guid: 00416af0d314f114ba456ec042e2c29f, type: 2}
+  exeDataSO: {fileID: 11400000, guid: 77b4f56102860a54e8639368e218b010, type: 2}
+  exeIconPrefab: {fileID: 2148310354490608959, guid: ffd32650548428d448437acda5a068ef, type: 3}
   contentArea: {fileID: 0}
   emptyText: {fileID: 0}
   pathPanelManager: {fileID: 0}
@@ -2059,6 +2062,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyPartsData: {fileID: 11400000, guid: 4e3aa65f747ed8d41939fcd338b67994, type: 2}
+--- !u!114 &693352170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693352153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f22134e3636ec1a4485532efcea182ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textGamePopupPrefab: {fileID: 456670268073674281, guid: 8996a5cc542551e4486342e7004cd8cd, type: 3}
+  canvasTransform: {fileID: 1152194526}
 --- !u!1 &708220948
 GameObject:
   m_ObjectHideFlags: 0
