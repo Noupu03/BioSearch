@@ -25,8 +25,12 @@ public partial class FileWindow
         selectedFolderIcon = null;
         selectedFileIcon = null;
 
-        // 콘텐츠 유무 확인
-        bool hasContent = (folder.children.Count > 0) || HasFilesInFolder(folder);
+        // 콘텐츠 유무 확인 (폴더, 파일, exe 모두 체크)
+        bool hasContent =
+            (folder.children.Count > 0) ||
+            HasFilesInFolder(folder) ||
+            (folder.exes != null && folder.exes.Count > 0);
+
         emptyText.gameObject.SetActive(!hasContent);
 
         // ---------------------------------------------

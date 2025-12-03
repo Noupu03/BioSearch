@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Mail
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 320d46ef3769bb44cb729bfdedc90623, type: 2}
   m_sharedMaterial: {fileID: -5327676744230259093, guid: 320d46ef3769bb44cb729bfdedc90623, type: 2}
@@ -297,6 +297,7 @@ GameObject:
   - component: {fileID: 8269958416917341405}
   - component: {fileID: 356793265376227005}
   - component: {fileID: 8451787431289732955}
+  - component: {fileID: 737690858629407378}
   m_Layer: 5
   m_Name: TopBar
   m_TagString: Untagged
@@ -362,6 +363,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &737690858629407378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2423727513306555787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6d76f219fc2e514da99a8d9d1780804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentWindow: {fileID: 1112100805922070217}
 --- !u!1 &2547223692037759414
 GameObject:
   m_ObjectHideFlags: 0
