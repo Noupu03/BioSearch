@@ -4087,7 +4087,7 @@ MonoBehaviour:
   timeManager: {fileID: 693352163}
   faxPrefab: {fileID: 5844519550629814756, guid: 388aa1cfadd423a4da8a65ca25d84d3d, type: 3}
   roomCamera: {fileID: 919113284}
-  spawnPosition: {x: 11.44147, y: -4001.347, z: 118.4432}
+  spawnPosition: {x: 0, y: 0, z: 0}
   faxUIButton: {fileID: 918165123}
   faxSchedule:
   - time:
@@ -4097,6 +4097,13 @@ MonoBehaviour:
       hour: 8
       minute: 10
     message: hello
+  - time:
+      year: 25
+      month: 1
+      day: 1
+      hour: 8
+      minute: 20
+    message: asdasdasd
 --- !u!114 &1369091292
 MonoBehaviour:
   m_ObjectHideFlags: 0
