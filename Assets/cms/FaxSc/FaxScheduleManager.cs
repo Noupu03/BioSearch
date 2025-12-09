@@ -32,13 +32,15 @@ public class FaxScheduleManager : MonoBehaviour
         {
             string key = targetTime.ToString();
 
-            if (!spawnedFax.Contains(key) && now >= targetTime)
+            // 정확히 같은 시간일 때에만 생성
+            if (!spawnedFax.Contains(key) && now.Equals(targetTime))
             {
                 SpawnFax();
                 spawnedFax.Add(key);
             }
         }
     }
+
 
     void SpawnFax()
     {

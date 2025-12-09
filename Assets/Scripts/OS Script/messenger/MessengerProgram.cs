@@ -4,7 +4,11 @@ using UnityEngine.UI;
 public class MessengerProgram : MonoBehaviour
 {
     public Button bossButton;
-    public Button predecessorButton;
+    public Button leeButton;
+    public Button seoButton;
+    public Button jooButton;
+    public Button parkButton;
+    public Button choiButton;
     public ProgramOpen programOpen;
     public Button submitButton;   // ★ 제출 버튼 추가
 
@@ -17,9 +21,17 @@ public class MessengerProgram : MonoBehaviour
     void Start()
     {
         if (bossButton != null)
-            bossButton.onClick.AddListener(() => OpenChat("상사"));
-        if (predecessorButton != null)
-            predecessorButton.onClick.AddListener(() => OpenChat("전임자"));
+            bossButton.onClick.AddListener(() => OpenChat("김부장"));
+        if (leeButton != null)
+            leeButton.onClick.AddListener(() => OpenChat("이대리"));
+        if (seoButton != null)
+            seoButton.onClick.AddListener(() => OpenChat("서주임"));
+        if (jooButton != null)
+            jooButton.onClick.AddListener(() => OpenChat("주인턴"));
+        if (parkButton != null)
+            parkButton.onClick.AddListener(() => OpenChat("박00"));
+        if (choiButton != null)
+            choiButton.onClick.AddListener(() => OpenChat("최00"));
         if (submitButton != null)
             submitButton.onClick.AddListener(OpenSubmitWindow); // ★ 추가
     }

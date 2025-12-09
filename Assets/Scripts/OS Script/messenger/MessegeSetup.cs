@@ -33,31 +33,31 @@ public class MessageSetup : MonoBehaviour
     private List<MessageTemplate> randomTemplates = new List<MessageTemplate>
     {
         new MessageTemplate(
-            "상사",
+            "김부장",
             "아마 슬슬 발전기에 녹이 슬었을거다. 해결 해라.",
             "발전기의 녹을 제거할 방법 찾기.",
             "녹슬었을때"
         ),
         new MessageTemplate(
-            "상사",
+            "김부장",
             "발전기 배터리를 교체할 때가 된거 같다. 교체할 방법을 찾아라.",
             "발전기 배터리를 교체할 방법 찾기.",
             "배터리교체방법"
         ),
         new MessageTemplate(
-            "상사",
+            "김부장",
             "발전기 내부 점검표 체크해라.",
             "발전기 내부 점검 보고서 확인하기.",
             "점검보고서"
         ),
         new MessageTemplate(
-            "상사",
+            "김부장",
             "엔진에서 이상 소리가 난다. 원인을 조사해라.",
             "엔진 이상 소음의 원인 찾기.",
             "엔진이상소음"
         ),
         new MessageTemplate(
-            "상사",
+            "김부장",
             "안전 매뉴얼을 다시 읽어봐라. 실수하지 말고.",
             "안전 매뉴얼 다시 읽기.",
             "안전매뉴얼"
@@ -95,7 +95,7 @@ public class MessageSetup : MonoBehaviour
         SpawnRandomScheduledMessage(t1);
 
         GameDateTime t2 = new GameDateTime(00, 1, 1, 8, 12);
-        scheduler.ScheduleMessage(new MessengerChatUI.MessageData(t2, "상사", "체크리스트 작성 꼭 하고."));
+        scheduler.ScheduleMessage(new MessengerChatUI.MessageData(t2, "김부장", "체크리스트 작성 꼭 하고."));
 
         scheduler.ScheduleRandomErrors(t1);
 

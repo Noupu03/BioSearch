@@ -13,22 +13,15 @@ public class MachinePartViewer : MonoBehaviour
     [SerializeField] private BodyPartsData bodyPartsData;
 
     [Header("각 BodyPart와 매핑될 버튼들")]
-    [SerializeField] private Button HeadBtn;
-    [SerializeField] private Button ChestBtn;
-    [SerializeField] private Button LeftUpperArmBtn;
-    [SerializeField] private Button LeftForeArmBtn;
-    [SerializeField] private Button LeftHandBtn;
-    [SerializeField] private Button RightUpperArmBtn;
-    [SerializeField] private Button RightForeArmBtn;
-    [SerializeField] private Button RightHandBtn;
-    [SerializeField] private Button StomachBtn;
-    [SerializeField] private Button PelvisBtn;
-    [SerializeField] private Button LeftThighBtn;
-    [SerializeField] private Button LeftCalfBtn;
-    [SerializeField] private Button LeftFootBtn;
-    [SerializeField] private Button RightThighBtn;
-    [SerializeField] private Button RightCalfBtn;
-    [SerializeField] private Button RightFootBtn;
+    [SerializeField] private Button br1Btn;
+    [SerializeField] private Button br2Btn;
+    [SerializeField] private Button br3Btn;
+    [SerializeField] private Button br4Btn;
+    [SerializeField] private Button br5Btn;
+    [SerializeField] private Button br6Btn;
+    //[SerializeField] private Button br7Btn;
+    [SerializeField] private Button br8Btn;
+    
 
     private Dictionary<string, Button> buttonDict;
 
@@ -43,22 +36,14 @@ public class MachinePartViewer : MonoBehaviour
     {
         buttonDict = new Dictionary<string, Button>
         {
-            { "Head", HeadBtn },
-            { "Chest", ChestBtn },
-            { "LeftUpperArm", LeftUpperArmBtn },
-            { "LeftForeArm", LeftForeArmBtn },
-            { "LeftHand", LeftHandBtn },
-            { "RightUpperArm", RightUpperArmBtn },
-            { "RightForeArm", RightForeArmBtn },
-            { "RightHand", RightHandBtn },
-            { "Stomach", StomachBtn },
-            { "Pelvis", PelvisBtn },
-            { "LeftThigh", LeftThighBtn },
-            { "LeftCalf", LeftCalfBtn },
-            { "LeftFoot", LeftFootBtn },
-            { "RightThigh", RightThighBtn },
-            { "RightCalf", RightCalfBtn },
-            { "RightFoot", RightFootBtn }
+            { "br1", br1Btn },
+            { "br2", br2Btn },
+            { "br3", br3Btn },
+            { "br4", br4Btn },
+            { "br5", br5Btn },
+            { "br6", br6Btn },
+            //{ "br7", br7Btn },
+            { "br8", br8Btn },
         };
     }
 
