@@ -1952,7 +1952,7 @@ MonoBehaviour:
   fileExplorerProgramPrefab: {fileID: 5264846252831550521, guid: ca25a31091e3b164e97dafc32d1e3d7c, type: 3}
   displayProgramPrefab: {fileID: 2247762015494164856, guid: b2ff817368c01414bbe80eff5f196254, type: 3}
   messengerProgramPrefab: {fileID: 7031407847737184872, guid: 97112371231850d4fb97edd79dbb959c, type: 3}
-  messengerWindowprefab: {fileID: 7254373067078824897, guid: 46c3b1448c1c9a745915aec6a4391d49, type: 3}
+  messengerWindowprefab: {fileID: 4024158673103815516, guid: a8fd70a231cedcf42a157b6a3f847c01, type: 3}
   xButtonPrefab: {fileID: 8310929312515220783, guid: 5fd46aeaf08fac641a6d44809228412d, type: 3}
   minimizeButtonPrefab: {fileID: 8310929312515220783, guid: 9bb0e596996c8e540b447259de4e1263, type: 3}
   taskbarArea: {fileID: 1637138340}
