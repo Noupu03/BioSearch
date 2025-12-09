@@ -8,7 +8,7 @@ public class OSTimeManager : MonoBehaviour
     public TextMeshProUGUI timeText;
 
     [Header("시작 날짜/시간")]
-    public int year = 25;
+    public int year = 0;
     public int month = 1;
     public int day = 1;
     public int hour = 8;
@@ -63,7 +63,7 @@ public class OSTimeManager : MonoBehaviour
         isAM = hour < 12;
 
         string ampm = isAM ? "am" : "pm";
-        string timeString = $"{year}/{month}/{day}  {displayHour:00}:{minute:00} {ampm}";
+        string timeString = $"200{year}/{month}/{day}  {displayHour:00}:{minute:00} {ampm}";
         if (timeText != null)
             timeText.text = timeString;
     }

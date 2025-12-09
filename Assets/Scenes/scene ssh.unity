@@ -1421,8 +1421,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 573, y: 1}
-  m_SizeDelta: {x: 130, y: 50}
+  m_AnchoredPosition: {x: 608, y: 1}
+  m_SizeDelta: {x: 140, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &496273164
 MonoBehaviour:
@@ -1444,7 +1444,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 25/1/1 08:00 am
+  m_text: 2000/1/1 08:00 am
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 320d46ef3769bb44cb729bfdedc90623, type: 2}
   m_sharedMaterial: {fileID: -5327676744230259093, guid: 320d46ef3769bb44cb729bfdedc90623, type: 2}
@@ -1509,7 +1509,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -67.77496, y: 0, z: -65.27444, w: 0}
+  m_margin: {x: -138.39412, y: 0, z: -65.27444, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1974,7 +1974,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeText: {fileID: 496273164}
-  year: 25
+  year: 0
   month: 1
   day: 1
   hour: 8
@@ -4133,7 +4133,7 @@ MonoBehaviour:
   spawnPosition: {x: 11.44147, y: -4001.347, z: 118.4432}
   faxUIButton: {fileID: 918165123}
   faxSchedule:
-  - year: 25
+  - year: 0
     month: 1
     day: 2
     hour: 8

@@ -91,16 +91,16 @@ public class MessageSetup : MonoBehaviour
         scheduler.ScheduleMessage(new MessengerChatUI.MessageData(t3, "전임자", "신입, 점심 같이 가자!"));
         기존 예시들..*/
 
-        GameDateTime t1 = new GameDateTime(25, 1, 1, 8, 10);
+        GameDateTime t1 = new GameDateTime(00, 1, 1, 8, 10);
         SpawnRandomScheduledMessage(t1);
 
-        GameDateTime t2 = new GameDateTime(25, 1, 1, 8, 12);
+        GameDateTime t2 = new GameDateTime(00, 1, 1, 8, 12);
         scheduler.ScheduleMessage(new MessengerChatUI.MessageData(t2, "상사", "체크리스트 작성 꼭 하고."));
 
         scheduler.ScheduleRandomErrors(t1);
 
-        GameDateTime t3 = new GameDateTime(25, 1, 1, 8, 30);
-        GameDateTime t4 = new GameDateTime(25, 1, 1, 21, 0);
+        GameDateTime t3 = new GameDateTime(00, 1, 1, 8, 30);
+        GameDateTime t4 = new GameDateTime(00, 1, 1, 21, 0);
         scheduler.ScheduleInitializeAllStates(t4);
 
 

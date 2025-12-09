@@ -8,7 +8,7 @@ public class SubmissionChecker : MonoBehaviour
     public ScoreData[] dailyScores;
     public OSTimeManager timeManager;
 
-    private const int baseYear = 25;
+    private const int baseYear = 0;
     private const int daysPerMonth = 31;
     private const int monthsPerYear = 12;
 
@@ -19,7 +19,7 @@ public class SubmissionChecker : MonoBehaviour
             dailyScores = new ScoreData[4000];
     }
 
-    // 기준일 25/01/01 기준으로 배열 인덱스 계산
+    // 기준일 00/01/01 기준으로 배열 인덱스 계산
     public int GetDateIndex(GameDateTime dt)
     {
         int yearDiff = dt.year - baseYear;

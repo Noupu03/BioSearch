@@ -30,7 +30,7 @@ public struct GameDateTime : IComparable<GameDateTime>
 
     public override string ToString()
     {
-        return $"{year}/{month}/{day} {hour:00}:{minute:00}";
+        return $"0{year}/{month}/{day} {hour:00}:{minute:00}";
     }
     public void NormalizeTime()
     {
