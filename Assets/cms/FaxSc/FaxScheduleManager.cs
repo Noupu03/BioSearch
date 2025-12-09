@@ -2,6 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class FaxScheduleEntry
+{
+    public GameDateTime time;      // 언제 도착하는지
+    [TextArea(3, 5)]
+    public string message;         // 이때 보여줄 팩스 내용
+}
+
 public class FaxScheduleManager : MonoBehaviour
 {
     [Header("게임 시간 관리자")]
@@ -16,68 +24,79 @@ public class FaxScheduleManager : MonoBehaviour
     [Header("팩스 생성 위치")]
     public Vector3 spawnPosition = Vector3.zero;
 
-    [Header("UI 버튼 (씬에 존재하는 버튼)")]
-    public Button faxUIButton;
+    [Header("씬에 있는 UI 버튼 (선택)")]
+    public Button faxUIButton;   // paxClickArea 안의 Button 넣어두면 됨
 
-    public List<GameDateTime> faxSchedule = new List<GameDateTime>();
-    private HashSet<string> spawnedFax = new HashSet<string>();
+    [Header("시간별 팩스 스케줄")]
+    public List<FaxScheduleEntry> faxSchedule = new List<FaxScheduleEntry>();
+
+
+
+    // 어떤 스케줄이 이미 생성됐는지 체크용
+    private HashSet<int> spawnedIndexes = new HashSet<int>();
 
     void Update()
     {
-        if (timeManager == null) return;
+        if (timeManager == null || faxPrefab == null) return;
 
         GameDateTime now = timeManager.GetCurrentGameTime();
 
-        foreach (var targetTime in faxSchedule)
+        for (int i = 0; i < faxSchedule.Count; i++)
         {
-            string key = targetTime.ToString();
+            if (spawnedIndexes.Contains(i))
+                continue;
 
-            if (!spawnedFax.Contains(key) && now >= targetTime)
+            FaxScheduleEntry entry = faxSchedule[i];
+
+            if (now >= entry.time)
             {
-                SpawnFax();
-                spawnedFax.Add(key);
+                SpawnFax(entry);
+                spawnedIndexes.Add(i);
             }
         }
     }
 
-    void SpawnFax()
+    //  여기서 실제 팩스 오브젝트 생성 + 메시지 주입 + 버튼 연결
+    void SpawnFax(FaxScheduleEntry entry)
     {
-        //  팩스 생성
         GameObject fax = Instantiate(faxPrefab, spawnPosition, Quaternion.identity);
-        Debug.Log($"[FAX] {fax.name} 생성됨!");
+        Debug.Log($"[FAX] 팩스 생성됨! 메시지: {entry.message}");
 
-        //  Viewer 연결
+        // 1) FaxViewer 기본 세팅
         FaxViewer viewer = fax.GetComponent<FaxViewer>();
         if (viewer != null)
         {
             viewer.viewCamera = roomCamera;
-            Debug.Log("[FAX] Viewer 카메라 연결 완료");
-        }
-        else
-        {
-            Debug.LogError("[FAX ERROR] FaxViewer 컴포넌트를 찾지 못함!");
         }
 
-        // 3) 삭제 버튼 처리 (world click delete)
+        // 2) 삭제 버튼 세팅 (있으면)
         FaxDeleteButton deleteBtn = fax.GetComponentInChildren<FaxDeleteButton>(true);
         if (deleteBtn != null)
         {
             deleteBtn.targetCamera = roomCamera;
             deleteBtn.faxObject = fax;
-            Debug.Log("[FAX] 삭제 버튼 세팅 완료");
         }
 
-        //  UI 버튼 자동 연결 (씬 버튼)
-        if (faxUIButton != null)
+        // 3)  메시지 UI에 꽂기
+        FaxMessageDisplay msgDisplay = fax.GetComponentInChildren<FaxMessageDisplay>(true);
+        if (msgDisplay != null)
         {
-            faxUIButton.onClick.RemoveAllListeners();
-            faxUIButton.onClick.AddListener(() => viewer.TriggerExpand());
-
-            Debug.Log($"[FAX UI] '{faxUIButton.name}' 버튼 → 새 FaxViewer에 자동 연결됨");
+            msgDisplay.SetMessage(entry.message);
         }
         else
         {
-            Debug.LogWarning("[FAX WARNING] UI 버튼이 배정되지 않음 → Inspector에 지정 필요");
+            Debug.LogWarning("[FAX] FaxMessageDisplay 컴포넌트를 찾을 수 없습니다.");
         }
+
+        // 4) (옵션) 씬 UI 버튼을 이 팩스에 연결
+        if (faxUIButton != null && viewer != null)
+        {
+            faxUIButton.onClick.RemoveAllListeners();
+            faxUIButton.onClick.AddListener(viewer.TriggerExpand);
+        }
+        Canvas canvas = fax.GetComponentInChildren<Canvas>(true);
+        if (canvas != null && canvas.renderMode == RenderMode.WorldSpace)
+            canvas.worldCamera = roomCamera;
+
     }
 }
