@@ -2220,6 +2220,7 @@ MonoBehaviour:
   targetHour: 8
   targetMinute: 0
   minutesPerFrame: 60
+  fadeSpeed: 2
 --- !u!1 &734832709
 GameObject:
   m_ObjectHideFlags: 0
@@ -4134,9 +4135,9 @@ MonoBehaviour:
   faxSchedule:
   - year: 25
     month: 1
-    day: 1
+    day: 2
     hour: 8
-    minute: 10
+    minute: 15
 --- !u!114 &1369091292
 MonoBehaviour:
   m_ObjectHideFlags: 0

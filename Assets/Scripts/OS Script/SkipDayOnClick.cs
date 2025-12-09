@@ -136,6 +136,12 @@ public class SkipDayOnClick : MonoBehaviour
             yield return null;
         }
 
+        if (skipOverlay != null)
+        {
+            Destroy(skipOverlay);
+            skipOverlay = null;
+        }
+
         Debug.Log($"[Skip Completed] 현재 시간: {target}");
     }
 }

@@ -45,9 +45,27 @@ public class FaxScheduleManager : MonoBehaviour
         //  팩스 생성
         GameObject fax = Instantiate(faxPrefab, spawnPosition, Quaternion.identity);
         Debug.Log($"[FAX] {fax.name} 생성됨!");
-
-        //  Viewer 연결
         FaxViewer viewer = fax.GetComponent<FaxViewer>();
+
+        // ------------------------------
+        // ScoreDisplayOnFax 연결
+        // ------------------------------
+        ScoreDisplayOnFax scoreUI = fax.GetComponent<ScoreDisplayOnFax>();
+        if (scoreUI != null)
+        {
+            // SubmissionChecker는 여기서 찾아 연결
+            SubmissionChecker checker = FindObjectOfType<SubmissionChecker>();
+            scoreUI.submissionChecker = checker;
+
+            // 스케줄된 날짜의 "전날 점수" 가 필요하므로
+            // SpawnFax 호출한 targetTime을 전달
+            if (faxSchedule.Count > 0)
+            {
+                GameDateTime target = timeManager.GetCurrentGameTime();
+                scoreUI.SetDate(target);
+            }
+        }
+
         if (viewer != null)
         {
             viewer.viewCamera = roomCamera;
@@ -80,4 +98,5 @@ public class FaxScheduleManager : MonoBehaviour
             Debug.LogWarning("[FAX WARNING] UI 버튼이 배정되지 않음 → Inspector에 지정 필요");
         }
     }
+
 }

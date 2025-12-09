@@ -26,7 +26,7 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
 
     // 기본 색상
     private Color normalColor = Color.white;   // 정상 파일: 하양
-    private Color abnormalColor = Color.red;   // 이상 파일: 빨강
+    //private Color abnormalColor = Color.red;   // 이상 파일: 빨강
     private Color selectedColor = Color.yellow;
     // 추가됨: 체크 상태 색상
     private Color checkedColor = Color.green;
@@ -79,7 +79,7 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
         else
         {
             //  선택 해제 시 다시 이상 여부 반영
-            fileNameText.color = file.isImportant ? abnormalColor : normalColor;
+            fileNameText.color = file.isImportant ? normalColor : normalColor;
         }
     }
 

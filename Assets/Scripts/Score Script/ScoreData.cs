@@ -10,4 +10,6 @@ public struct ScoreData
     public int partErrorCount;
     public int partCorrect;
     public int partWrong;
+
+    public char grade; // ¡ç µî±Þ (A/B/C)
 }

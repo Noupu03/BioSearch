@@ -20,7 +20,7 @@ public class SubmissionChecker : MonoBehaviour
     }
 
     // 기준일 25/01/01 기준으로 배열 인덱스 계산
-    private int GetDateIndex(GameDateTime dt)
+    public int GetDateIndex(GameDateTime dt)
     {
         int yearDiff = dt.year - baseYear;
         int monthDiff = dt.month - 1; // 1월 = 0
@@ -86,6 +86,9 @@ public class SubmissionChecker : MonoBehaviour
     // ------------------------------
     // 최종 날짜별 점수 저장
     // ------------------------------
+    // ------------------------------
+    // 최종 날짜별 점수 저장
+    // ------------------------------
     public void SaveTodayScore()
     {
         if (timeManager == null)
@@ -115,6 +118,9 @@ public class SubmissionChecker : MonoBehaviour
         int partCorrect = partStat.correctChecked;
         int partWrong = partError - partCorrect;
 
+        // ★ 등급 계산
+        char grade = CalculateGrade(fileMust, fileCorrect, fileWrong);
+
         // 저장
         dailyScores[idx] = new ScoreData
         {
@@ -124,9 +130,30 @@ public class SubmissionChecker : MonoBehaviour
 
             partErrorCount = partError,
             partCorrect = partCorrect,
-            partWrong = partWrong
+            partWrong = partWrong,
+
+            grade = grade // ★ 등급 저장
         };
 
-        Debug.Log($"[{idx}] 점수 저장 완료: 파일({fileCorrect}/{fileMust}), 부품({partCorrect}/{partError})");
+        Debug.Log($"[{idx}] 점수 저장 완료: 파일({fileCorrect}/{fileMust}/{fileWrong}), 부품({partCorrect}/{partError}/{partWrong}), 등급: {grade}");
+    }
+
+    private char CalculateGrade(int must, int correct, int wrong)
+    {
+        if (must > 0)
+        {
+            float ratio = (float)correct / must;
+
+            // A 등급
+            if (ratio == 1f && wrong == 0)
+                return 'A';
+
+            // B 등급
+            if (ratio >= 0.5f && wrong >= 1 && wrong <= 3)
+                return 'B';
+        }
+
+        // 그 외 모두 C
+        return 'C';
     }
 }
