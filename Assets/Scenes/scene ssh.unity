@@ -4138,6 +4138,31 @@ MonoBehaviour:
     day: 2
     hour: 8
     minute: 15
+  - year: 0
+    month: 1
+    day: 3
+    hour: 8
+    minute: 15
+  - year: 0
+    month: 1
+    day: 4
+    hour: 8
+    minute: 15
+  - year: 0
+    month: 1
+    day: 5
+    hour: 8
+    minute: 15
+  - year: 0
+    month: 1
+    day: 6
+    hour: 8
+    minute: 15
+  - year: 0
+    month: 1
+    day: 7
+    hour: 8
+    minute: 15
 --- !u!114 &1369091292
 MonoBehaviour:
   m_ObjectHideFlags: 0

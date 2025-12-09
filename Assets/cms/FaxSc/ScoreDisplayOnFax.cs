@@ -53,7 +53,7 @@ public class ScoreDisplayOnFax : MonoBehaviour
         if (currentDateTMP != null)
         {
             currentDateTMP.text = string.Format(
-                "{0}년 {1}월 {2}일",
+                "200{0}년 {1}월 {2}일",
                 prev.year, prev.month, prev.day
             );
         }
@@ -69,7 +69,7 @@ public class ScoreDisplayOnFax : MonoBehaviour
             idx >= submissionChecker.dailyScores.Length)
         {
             if (prevDayScoreTMP != null)
-                prevDayScoreTMP.text = "미제출";
+                prevDayScoreTMP.text = "미제출... \n총점: C";
             return;
         }
 
