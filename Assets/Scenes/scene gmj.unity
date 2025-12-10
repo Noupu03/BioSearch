@@ -685,6 +685,10 @@ MonoBehaviour:
   view2: {fileID: 614927673}
   leftView: {fileID: 661166835}
   rightView: {fileID: 1177477598}
+  rendererData: {fileID: 0}
+  featureName1: 
+  featureName2: 
+  switchDelay: 1.5
 --- !u!114 &919113287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -868,8 +872,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera1: {fileID: 919113284}
   camera2: {fileID: 1110581901}
-  targetCanvas: {fileID: 0}
-  targetInputField: {fileID: 0}
   switchDelay: 1.5
 --- !u!4 &1135300293
 Transform:
@@ -1714,6 +1716,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2876289037910213904, guid: fc5e1431f9a709e4c8054cf067820c28, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d41688f3a4a5de345b627f06e2717b14, type: 2}
+    - target: {fileID: 5771101776372714298, guid: fc5e1431f9a709e4c8054cf067820c28, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d41688f3a4a5de345b627f06e2717b14, type: 2}
+    - target: {fileID: 8144978005864726781, guid: fc5e1431f9a709e4c8054cf067820c28, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d41688f3a4a5de345b627f06e2717b14, type: 2}
     - target: {fileID: 8326405868422808681, guid: fc5e1431f9a709e4c8054cf067820c28, type: 3}
       propertyPath: m_Name
       value: Object_01
