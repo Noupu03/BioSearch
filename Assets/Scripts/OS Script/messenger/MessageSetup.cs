@@ -92,16 +92,16 @@ public class MessageSetup : MonoBehaviour
         기존 예시들..*/
 
         GameDateTime t1 = new GameDateTime(00, 1, 1, 8, 10);
-        SpawnRandomScheduledMessage(t1);
+        SpawnRandomScheduledMessage(t1);//탬플릿중에 하나 메시지 보내기
 
         GameDateTime t2 = new GameDateTime(00, 1, 1, 8, 12);
-        scheduler.ScheduleMessage(new MessengerChatUI.MessageData(t2, "김부장", "체크리스트 작성 꼭 하고."));
+        scheduler.ScheduleMessage(new MessengerChatUI.MessageData(t2, "김부장", "체크리스트 작성 꼭 하고."));//기능없는 일반 메시지
 
-        scheduler.ScheduleRandomErrors(t1);
+        scheduler.ScheduleRandomErrors(t1);//설계도 부품에 에러부품 생성하기
 
         GameDateTime t3 = new GameDateTime(00, 1, 1, 8, 30);
-        GameDateTime t4 = new GameDateTime(00, 1, 1, 21, 0);
-        scheduler.ScheduleInitializeAllStates(t4);
+        GameDateTime t4 = new GameDateTime(00, 1, 1, 23, 59);
+        scheduler.ScheduleInitializeAllStates(t4);//꼭 매일 하루 끝나기 전에 초기화해야함. 부품에러, 제출파일 지정 해제.
 
 
     }
