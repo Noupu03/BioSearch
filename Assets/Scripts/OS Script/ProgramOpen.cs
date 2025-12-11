@@ -58,7 +58,7 @@ public class ProgramOpen : MonoBehaviour
     void Start()
     {
         CreateDesktopIcons();
-        CreateTaskbarIcons();
+        //CreateTaskbarIcons();
     }
 
     // =========================================
@@ -99,7 +99,7 @@ public class ProgramOpen : MonoBehaviour
     // =========================================
     // TASKBAR 아이콘 생성
     // =========================================
-    void CreateTaskbarIcons()
+    /*void CreateTaskbarIcons()
     {
         var taskbarIconInfos = new List<(GameObject iconPrefab, GameObject programPrefab)>
         {
@@ -131,7 +131,7 @@ public class ProgramOpen : MonoBehaviour
                 OpenProgram(capturedPrefab);
             });
         }
-    }
+    }*/
 
     // =========================================
     // PROGRAM OPEN
