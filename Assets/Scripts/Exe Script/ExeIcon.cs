@@ -14,7 +14,7 @@ public class ExeIcon : MonoBehaviour, IPointerClickHandler
     private FileWindow fileWindow;
 
     // 선택 텍스트 색상
-    private Color normalColor = Color.white;
+    private Color normalColor = Color.black;
     private Color selectedColor = Color.yellow;
 
     // 더블클릭 처리

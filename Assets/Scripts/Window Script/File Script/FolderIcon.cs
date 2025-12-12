@@ -22,7 +22,7 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
     private Folder folder;
 
     // 선택되지 않았을 때의 색상
-    private Color normalColor = Color.white;
+    private Color normalColor = Color.black;
 
     // 선택되었을 때의 색상
     private Color selectedColor = Color.yellow;
