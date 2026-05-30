@@ -8,9 +8,9 @@ using System;
 public class SelectPopup : MonoBehaviour
 {
     [Header("버튼")]
-    public Button yesButton;
-    public Button noButton;
-    public Button closeButton;
+    [SerializeField] private Button yesButton;
+    [SerializeField] private Button noButton;
+    [SerializeField] private Button closeButton;
 
     public event Action OnYesClicked;
     public event Action OnClosed;

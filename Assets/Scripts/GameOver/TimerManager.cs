@@ -4,10 +4,10 @@ using TMPro;
 public class TimerManager : MonoBehaviour
 {
     [Header("UI")]
-    public TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI timerText;
 
     [Header("설정")]
-    public float totalTime = 60f;
+    [SerializeField] private float totalTime = 60f;
 
     private float currentTime;
     private bool  isRunning;

@@ -67,7 +67,11 @@ public class BodyPartViewer : MonoBehaviour
         Folder target = fw.GetRootFolder();
         foreach (var node in path)
         {
-            target = target?.children.Find(f => f.name == node);
+            if (target == null) break;
+            Folder next = null;
+            foreach (var child in target.children)
+                if (child.name == node) { next = child; break; }
+            target = next;
             if (target == null) return;
         }
 

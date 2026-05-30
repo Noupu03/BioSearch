@@ -5,7 +5,7 @@ using System.Collections;
 public class GameOverManager : MonoBehaviour
 {
     [Header("설정")]
-    public string startSceneName = "StartScene";
+    [SerializeField] private string startSceneName = "StartScene";
 
     private bool isGameOver;
 

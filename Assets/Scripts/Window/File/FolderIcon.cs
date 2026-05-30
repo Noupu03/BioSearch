@@ -5,87 +5,87 @@ using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
-/// FolderIcon Å¬·¡½º
-/// - Æú´õ ¾ÆÀÌÄÜÀÇ ½Ã°¢Àû Ç¥½Ã, ¼±ÅÃ »óÅÂ, µå·¡±× & µå·Ó, Å¬¸¯ ÀÌº¥Æ® µîÀ» °ü¸®ÇÔ
-/// - FileWindow ¹× Folder °´Ã¼¿Í ¿¬µ¿µÇ¾î ÀÛµ¿ÇÔ
+/// FolderIcon Å¬ï¿½ï¿½ï¿½ï¿½
+/// - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½å·¡ï¿½ï¿½ & ï¿½ï¿½ï¿½, Å¬ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+/// - FileWindow ï¿½ï¿½ Folder ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½Ûµï¿½ï¿½ï¿½
 /// </summary>
 public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    // Æú´õ ÀÌ¸§À» Ç¥½ÃÇÏ´Â TMP ÅØ½ºÆ®
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ï¿½Ï´ï¿½ TMP ï¿½Ø½ï¿½Æ®
     public TMP_Text fileNameText;
 
-    // Æú´õ°¡ ¼ÓÇÑ FileWindow ÂüÁ¶
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ FileWindow ï¿½ï¿½ï¿½ï¿½
     private FileWindow fileWindow;
 
-    // ½ÇÁ¦ Æú´õ µ¥ÀÌÅÍ(Folder Å¬·¡½º)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Folder Å¬ï¿½ï¿½ï¿½ï¿½)
     private Folder folder;
 
-    // ¼±ÅÃµÇÁö ¾Ê¾ÒÀ» ¶§ÀÇ »ö»ó
+    // ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ ï¿½Ê¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Color normalColor = Color.white;
 
-    // ¼±ÅÃµÇ¾úÀ» ¶§ÀÇ »ö»ó
+    // ï¿½ï¿½ï¿½ÃµÇ¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Color selectedColor = Color.yellow;
 
     /// <summary>
-    /// FolderIcon ÃÊ±â ¼³Á¤
+    /// FolderIcon ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
-    /// <param name="folder">¿¬°áÇÒ Folder °´Ã¼</param>
-    /// <param name="window">¿¬°áÇÒ FileWindow °´Ã¼</param>
-    /// <param name="parentAbnormal">»óÀ§ Æú´õ°¡ ºñÁ¤»ó »óÅÂÀÎÁö ¿©ºÎ</param>
+    /// <param name="folder">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Folder ï¿½ï¿½Ã¼</param>
+    /// <param name="window">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ FileWindow ï¿½ï¿½Ã¼</param>
+    /// <param name="parentAbnormal">ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½</param>
     public void Setup(Folder folder, FileWindow window, bool parentAbnormal = false)
     {
         this.folder = folder;
         this.fileWindow = window;
 
-        // ÇöÀç Æú´õ ¶Ç´Â ºÎ¸ð Æú´õ Áß ÇÏ³ª¶óµµ ºñÁ¤»ó(abnormal)ÀÏ °æ¿ì
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(abnormal)ï¿½ï¿½ ï¿½ï¿½ï¿½
         bool isAbnormal = parentAbnormal || folder.isAbnormal;
 
-        // Æú´õ ÀÌ¸§ Ç¥½Ã
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ Ç¥ï¿½ï¿½
         if (fileNameText != null)
             fileNameText.text = folder.name;
 
-        // ÃÊ±â¿¡´Â ¼±ÅÃµÇÁö ¾ÊÀº »óÅÂ
+        // ï¿½Ê±â¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         SetSelected(false);
 
-        // ºñÁ¤»ó Æú´õÀÇ °æ¿ì ÆùÆ® »ö»óÀ» »¡°£»öÀ¸·Î Ç¥½Ã
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
         if (fileNameText != null && isAbnormal)
             fileNameText.color = Color.red;
     }
 
     /// <summary>
-    /// ÇöÀç ¾ÆÀÌÄÜÀÌ ÂüÁ¶ÇÏ´Â Folder °´Ã¼ ¹ÝÈ¯
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Folder ï¿½ï¿½Ã¼ ï¿½ï¿½È¯
     /// </summary>
     public Folder GetFolder() => folder;
 
     /// <summary>
-    /// ¼±ÅÃ »óÅÂ¸¦ Ç¥½Ã »ö»óÀ¸·Î ¹Ý¿µ
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½
     /// </summary>
     public void SetSelected(bool selected)
     {
         if (fileNameText == null) return;
-        if (folder != null && folder.isAbnormal) return; // ºñÁ¤»ó Æú´õ´Â »ö»ó º¯°æ X
+        if (folder != null && folder.isAbnormal) return; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ X
         fileNameText.color = selected ? selectedColor : normalColor;
     }
 
     /// <summary>
-    /// Æú´õ ¾ÆÀÌÄÜ Å¬¸¯ ½Ã µ¿ÀÛ
-    /// - ÇÑ ¹ø Å¬¸¯: ¼±ÅÃ
-    /// - µÎ ¹ø Å¬¸¯: Æú´õ ¿­±â
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    /// - ï¿½ï¿½ ï¿½ï¿½ Å¬ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+    /// - ï¿½ï¿½ ï¿½ï¿½ Å¬ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
-        fileWindow.SetSelectedIcon(this); // ¼±ÅÃ Ã³¸®
+        fileWindow.SetSelectedIcon(this); // ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 
-        // ´õºí Å¬¸¯ ½Ã Æú´õ ¿­±â
+        // ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (eventData.clickCount == 2)
             fileWindow.OpenFolder(folder);
     }
 
-    #region µå·¡±× ±¸Çö
+    #region ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     /// <summary>
-    /// µå·¡±× ½ÃÀÛ ½Ã È£Ãâ
+    /// ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½
     /// </summary>
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -93,7 +93,7 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
     }
 
     /// <summary>
-    /// µå·¡±× Áß ¸¶¿ì½º ÀÌµ¿ Ã³¸®
+    /// ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ì½º ï¿½Ìµï¿½ Ã³ï¿½ï¿½
     /// </summary>
     public void OnDrag(PointerEventData eventData)
     {
@@ -101,7 +101,7 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
     }
 
     /// <summary>
-    /// µå·¡±× Á¾·á ½Ã Ã³¸®
+    /// ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ã³ï¿½ï¿½
     /// </summary>
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -111,79 +111,69 @@ public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
     #endregion
 
     /// <summary>
-    /// Æú´õ À§·Î ´Ù¸¥ ¾ÆÀÌÄÜÀÌ µå·ÓµÉ ¶§ Ã³¸®
-    /// - Æú´õ¸¦ µå·ÓÇÑ °æ¿ì: Æú´õ ÀÌµ¿
-    /// - ÆÄÀÏÀ» µå·ÓÇÑ °æ¿ì: ÆÄÀÏ ÀÌµ¿
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½ ï¿½ï¿½ Ã³ï¿½ï¿½
+    /// - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
+    /// - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
     /// </summary>
     public void OnDrop(PointerEventData eventData)
     {
         // -----------------------------
-        // 1. Æú´õ µå·Ó Ã³¸®
+        // 1. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         // -----------------------------
         FolderIcon draggedFolderIcon = eventData.pointerDrag?.GetComponent<FolderIcon>();
         if (draggedFolderIcon != null)
         {
-            Folder source = draggedFolderIcon.GetFolder(); // ÀÌµ¿µÇ´Â Æú´õ
-            Folder target = folder; // µå·Ó ´ë»ó Æú´õ
+            Folder source = draggedFolderIcon.GetFolder(); // ï¿½Ìµï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½
+            Folder target = folder; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
             string warning;
-            // Æú´õ ÀÌµ¿ °¡´É ¿©ºÎ °Ë»ç (¼øÈ¯ ÂüÁ¶ µî ¹æÁö)
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ (ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
             if (!FolderDepthUtility.CanMove(source, target, out warning))
             {
                 LogWindowManager.Instance.Log(warning);
                 return;
             }
 
-            // ±âÁ¸ ºÎ¸ð Æú´õ¿¡¼­ Á¦°Å
-            if (source.parent != null)
-                source.parent.children.Remove(source);
+            source.parent?.RemoveChild(source);
+            target.AddChild(source);
 
-            // »õ ºÎ¸ð Æú´õ¿¡ Ãß°¡
-            target.children.Add(source);
-            source.parent = target;
+            // ï¿½Î±ï¿½ ï¿½ï¿½ï¿½
+            LogWindowManager.Instance.Log($"ï¿½ï¿½ï¿½ï¿½ '{source.name}' ï¿½ï¿½ '{target.name}' ï¿½Ìµï¿½ï¿½ï¿½");
 
-            // ·Î±× Ãâ·Â
-            LogWindowManager.Instance.Log($"Æú´õ '{source.name}' ¡æ '{target.name}' ÀÌµ¿µÊ");
-
-            // µå·¡±× °­Á¦ Á¾·á ¹× UI ¾÷µ¥ÀÌÆ®
+            // ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
             FolderDragManager.Instance.ForceEndDrag();
             fileWindow.StartCoroutine(OpenFolderNextFrame(target));
             return;
         }
 
         // -----------------------------
-        // 2. ÆÄÀÏ µå·Ó Ã³¸®
+        // 2. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         // -----------------------------
         FileIcon draggedFileIcon = eventData.pointerDrag?.GetComponent<FileIcon>();
         if (draggedFileIcon != null)
         {
-            File file = draggedFileIcon.GetFile(); // ÀÌµ¿µÇ´Â ÆÄÀÏ
-            Folder target = folder; // µå·Ó ´ë»ó Æú´õ
+            File file = draggedFileIcon.GetFile(); // ï¿½Ìµï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½
+            Folder target = folder; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-            // ±âÁ¸ ºÎ¸ð Æú´õ¿¡¼­ Á¦°Å
-            if (file.parent != null)
-                file.parent.files.Remove(file);
+            file.parent?.RemoveFile(file);
+            target.AddFile(file);
 
-            // »õ ºÎ¸ð Æú´õ¿¡ Ãß°¡
-            target.files.Add(file);
-            file.parent = target;
+            // ï¿½Î±ï¿½ ï¿½ï¿½ï¿½
+            LogWindowManager.Instance.Log($"ï¿½ï¿½ï¿½ï¿½ '{file.name}.{file.extension}' ï¿½ï¿½ '{target.name}' ï¿½Ìµï¿½ï¿½ï¿½");
 
-            // ·Î±× Ãâ·Â
-            LogWindowManager.Instance.Log($"ÆÄÀÏ '{file.name}.{file.extension}' ¡æ '{target.name}' ÀÌµ¿µÊ");
-
-            // µå·¡±× °­Á¦ Á¾·á ¹× UI °»½Å
+            // ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½
             FolderDragManager.Instance.ForceEndDrag();
-            fileWindow.RefreshWindow(); // ÆÄÀÏ ÀÌµ¿ ÈÄ UI °»½Å
+            fileWindow.RefreshWindow(); // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½
         }
     }
 
     /// <summary>
-    /// ´ÙÀ½ ÇÁ·¹ÀÓ¿¡ Æú´õ¸¦ ¿©´Â ÄÚ·çÆ¾
-    /// - Áï½Ã ¿­¸é µå·¡±× ÀÌº¥Æ® Ã³¸®¿Í Ãæµ¹ °¡´É¼ºÀÌ ÀÖÀ½
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½Æ¾
+    /// - ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½å·¡ï¿½ï¿½ ï¿½Ìºï¿½Æ® Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½É¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private IEnumerator OpenFolderNextFrame(Folder target)
     {
-        yield return null; // ÇÑ ÇÁ·¹ÀÓ ´ë±â
+        yield return null; // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         fileWindow.OpenFolder(target, false);
     }
     // FolderIcon.cs

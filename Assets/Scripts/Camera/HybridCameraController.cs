@@ -6,27 +6,27 @@ using System.Collections;
 public class HybridCameraController : MonoBehaviour
 {
     [Header("Cameras")]
-    public Camera camera1;
-    public Camera camera2;
+    [SerializeField] private Camera camera1;
+    [SerializeField] private Camera camera2;
 
     [Header("Camera Views (Camera2 Only)")]
-    public Transform view2;
-    public Transform leftView;
-    public Transform rightView;
+    [SerializeField] private Transform view2;
+    [SerializeField] private Transform leftView;
+    [SerializeField] private Transform rightView;
 
     [Header("Camera Movement")]
-    public float transitionSpeed = 5f;
-    public float defaultFOV = 60f;
-    public float zoomFOV = 40f;
+    [SerializeField] private float transitionSpeed = 5f;
+    [SerializeField] private float defaultFOV      = 60f;
+    [SerializeField] private float zoomFOV         = 40f;
 
     [Header("Switch Settings")]
-    public float switchDelay = 1.5f; // W µô·¹ÀÌ
-    private bool wPressed = false;
+    [SerializeField] private float switchDelay = 1.5f;
+    private bool  wPressed     = false;
     private float wPressedTime = 0f;
 
     [Header("UI")]
-    public Canvas targetCanvas;
-    public TMP_InputField targetInputField;
+    [SerializeField] private Canvas          targetCanvas;
+    [SerializeField] private TMP_InputField  targetInputField;
 
     private Camera activeCamera;
     private Transform currentView;
@@ -63,7 +63,7 @@ public class HybridCameraController : MonoBehaviour
 
     private void HandleKeyInput()
     {
-        // W Å° ´­¸² (camera1 ¡æ camera2)
+        // W Å° ï¿½ï¿½ï¿½ï¿½ (camera1 ï¿½ï¿½ camera2)
         if (activeCamera == camera1)
         {
             if (Input.GetKeyDown(KeyCode.W))
@@ -84,13 +84,13 @@ public class HybridCameraController : MonoBehaviour
             }
         }
 
-        // S Å° ´­¸² (camera2 ¡æ camera1)
+        // S Å° ï¿½ï¿½ï¿½ï¿½ (camera2 ï¿½ï¿½ camera1)
         if (activeCamera == camera2 && Input.GetKeyDown(KeyCode.S))
         {
             SwitchFrom2To1();
         }
 
-        // camera2ÀÏ ¶§¸¸ ÁÂ/¿ì ÀÌµ¿
+        // camera2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½/ï¿½ï¿½ ï¿½Ìµï¿½
         if (activeCamera == camera2 && inView2)
         {
             if (Input.GetKeyDown(KeyCode.A))
@@ -98,7 +98,7 @@ public class HybridCameraController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.D))
                 HandleSideView(rightView);
             if (Input.GetKeyDown(KeyCode.W))
-                ZoomView(); // W·Î zoom FOV °¡´É
+                ZoomView(); // Wï¿½ï¿½ zoom FOV ï¿½ï¿½ï¿½ï¿½
         }
     }
 
@@ -120,7 +120,7 @@ public class HybridCameraController : MonoBehaviour
 
     private void ZoomView()
     {
-        currentView = currentView; // ±×´ë·Î À§Ä¡ À¯Áö
+        currentView = currentView; // ï¿½×´ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
         targetFOV = zoomFOV;
     }
 

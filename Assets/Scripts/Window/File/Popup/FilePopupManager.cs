@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 /// <summary>
@@ -43,7 +42,6 @@ public class FilePopupManager : MonoBehaviour
         {
             popup.Initialize(file.name, file.extension, canvas);
             popup.SetFileKey(file.name);
-            SetupDragTrigger(popup);
         }
 
         go.transform.SetAsLastSibling();
@@ -69,28 +67,7 @@ public class FilePopupManager : MonoBehaviour
     public bool IsPopupOpen(string fileName) => openPopups.ContainsKey(fileName);
 
     // ── 내부 헬퍼 ────────────────────────────────
-
-    private static void SetupDragTrigger(FilePopup popup)
-    {
-        if (popup.topBar == null) return;
-
-        var trigger = popup.topBar.gameObject.GetComponent<EventTrigger>()
-                   ?? popup.topBar.gameObject.AddComponent<EventTrigger>();
-        trigger.triggers.Clear();
-
-        AddTrigger(trigger, EventTriggerType.PointerDown,
-            d => popup.OnTopBarPointerDown((BaseEventData)d));
-        AddTrigger(trigger, EventTriggerType.Drag,
-            d => popup.OnTopBarDrag((BaseEventData)d));
-    }
-
-    private static void AddTrigger(EventTrigger trigger, EventTriggerType type,
-        UnityEngine.Events.UnityAction<BaseEventData> action)
-    {
-        var entry = new EventTrigger.Entry { eventID = type };
-        entry.callback.AddListener(d => action((BaseEventData)d));
-        trigger.triggers.Add(entry);
-    }
+    // 드래그 처리는 FilePopup.Initialize() 내에서 DragHandler 컴포넌트가 담당한다.
 
     private static void SetupContent(GameObject go, File file)
     {

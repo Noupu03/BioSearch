@@ -3,78 +3,57 @@ using System.Collections;
 
 public class GameStateManager : MonoBehaviour
 {
-    public enum GameState
-    {
-        Normal,
-        EscapePreparing,
-        Escape,
-        Overwhelmed
-    }
+    public static GameStateManager Instance { get; private set; }
 
-    public GameState currentState = GameState.Normal;
-    public float escapeDelay = 3f;
+    public enum GameState { Normal, EscapePreparing, Escape, Overwhelmed }
 
-    public EscapePatternSimple escapeMover; 
+    [SerializeField] private GameState           currentState = GameState.Normal;
+    [SerializeField] private float               escapeDelay  = 3f;
+    [SerializeField] private EscapePatternSimple escapeMover;
 
     private Coroutine escapeCoroutine;
+
+    void Awake()
+    {
+        if (Instance != null) { Destroy(gameObject); return; }
+        Instance = this;
+    }
+
+    void OnDestroy() { if (Instance == this) Instance = null; }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E) && currentState == GameState.Normal)
         {
             ChangeState(GameState.EscapePreparing);
-
             if (escapeCoroutine != null) StopCoroutine(escapeCoroutine);
             escapeCoroutine = StartCoroutine(EscapeDelayCoroutine());
         }
     }
 
-
-    void ChangeState(GameState newState)
+    private void ChangeState(GameState newState)
     {
         currentState = newState;
-        Debug.Log("[GameStateManager] ªÛ≈¬ ∫Ø∞Ê: " + currentState);
+        Debug.Log("[GameStateManager] ÏÉÅÌÉú Î≥ÄÍ≤Ω: " + currentState);
 
         switch (currentState)
         {
-            case GameState.Normal:
-                if (escapeMover != null)
-                    escapeMover.MoveBack();
-                break;
-
-            case GameState.EscapePreparing:
-
-                break;
-
-            case GameState.Escape:
-
-                if (escapeMover != null)
-                    escapeMover.MoveToEscape();
-                break;
+            case GameState.Normal:  escapeMover?.MoveBack();       break;
+            case GameState.Escape:  escapeMover?.MoveToEscape();   break;
         }
     }
 
-    IEnumerator EscapeDelayCoroutine()
+    private IEnumerator EscapeDelayCoroutine()
     {
         yield return new WaitForSeconds(escapeDelay);
-   
         escapeCoroutine = null;
-
         if (currentState == GameState.EscapePreparing)
             ChangeState(GameState.Escape);
     }
 
-   
     public void RequestCancelEscape()
     {
-        if (escapeCoroutine != null)
-        {
-            StopCoroutine(escapeCoroutine);
-            escapeCoroutine = null;
-        }
-
-        
+        if (escapeCoroutine != null) { StopCoroutine(escapeCoroutine); escapeCoroutine = null; }
         ChangeState(GameState.Normal);
-        Debug.Log("[GameStateManager] RequestCancelEscape »£√‚ - Normal∑Œ ¿¸»Ø");
     }
 }

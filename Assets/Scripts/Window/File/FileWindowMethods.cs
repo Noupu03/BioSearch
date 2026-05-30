@@ -159,15 +159,13 @@ public partial class FileWindow
     /// <summary>
     /// ���� ���ŷ¿� ���� �̻� Ȯ�� ��ȯ
     /// </summary>
-    private float GetAbnormalProbabilityBySanity()
+    private static float GetAbnormalProbabilityBySanity()
     {
         float sanity = SanityManager.currentSanityStatic;
 
-        // 0이면 SanityManager가 아직 초기화되지 않은 것 → 최소 확률 사용
-        if (sanity <= 0f) return 0.03f;
-
-        if (sanity >= 70f) return 0.03f;
-        else if (sanity >= 30f) return 0.08f;
-        else return 0.2f;
+        if (sanity <= 0f)  return GameConfig.AbnormalChanceHigh; // 미초기화 시 최소 확률
+        if (sanity >= 70f) return GameConfig.AbnormalChanceHigh;
+        if (sanity >= 30f) return GameConfig.AbnormalChanceMid;
+        return               GameConfig.AbnormalChanceLow;
     }
 }

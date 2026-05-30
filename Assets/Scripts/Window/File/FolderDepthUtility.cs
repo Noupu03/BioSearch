@@ -1,51 +1,33 @@
-using System.Collections.Generic;
-using UnityEngine;
-
 public static class FolderDepthUtility
 {
-    // ÇöÀç Æú´õ ±íÀÌ °è»ê (·çÆ® Æ÷ÇÔ, ·çÆ®°¡ depth 1)
     public static int GetFolderDepth(Folder folder)
     {
-        int depth = 1; // ·çÆ® ½ÃÀÛ
+        int depth = 1;
         Folder temp = folder;
-        while (temp.parent != null)
-        {
-            depth++;
-            temp = temp.parent;
-        }
+        while (temp.parent != null) { depth++; temp = temp.parent; }
         return depth;
     }
 
-    // ÇÏÀ§ Æ®¸®ÀÇ ÃÖ´ë ±íÀÌ °è»ê (ÀÚ±â ÀÚ½Å Æ÷ÇÔ ¾È ÇÔ)
     public static int GetSubtreeMaxDepth(Folder folder)
     {
-        if (folder.children == null || folder.children.Count == 0)
-            return 0;
-
-        int maxDepth = 0;
+        int max = 0;
         foreach (var child in folder.children)
         {
-            int childDepth = 1 + GetSubtreeMaxDepth(child);
-            if (childDepth > maxDepth)
-                maxDepth = childDepth;
+            int d = 1 + GetSubtreeMaxDepth(child);
+            if (d > max) max = d;
         }
-        return maxDepth;
+        return max;
     }
 
-    // ÀÌµ¿ ½Ã »õ·Î¿î ±íÀÌ¸¦ °è»ê
-    public static bool CanMove(Folder dragged, Folder target, out string warningMessage)
+    public static bool CanMove(Folder dragged, Folder target, out string warning)
     {
-        int targetDepth = GetFolderDepth(target);              // ´ë»ó Æú´õ ±íÀÌ
-        int subtreeDepth = 1 + GetSubtreeMaxDepth(dragged);    // µå·¡±×µÈ Æú´õ Æ÷ÇÔ ÇÏÀ§ ±íÀÌ
-        int newDepth = targetDepth + subtreeDepth;
-
-        if (newDepth > 6)
+        int newDepth = GetFolderDepth(target) + 1 + GetSubtreeMaxDepth(dragged);
+        if (newDepth > GameConfig.MaxFolderDepth)
         {
-            warningMessage = "Warning. ÃÖ´ë ±íÀÌ(6) ÃÊ°ú.";
+            warning = $"ìµœëŒ€ í´ë” ê¹Šì´({GameConfig.MaxFolderDepth})ë¥¼ ì´ˆê³¼í•©ë‹ˆë‹¤.";
             return false;
         }
-
-        warningMessage = null;
+        warning = null;
         return true;
     }
 }

@@ -2,101 +2,110 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 
 /// <summary>
-/// ·Î±× Ãâ·Â ¹× ¸í·É¾î ÀÔ·Â °ü¸®
-/// - ¸Ş½ÃÁö Å¥ ±â¹İ Ãâ·Â (Å¸ÀÌÇÎ È¿°ú)
-/// - ÃÖ´ë ¶óÀÎ ¼ö °ü¸®
-/// - ÀÔ·Â ÇÊµå ºñÈ°¼ºÈ­/È°¼ºÈ­ Áö¿ø
+/// ë¡œê·¸ ì°½ ë° ëª…ë ¹ì–´ ì…ë ¥ ê´€ë¦¬.
+/// - ë©”ì‹œì§€ í ì²˜ë¦¬ (íƒ€ì´í•‘ íš¨ê³¼)
+/// - ìµœëŒ€ ì¤„ ìˆ˜ ì œí•œ
+/// - ì…ë ¥ í•„ë“œ í™œì„±í™”/ë¹„í™œì„±í™”
 /// </summary>
 public class LogWindowManager : MonoBehaviour
 {
-    public static LogWindowManager Instance;
+    public static LogWindowManager Instance { get; private set; }
 
-    [Header("UI References")]
-    public TMP_Text logText;
-    public TMP_InputField inputField;
-    public ScrollRect scrollRect;
+    [Header("UI")]
+    [SerializeField] private TMP_Text       logText;
+    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private ScrollRect     scrollRect;
 
-    [Header("Settings")]
-    public int maxLines = 50;
-    public float charDelay = 0.01f;
+    [Header("ì„¤ì •")]
+    [SerializeField] private int   maxLines  = GameConfig.LogMaxLines;
+    [SerializeField] private float charDelay = 0.01f;
 
-    private string[] lines;
-    private int currentLine = 0;
+    private string[]      lines;
+    private int           currentLine;
     private StringBuilder sb;
+    private bool          needsScroll;
+    private bool          isTyping;
 
-    private bool autoScroll = false;
-    private bool userScrolling = false;
+    private readonly System.Collections.Generic.Queue<string> messageQueue =
+        new System.Collections.Generic.Queue<string>();
 
-    private readonly Queue<string> messageQueue = new Queue<string>();
-    private bool isTyping = false;
+    public event System.Action<string> OnScanCommandEntered;
+    public event System.Action<string> OnExtenseCommandEntered;
 
-    public delegate void ScanCommandHandler(string folderName);
-    public event ScanCommandHandler OnScanCommandEntered;
-
-    public delegate void ExtenseCommandHandler(string args);
-    public event ExtenseCommandHandler OnExtenseCommandEntered;
-
-    private void Awake()
+    void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance != null) { Destroy(gameObject); return; }
+        Instance = this;
 
         lines = new string[maxLines];
-        sb = new StringBuilder();
+        sb    = new StringBuilder();
 
         logText.text = "";
-        inputField.onSubmit.AddListener(OnInputSubmitted);
-        inputField.ActivateInputField();
 
         if (scrollRect == null)
             scrollRect = GetComponentInChildren<ScrollRect>();
 
         scrollRect.movementType = ScrollRect.MovementType.Elastic;
-        scrollRect.inertia = true;
-        scrollRect.content = logText.rectTransform;
-        scrollRect.onValueChanged.AddListener(_ => userScrolling = true);
+        scrollRect.inertia      = true;
+        scrollRect.content      = logText.rectTransform;
 
-        logText.rectTransform.pivot = new Vector2(0, 0);
+        logText.rectTransform.pivot     = new Vector2(0, 0);
         logText.rectTransform.anchorMin = new Vector2(0, 0);
         logText.rectTransform.anchorMax = new Vector2(1, 0);
 
+        inputField.onSubmit.AddListener(OnInputSubmitted);
+        // í…ìŠ¤íŠ¸ê°€ ë°”ë€” ë•Œë§Œ ë†’ì´ ì¬ê³„ì‚° (LateUpdate í´ë§ ì œê±°)
+        logText.RegisterDirtyLayoutCallback(OnLogTextDirty);
+        scrollRect.onValueChanged.AddListener(OnScrollChanged);
+
+        inputField.ActivateInputField();
+
         int stage = ScoreCount.stageCount;
-        Log($"{stage}¹ø ÇÇ°Ë»çÀÚ °Ë»ç½Ç¿¡ ¹èÄ¡..");
+        Log($"{stage}ë²ˆì§¸ ê²€ì‚¬ì ë°œê²¬..");
         Log(".......complete");
-        Log("ÇØ´ç ÇÇ°Ë»çÀÚ BioSearch system ¿¬°á..");
+        Log("BioSearch system ì ‘ì†..");
         Log(".......complete");
-        Log("BioSearch¿¡¼­ »ç¿ëÀÚÀÇ Á¤½Å ¿¬°á..");
+        Log("BioSearchì—ì„œ ëŒ€ê¸°ì¤‘ì…ë‹ˆë‹¤..");
         Log(".......complete");
-
     }
 
-    private void LateUpdate()
+    void OnDestroy()
     {
-        float contentHeight = logText.preferredHeight;
-        Vector2 size = logText.rectTransform.sizeDelta;
-        logText.rectTransform.sizeDelta = new Vector2(size.x, contentHeight);
-
-        if (autoScroll && !userScrolling)
-        {
-            scrollRect.verticalNormalizedPosition = 0f;
-            autoScroll = false;
-        }
-
-        userScrolling = false;
+        if (Instance == this) Instance = null;
+        if (inputField != null)  inputField.onSubmit.RemoveListener(OnInputSubmitted);
+        if (logText != null)     logText.UnregisterDirtyLayoutCallback(OnLogTextDirty);
+        if (scrollRect != null)  scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
     }
 
-    /// <summary>
-    /// ¿ÜºÎ¿¡¼­ ·Î±× Ãß°¡
-    /// </summary>
+    // â”€â”€ í…ìŠ¤íŠ¸ ë³€ê²½ ì½œë°± (LateUpdate ëŒ€ì²´) â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    private void OnLogTextDirty()
+    {
+        // í…ìŠ¤íŠ¸ê°€ dirty ìƒíƒœì¼ ë•Œ ë‹¤ìŒ í”„ë ˆì„ì— ë†’ì´ ì—…ë°ì´íŠ¸ (Canvas.ForceUpdateCanvases ì´í›„)
+        needsScroll = true;
+    }
+
+    private bool wasScrollDirty;
+    void LateUpdate()
+    {
+        if (!needsScroll) return;
+        needsScroll = false;
+
+        float h = logText.preferredHeight;
+        var   s = logText.rectTransform.sizeDelta;
+        logText.rectTransform.sizeDelta = new Vector2(s.x, h);
+        scrollRect.verticalNormalizedPosition = 0f;
+    }
+
+    private void OnScrollChanged(Vector2 _) { /* userScrolling í”Œë˜ê·¸ - í˜„ì¬ ë¯¸ì‚¬ìš© */ }
+
+    // â”€â”€ ë¡œê·¸ API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public void Log(string message)
     {
         messageQueue.Enqueue(message);
-        if (!isTyping)
-            StartCoroutine(ProcessQueue());
+        if (!isTyping) StartCoroutine(ProcessQueue());
     }
 
     private IEnumerator ProcessQueue()
@@ -105,8 +114,8 @@ public class LogWindowManager : MonoBehaviour
 
         while (messageQueue.Count > 0)
         {
-            string message = messageQueue.Dequeue();
-            lines[currentLine % maxLines] = "> " + message;
+            string msg = messageQueue.Dequeue();
+            lines[currentLine % maxLines] = "> " + msg;
             currentLine++;
 
             sb.Clear();
@@ -123,45 +132,30 @@ public class LogWindowManager : MonoBehaviour
                 yield return new WaitForSeconds(charDelay);
             }
 
-            autoScroll = true;
+            needsScroll = true;
         }
 
         isTyping = false;
     }
 
-    private void OnInputSubmitted(string command)
+    public void ReplaceLastScanLog(string message)
     {
-        if (!inputField.interactable || string.IsNullOrWhiteSpace(command)) return;
+        if (lines == null) return;
 
-        Log("¸í·É¾î ÀÔ·Â: " + command);
-
-        command = command.Trim().ToLower();
-
-        if (command.StartsWith("scan "))
+        for (int i = currentLine - 1; i >= 0; i--)
         {
-            string folderName = command.Substring(5).Trim();
-            OnScanCommandEntered?.Invoke(folderName);
-        }
-        else if (command.StartsWith("extense "))
-        {
-            string args = command.Substring(8).Trim();
-            OnExtenseCommandEntered?.Invoke(args);
-        }
-        else if (command == "help")
-        {
-            Log("»ç¿ë °¡´ÉÇÑ ¸í·É¾î: scan [Æú´õ¸í], extense [ÆÄÀÏ¸í] [»õ È®ÀåÀÚ], help, clear");
-        }
-        else if (command == "clear")
-        {
-            ClearLog();
-        }
-        else
-        {
-            Log("Àß¸øµÈ ¸í·É¾î ÀÔ·ÂµÊ.");
+            int idx = (i + maxLines) % maxLines;
+            if (lines[idx].StartsWith("> ì´ìƒ ìŠ¤ìº” ì¤‘"))
+            {
+                lines[idx] = "> " + message;
+                break;
+            }
         }
 
-        inputField.text = "";
-        inputField.ActivateInputField();
+        sb.Clear();
+        int s2 = Mathf.Max(0, currentLine - maxLines);
+        for (int i = s2; i < currentLine; i++) sb.AppendLine(lines[i % maxLines]);
+        logText.text = sb.ToString();
     }
 
     public void ClearLog()
@@ -169,53 +163,37 @@ public class LogWindowManager : MonoBehaviour
         currentLine = 0;
         sb.Clear();
         logText.text = "";
-        autoScroll = true;
+        needsScroll  = true;
     }
 
-    /// <summary>
-    /// ¸¶Áö¸· ·Î±× ÇÑ ÁÙ ±³Ã¼
-    /// </summary>
-    public void ReplaceLastScanLog(string message)
-    {
-        if (lines == null || lines.Length == 0) return;
-
-        // ¿ª¼øÀ¸·Î Å½»öÇØ¼­ "ÀÌ»ó ½ºÄµÁß"À¸·Î ½ÃÀÛÇÏ´Â ¸¶Áö¸· ·Î±× Ã£±â
-        for (int i = currentLine - 1; i >= 0; i--)
-        {
-            int index = (i + maxLines) % maxLines;
-            if (lines[index].StartsWith("> ÀÌ»ó ½ºÄµÁß"))
-            {
-                lines[index] = "> " + message; // °»½Å
-                break;
-            }
-        }
-
-        // ÀüÃ¼ ÅØ½ºÆ® °»½Å
-        sb.Clear();
-        int start = Mathf.Max(0, currentLine - maxLines);
-        for (int i = start; i < currentLine; i++)
-            sb.AppendLine(lines[i % maxLines]);
-
-        logText.text = sb.ToString();
-    }
-
-
-    /// <summary>
-    /// ÀÔ·Â ÇÊµå ºñÈ°¼ºÈ­
-    /// </summary>
     public void DisableInput()
     {
         inputField.interactable = false;
-        inputField.readOnly = true;
+        inputField.readOnly     = true;
     }
 
-    /// <summary>
-    /// ÀÔ·Â ÇÊµå È°¼ºÈ­
-    /// </summary>
     public void EnableInput()
     {
         inputField.interactable = true;
-        inputField.readOnly = false;
+        inputField.readOnly     = false;
+        inputField.ActivateInputField();
+    }
+
+    // â”€â”€ ëª…ë ¹ì–´ ì²˜ë¦¬ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    private void OnInputSubmitted(string command)
+    {
+        if (!inputField.interactable || string.IsNullOrWhiteSpace(command)) return;
+
+        Log("ëª…ë ¹ì–´ ì…ë ¥: " + command);
+        command = command.Trim().ToLower();
+
+        if      (command.StartsWith("scan "))    OnScanCommandEntered?.Invoke(command.Substring(5).Trim());
+        else if (command.StartsWith("extense ")) OnExtenseCommandEntered?.Invoke(command.Substring(8).Trim());
+        else if (command == "help")  Log("ì‚¬ìš© ê°€ëŠ¥ ëª…ë ¹ì–´: scan [í´ë”ëª…], extense [íŒŒì¼ëª…] [ìƒˆ í™•ì¥ì], help, clear");
+        else if (command == "clear") ClearLog();
+        else                         Log("ì•Œ ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤.");
+
+        inputField.text = "";
         inputField.ActivateInputField();
     }
 }

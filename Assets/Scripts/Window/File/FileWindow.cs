@@ -31,13 +31,13 @@ public partial class FileWindow : MonoBehaviour
     public Button backButton;
 
     [Header("Inspector File List")]
-    public List<FileData> fileDatas = new List<FileData>();
+    [SerializeField] private List<FileData> fileDatas = new List<FileData>();
 
     [Header("Body Buttons")]
-    public List<BodyButtonEntry> bodyButtons = new List<BodyButtonEntry>();
+    [SerializeField] private List<BodyButtonEntry> bodyButtons = new List<BodyButtonEntry>();
 
     [Header("Special Prefabs")]
-    public GameObject upButtonPrefab;
+    [SerializeField] private GameObject upButtonPrefab;
 
     private FolderIcon selectedFolderIcon;
     private FileIcon selectedFileIcon;
@@ -127,73 +127,45 @@ public partial class FileWindow : MonoBehaviour
             );
 
             currentFolderFiles.Add(file);
-            targetParent.files.Add(file);
+            targetParent.AddFile(file);
         }
     }
 
+    // Folder 생성자가 parent에 자동 등록하므로 별도 Add 불필요
     void CreateDefaultFolders()
     {
-        // Head
-        // Head
-        Folder Head = new Folder("Head", rootFolder);
-        Head.children.Add(new Folder("Eye", Head));
-        Head.children.Add(new Folder("Ear", Head));
-        Head.children.Add(new Folder("Nose", Head));
-        Head.children.Add(new Folder("Mouth", Head));
-        Head.children.Add(new Folder("Jaw", Head));
-        Head.children.Add(new Folder("Skull", Head));
-        Head.children.Add(new Folder("Brain", Head));
+        var Head   = new Folder("Head",     rootFolder);
+        _ = new Folder("Eye",   Head);  _ = new Folder("Ear",   Head);
+        _ = new Folder("Nose",  Head);  _ = new Folder("Mouth", Head);
+        _ = new Folder("Jaw",   Head);  _ = new Folder("Skull", Head);
+        _ = new Folder("Brain", Head);
 
-        // Body
-        Folder Body = new Folder("Body", rootFolder);
-        Body.children.Add(new Folder("Chest", Body));
-        Body.children.Add(new Folder("Abdomen", Body));
-        Body.children.Add(new Folder("Back", Body));
-        Body.children.Add(new Folder("Pelvis", Body));
+        var Body = new Folder("Body", rootFolder);
+        _ = new Folder("Chest",   Body); _ = new Folder("Abdomen", Body);
+        _ = new Folder("Back",    Body); _ = new Folder("Pelvis",  Body);
 
-        // Left Arm
-        Folder LeftArm = new Folder("LeftArm", rootFolder);
-        LeftArm.children.Add(new Folder("UpperArm", LeftArm));
-        LeftArm.children.Add(new Folder("ForeArm", LeftArm));
-        LeftArm.children.Add(new Folder("Hand", LeftArm));
-        
+        var LeftArm  = new Folder("LeftArm",  rootFolder);
+        _ = new Folder("UpperArm", LeftArm); _ = new Folder("ForeArm", LeftArm);
+        _ = new Folder("Hand", LeftArm);
 
-        // Right Arm
-        Folder RightArm = new Folder("RightArm", rootFolder);
-        RightArm.children.Add(new Folder("UpperArm", RightArm));
-        RightArm.children.Add(new Folder("ForeArm", RightArm));
-        RightArm.children.Add(new Folder("Hand", RightArm));
-        
+        var RightArm = new Folder("RightArm", rootFolder);
+        _ = new Folder("UpperArm", RightArm); _ = new Folder("ForeArm", RightArm);
+        _ = new Folder("Hand", RightArm);
 
-        // Left Leg
-        Folder LeftLeg = new Folder("LeftLeg", rootFolder);
-        LeftLeg.children.Add(new Folder("Thigh", LeftLeg));
-        LeftLeg.children.Add(new Folder("Calf", LeftLeg));
-        LeftLeg.children.Add(new Folder("Foot", LeftLeg));
-        
+        var LeftLeg  = new Folder("LeftLeg",  rootFolder);
+        _ = new Folder("Thigh", LeftLeg); _ = new Folder("Calf", LeftLeg);
+        _ = new Folder("Foot",  LeftLeg);
 
-        // Right Leg
-        Folder RightLeg = new Folder("RightLeg", rootFolder);
-        RightLeg.children.Add(new Folder("Thigh", RightLeg));
-        RightLeg.children.Add(new Folder("Calf", RightLeg));
-        RightLeg.children.Add(new Folder("Foot", RightLeg));
-        
+        var RightLeg = new Folder("RightLeg", rootFolder);
+        _ = new Folder("Thigh", RightLeg); _ = new Folder("Calf", RightLeg);
+        _ = new Folder("Foot",  RightLeg);
 
-        // Organ
-        Folder Organ = new Folder("Organ", rootFolder);
-        Organ.children.Add(new Folder("Heart", Organ));
-        Organ.children.Add(new Folder("Lungs", Organ));
-        Organ.children.Add(new Folder("Liver", Organ));
-        Organ.children.Add(new Folder("Stomach", Organ));
-        Organ.children.Add(new Folder("Intestine", Organ));
-        Organ.children.Add(new Folder("Kidneys", Organ));
-        Organ.children.Add(new Folder("Pancreas", Organ));
-        Organ.children.Add(new Folder("Spleen", Organ));
-        Organ.children.Add(new Folder("Bladder", Organ));
-
-        rootFolder.children.AddRange(new List<Folder> {
-            Head, Body, LeftArm, RightArm, LeftLeg, RightLeg, Organ
-        });
+        var Organ = new Folder("Organ", rootFolder);
+        _ = new Folder("Heart",    Organ); _ = new Folder("Lungs",     Organ);
+        _ = new Folder("Liver",    Organ); _ = new Folder("Stomach",   Organ);
+        _ = new Folder("Intestine",Organ); _ = new Folder("Kidneys",   Organ);
+        _ = new Folder("Pancreas", Organ); _ = new Folder("Spleen",    Organ);
+        _ = new Folder("Bladder",  Organ);
     }
 
     private void LinkBodyButtons()
@@ -216,7 +188,14 @@ public partial class FileWindow : MonoBehaviour
         Folder current = root;
         foreach (var part in parts)
         {
-            current = current.children.Find(f => string.Equals(f.name, part.Trim(), System.StringComparison.OrdinalIgnoreCase));
+            string trimmed = part.Trim();
+            Folder next = null;
+            foreach (var child in current.children)
+            {
+                if (string.Equals(child.name, trimmed, System.StringComparison.OrdinalIgnoreCase))
+                { next = child; break; }
+            }
+            current = next;
             if (current == null) return null;
         }
         return current;
