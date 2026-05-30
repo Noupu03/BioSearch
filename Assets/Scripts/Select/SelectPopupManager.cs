@@ -2,21 +2,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// 수락/방류 팝업을 생성하고 판정 결과를 처리한다.
-/// FileWindow, LogWindowManager, SanityManager는 Instance로 접근하므로
-/// 인스펙터 크로스 참조가 없다.
-/// </summary>
 public class SelectPopupManager : MonoBehaviour
 {
     [Header("트리거 버튼")]
-    public Button acceptButton;
-    public Button releaseButton;
+    [SerializeField] private Button acceptButton;
+    [SerializeField] private Button releaseButton;
 
     [Header("팝업 프리팹 / 부모")]
-    public GameObject acceptPopupPrefab;
-    public GameObject releasePopupPrefab;
-    public Transform  popupParent;
+    [SerializeField] private GameObject acceptPopupPrefab;
+    [SerializeField] private GameObject releasePopupPrefab;
+    [SerializeField] private Transform  popupParent;
 
     private SelectPopup currentPopup;
 
@@ -44,32 +39,29 @@ public class SelectPopupManager : MonoBehaviour
         var fw = FileWindow.Instance;
         if (fw == null) return;
 
-        Folder root         = fw.GetRootFolder();
-        int    abnormal     = AbnormalDetector.GetAbnormalCount(root);
-        bool   success      = (isAccept && abnormal == 0) || (!isAccept && abnormal > 0);
-
-        var log = LogWindowManager.Instance;
+        int  abnormal = AbnormalDetector.GetAbnormalCount(fw.GetRootFolder());
+        bool success  = (isAccept && abnormal == 0) || (!isAccept && abnormal > 0);
+        var  log      = LogWindowManager.Instance;
 
         if (success)
         {
             log?.Log("성공!");
-            ScoreCount.successCount++;
+            ScoreCount.AddSuccess();
         }
         else
         {
             log?.Log("실패!");
-            ScoreCount.failCount++;
+            ScoreCount.AddFail();
 
             var sanity = SanityManager.Instance;
             if (sanity != null)
             {
                 sanity.DecreaseSanity(40f);
-                // DecreaseSanity 내부에서 고갈 시 GameEvents.RaiseGameOver 발생
                 if (sanity.GetCurrentSanity() <= 0f) return;
             }
         }
 
-        ScoreCount.stageCount++;
+        ScoreCount.NextStage();
         GameEvents.RaiseScoreChanged();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }

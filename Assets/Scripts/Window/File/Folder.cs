@@ -9,8 +9,8 @@ using UnityEngine.UI;
 /// </summary>
 public class Folder
 {
-    public string name;
-    public Folder parent;
+    public string name   { get; }
+    public Folder parent { get; private set; }
 
     public bool  isAbnormal      = false;
     public float abnormalParameter = 0f;

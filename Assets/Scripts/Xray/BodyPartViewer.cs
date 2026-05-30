@@ -22,7 +22,7 @@ public class BodyPartViewer : MonoBehaviour
     public Image cameraPanel;
 
     [Header("신체 부위 목록")]
-    public BodyPart[] bodyParts;
+    [SerializeField] private BodyPart[] bodyParts;
 
     private static readonly Dictionary<string, string[]> PartFolderPaths =
         new Dictionary<string, string[]>

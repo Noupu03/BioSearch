@@ -433,7 +433,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 2150773298
-  m_fontColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -977,8 +977,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timerText: {fileID: 1093830573}
   totalTime: 60
-  isRunning: 0
-  gameOverManager: {fileID: 168379754}
 --- !u!114 &168379754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -991,9 +989,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e67bf6c4c6f5c44ebc7ef3d7373e8b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  returnDelay: 0
   startSceneName: StartScene
-  sanityManager: {fileID: 168379756}
 --- !u!4 &168379755
 Transform:
   m_ObjectHideFlags: 0
@@ -1023,7 +1019,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSanity: 100
   sanityText: {fileID: 2121517776}
-  gameOverManager: {fileID: 168379754}
 --- !u!1 &171645015
 GameObject:
   m_ObjectHideFlags: 0
@@ -3569,7 +3564,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popupPrefab: {fileID: 7727029378613877681, guid: 3f0347fb32d8e3648bc342e0d4f5f005, type: 3}
-  canvas: {fileID: 1152194525}
 --- !u!114 &693352156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3614,10 +3608,6 @@ MonoBehaviour:
   acceptPopupPrefab: {fileID: 7727029378613877681, guid: 663ea21af39244a478e6b35e6ffb9e8e, type: 3}
   releasePopupPrefab: {fileID: 7727029378613877681, guid: 6605fe490f3ab934084989c65c1fc66f, type: 3}
   popupParent: {fileID: 1152194526}
-  sanityManager: {fileID: 168379756}
-  logWindow: {fileID: 942185077}
-  fileWindow: {fileID: 1796863570}
-  gameOverManager: {fileID: 168379754}
 --- !u!114 &693352159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3630,8 +3620,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bc2c46e72e0aad41b165f8ee1d559c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIsuccessCount: 0
-  UIfailCount: 0
 --- !u!114 &693352160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3659,7 +3647,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78400dafee199ae469647a5e2a96abe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileWindow: {fileID: 1796863570}
   spawnInterval: 1
 --- !u!1 &708220948
 GameObject:
@@ -3782,7 +3769,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef496296ca103804e8af68cc0d9f2b10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameStateManager: {fileID: 1135300294}
 --- !u!1 &728626210
 GameObject:
   m_ObjectHideFlags: 0
@@ -4769,6 +4755,7 @@ MonoBehaviour:
   defaultFOV: 20
   zoomFOV: 20
   transitionSpeed: 4
+  switchDelay: 1.5
   view1: {fileID: 1454907862}
   view2: {fileID: 614927673}
   leftView: {fileID: 661166835}
@@ -4776,7 +4763,6 @@ MonoBehaviour:
   rendererData: {fileID: 11400000, guid: f288ae1f4751b564a96ac7587541f7a2, type: 2}
   featureName1: FullScreenPassRendererFeature2
   featureName2: FullScreenPassRendererFeature1
-  switchDelay: 1.5
 --- !u!114 &919113287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4790,7 +4776,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetCamera: {fileID: 919113284}
-  uiManager: {fileID: 0}
 --- !u!1 &926627728
 GameObject:
   m_ObjectHideFlags: 0
@@ -5053,7 +5038,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5090,10 +5075,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f79920360fdbd6a4d980ec00aa4ffcd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileWindow: {fileID: 1796863570}
-  logWindow: {fileID: 942185077}
   scanPopupPrefab: {fileID: 253244205126553983, guid: 68721eb34da524e4bb268f6ed7565fc4, type: 3}
-  parentCanvas: {fileID: 1152194525}
 --- !u!114 &942185081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5106,8 +5088,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5ded39d22513774e96f738962d607ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileWindow: {fileID: 1796863570}
-  logWindow: {fileID: 942185077}
 --- !u!1 &970409499
 GameObject:
   m_ObjectHideFlags: 0
@@ -5224,9 +5204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13209e5ee283d6a478b32e1b1a70bd8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timer: {fileID: 168379753}
-  sanity: {fileID: 168379756}
-  gameOver: {fileID: 168379754}
 --- !u!1 &977293530
 GameObject:
   m_ObjectHideFlags: 0
@@ -6144,7 +6121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8202,7 +8179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9561,7 +9538,6 @@ MonoBehaviour:
   - folderPath: RightLeg/Foot
     button: {fileID: 436541330}
   upButtonPrefab: {fileID: 7856131077749057725, guid: 7e50e978dcde1574c82c9676f3c521a0, type: 3}
-  dummyIcons: []
 --- !u!1 &1806648556
 GameObject:
   m_ObjectHideFlags: 0
@@ -10307,7 +10283,6 @@ MonoBehaviour:
     button: {fileID: 1628225562}
     normalSprite: {fileID: -833976916, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
     abnormalSprite: {fileID: 433656760, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  fileWindow: {fileID: 1796863570}
 --- !u!114 &2079028865
 MonoBehaviour:
   m_ObjectHideFlags: 0

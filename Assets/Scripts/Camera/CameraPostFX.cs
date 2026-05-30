@@ -5,40 +5,37 @@ using System.Collections;
 
 public class CameraPostFX : MonoBehaviour
 {
-    [Header("Global Volume ¿¬°á")]
-    public Volume globalVolume;
+    [Header("Global Volume")]
+    [SerializeField] private Volume globalVolume;
 
-    private Bloom bloom;
-    private Vignette vignette;
-    private FilmGrain filmGrain;
+    private Bloom      bloom;
+    private Vignette   vignette;
+    private FilmGrain  filmGrain;
+    private Coroutine  transitionCoroutine;
 
-    [Header("ÀüÈ¯ ½Ã°£ (ÃÊ)")]
-    public float transitionTime = 1f; // ÀüÈ¯ ´Ü°è ½Ã°£
-    private Coroutine transitionCoroutine;
+    [Header("ì „í™˜ ì‹œê°„ (ì´ˆ)")]
+    [SerializeField] private float transitionTime = 1f;
 
-    // --- Room (±âº» ½ÃÁ¡, S »óÅÂ) ---
-    [Header("1 Room (S ½ÃÁ¡)")]
-    public float bloomIntensity_Room = 3f;
-    public float bloomScatter_Room = 0.5f;
-    public float vignetteIntensity_Room = 0.33f;
-    public float vignetteSmoothness_Room = 1f;
-    public float filmGrainIntensity_Room = 1f;
+    [Header("1 Room (S í‚¤)")]
+    [SerializeField] private float bloomIntensity_Room      = 3f;
+    [SerializeField] private float bloomScatter_Room        = 0.5f;
+    [SerializeField] private float vignetteIntensity_Room   = 0.33f;
+    [SerializeField] private float vignetteSmoothness_Room  = 1f;
+    [SerializeField] private float filmGrainIntensity_Room  = 1f;
 
-    // --- Transition (ÀÌµ¿ Áß) ---
-    [Header("2 Transition (ÀÌµ¿ Áß)")]
-    public float bloomIntensity_Transition = 1f;
-    public float bloomScatter_Transition = 1f;
-    public float vignetteIntensity_Transition = 1f;
-    public float vignetteSmoothness_Transition = 1f;
-    public float filmGrainIntensity_Transition = 1f;
+    [Header("2 Transition (ì´ë™ ì¤‘)")]
+    [SerializeField] private float bloomIntensity_Transition      = 1f;
+    [SerializeField] private float bloomScatter_Transition        = 1f;
+    [SerializeField] private float vignetteIntensity_Transition   = 1f;
+    [SerializeField] private float vignetteSmoothness_Transition  = 1f;
+    [SerializeField] private float filmGrainIntensity_Transition  = 1f;
 
-    // --- Monitor (µµÂø ÈÄ, W »óÅÂ) ---
-    [Header("3 Monitor (W ½ÃÁ¡)")]
-    public float bloomIntensity_Monitor = 40f;
-    public float bloomScatter_Monitor = 0.65f;
-    public float vignetteIntensity_Monitor = 0.3f;
-    public float vignetteSmoothness_Monitor = 1f;
-    public float filmGrainIntensity_Monitor = 1f;
+    [Header("3 Monitor (W í‚¤)")]
+    [SerializeField] private float bloomIntensity_Monitor      = 40f;
+    [SerializeField] private float bloomScatter_Monitor        = 0.65f;
+    [SerializeField] private float vignetteIntensity_Monitor   = 0.3f;
+    [SerializeField] private float vignetteSmoothness_Monitor  = 1f;
+    [SerializeField] private float filmGrainIntensity_Monitor  = 1f;
 
     void Start()
     {
@@ -50,12 +47,12 @@ public class CameraPostFX : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning(" Global VolumeÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù!");
+            Debug.LogWarning(" Global Volumeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½!");
         }
 
-        ApplyRoomValues(); // ½ÃÀÛ ½Ã Room »óÅÂ
+        ApplyRoomValues(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Room ï¿½ï¿½ï¿½ï¿½
 
-        // --- InputManager ÀÌº¥Æ® ¿¬°á ---
+        // --- InputManager ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ---
         if (InputManager.Instance != null)
         {
             InputManager.Instance.OnWPressed += OnWPressed;
@@ -72,7 +69,7 @@ public class CameraPostFX : MonoBehaviour
         }
     }
 
-    // W ´©¸¦ ¶§
+    // W ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
     private void OnWPressed()
     {
         if (transitionCoroutine != null)
@@ -80,7 +77,7 @@ public class CameraPostFX : MonoBehaviour
         transitionCoroutine = StartCoroutine(TransitionToMonitor());
     }
 
-    // S ´©¸¦ ¶§
+    // S ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
     private void OnSPressed()
     {
         if (transitionCoroutine != null)
@@ -88,19 +85,19 @@ public class CameraPostFX : MonoBehaviour
         transitionCoroutine = StartCoroutine(LerpToRoom());
     }
 
-    // Room ¡æ Transition ¡æ Monitor ¼ø¼­·Î ºÎµå·´°Ô º¯È­
+    // Room ï¿½ï¿½ Transition ï¿½ï¿½ Monitor ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµå·´ï¿½ï¿½ ï¿½ï¿½È­
     private IEnumerator TransitionToMonitor()
     {
         float t = 0f;
 
-        // 1´Ü°è: Room ¡æ Transition ¡æ Monitor¸¦ ¹Ù·Î ¿¬¼Ó Lerp
+        // 1ï¿½Ü°ï¿½: Room ï¿½ï¿½ Transition ï¿½ï¿½ Monitorï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½ Lerp
         float startBloom = bloom.intensity.value;
         float startScatter = bloom.scatter.value;
         float startVignette = vignette.intensity.value;
         float startSmooth = vignette.smoothness.value;
         float startGrain = filmGrain.intensity.value;
 
-        // ¸ñÇ¥°ªÀ» Monitor·Î ¹Ù·Î Àâ°í, Transition °ªÀº º¸Á¤¿ëÀ¸·Î Áß°£¿¡¼­ °è»ê
+        // ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ Monitorï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½, Transition ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         float targetBloom = bloomIntensity_Monitor;
         float targetScatter = bloomScatter_Monitor;
         float targetVignette = vignetteIntensity_Monitor;
@@ -112,14 +109,14 @@ public class CameraPostFX : MonoBehaviour
             t += Time.deltaTime / transitionTime;
             float easedT = Mathf.SmoothStep(0, 1, t);
 
-            // Áß°£°ª(Trajectory) °è»ê
+            // ï¿½ß°ï¿½ï¿½ï¿½(Trajectory) ï¿½ï¿½ï¿½
             float midBloom = Mathf.Lerp(bloomIntensity_Room, bloomIntensity_Transition, easedT);
             float midScatter = Mathf.Lerp(bloomScatter_Room, bloomScatter_Transition, easedT);
             float midVignette = Mathf.Lerp(vignetteIntensity_Room, vignetteIntensity_Transition, easedT);
             float midSmooth = Mathf.Lerp(vignetteSmoothness_Room, vignetteSmoothness_Transition, easedT);
             float midGrain = Mathf.Lerp(filmGrainIntensity_Room, filmGrainIntensity_Transition, easedT);
 
-            // ÃÖÁ¾ Lerp (Transition ¡æ Monitor)
+            // ï¿½ï¿½ï¿½ï¿½ Lerp (Transition ï¿½ï¿½ Monitor)
             bloom.intensity.value = Mathf.Lerp(midBloom, targetBloom, easedT);
             bloom.scatter.value = Mathf.Lerp(midScatter, targetScatter, easedT);
             vignette.intensity.value = Mathf.Lerp(midVignette, targetVignette, easedT);
@@ -129,7 +126,7 @@ public class CameraPostFX : MonoBehaviour
             yield return null;
         }
 
-        // ÀüÈ¯ Á¾·á ½ÃÁ¡¿¡ S ÀÔ·Â ÇØÁ¦
+        // ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ S ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (InputManager.Instance != null)
             InputManager.Instance.LockSInput(false);
 
@@ -164,7 +161,7 @@ public class CameraPostFX : MonoBehaviour
         transitionCoroutine = null;
     }
 
-    // --- Áï½Ã Àû¿ë ÇÔ¼ö ---
+    // --- ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ---
     private void ApplyRoomValues()
     {
         if (bloom == null) return;

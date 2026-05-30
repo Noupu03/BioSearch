@@ -12,7 +12,7 @@ public class SanityManager : MonoBehaviour
     public static float currentSanityStatic;
 
     [Header("UI")]
-    public TextMeshProUGUI sanityText;
+    [SerializeField] private TextMeshProUGUI sanityText;
 
     void Awake()
     {

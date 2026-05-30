@@ -12,7 +12,7 @@ public class FilePopupManager : MonoBehaviour
     public static FilePopupManager Instance { get; private set; }
 
     [Header("팝업 프리팹")]
-    public GameObject popupPrefab;
+    [SerializeField] private GameObject popupPrefab;
 
     private Canvas canvas;
     private readonly Dictionary<string, GameObject> openPopups = new Dictionary<string, GameObject>();

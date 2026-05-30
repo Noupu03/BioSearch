@@ -4,28 +4,27 @@ using System.Collections;
 
 public class CameraSwitch : MonoBehaviour
 {
-    [Header("Ä«¸Ş¶ó ¼³Á¤")]
-    public Camera targetCamera;
-    public float defaultFOV = 60f;
-    public float zoomFOV = 40f;
-    public float transitionSpeed = 5f;
+    [Header("ì¹´ë©”ë¼ ì„¤ì •")]
+    [SerializeField] private Camera targetCamera;
+    [SerializeField] private float  defaultFOV      = 60f;
+    [SerializeField] private float  zoomFOV         = 40f;
+    [SerializeField] private float  transitionSpeed  = 5f;
+    [SerializeField] private float  switchDelay      = 1.5f;
 
-    [Header("½ÃÁ¡ ¼³Á¤")]
-    public Transform view1;
-    public Transform view2;
-    public Transform leftView;
-    public Transform rightView;
+    [Header("ë·° í¬ì¸íŠ¸")]
+    [SerializeField] private Transform view1;
+    [SerializeField] private Transform view2;
+    [SerializeField] private Transform leftView;
+    [SerializeField] private Transform rightView;
 
-    private Transform currentView;
-    private bool inView2 = true; // S »óÅÂ = view2
-    private float targetFOV;
-
-    [Header("URP Feature ¼³Á¤")]
+    [Header("URP Feature ì „í™˜")]
     [SerializeField] private UniversalRendererData rendererData;
     [SerializeField] private string featureName1;
     [SerializeField] private string featureName2;
 
-    public float switchDelay = 1.5f;
+    private Transform              currentView;
+    private bool                   inView2 = true;
+    private float                  targetFOV;
 
     private ScriptableRendererFeature feature1;
     private ScriptableRendererFeature feature2;
@@ -74,7 +73,7 @@ public class CameraSwitch : MonoBehaviour
 
     void Update()
     {
-        // A/D ½ÃÁ¡ ÀüÈ¯ (S »óÅÂ(view2)¿¡¼­¸¸)
+        // A/D ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ (S ï¿½ï¿½ï¿½ï¿½(view2)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         if (inView2)
         {
             if (InputManager.Instance.APressed && currentView != leftView)
@@ -83,7 +82,7 @@ public class CameraSwitch : MonoBehaviour
                 currentView = rightView;
         }
 
-        // Ä«¸Ş¶ó ÀÌµ¿/È¸Àü/FOV º¸°£
+        // Ä«ï¿½Ş¶ï¿½ ï¿½Ìµï¿½/È¸ï¿½ï¿½/FOV ï¿½ï¿½ï¿½ï¿½
         transform.position = Vector3.Lerp(transform.position, currentView.position, Time.deltaTime * transitionSpeed);
         transform.rotation = Quaternion.Lerp(transform.rotation, currentView.rotation, Time.deltaTime * transitionSpeed);
         targetCamera.fieldOfView = Mathf.Lerp(targetCamera.fieldOfView, targetFOV, Time.deltaTime * transitionSpeed);
@@ -91,10 +90,10 @@ public class CameraSwitch : MonoBehaviour
 
     private void OnWPressed()
     {
-        // ¹İµå½Ã S »óÅÂ(view2)¿¡¼­¸¸ W Çã¿ë
+        // ï¿½İµï¿½ï¿½ S ï¿½ï¿½ï¿½ï¿½(view2)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ W ï¿½ï¿½ï¿½
         if (!inView2) return;
 
-        // A/D ÀÔ·Â ÁßÀÌ¸é W ¹«½Ã
+        // A/D ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ W ï¿½ï¿½ï¿½ï¿½
         if (InputManager.Instance.APressed || InputManager.Instance.DPressed) return;
 
         currentView = view1;

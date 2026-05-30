@@ -163,15 +163,7 @@ public class HybridCameraController : MonoBehaviour
         }
     }
 
-    private void SetCameraState(Camera cam, bool state)
-    {
-        if (cam == null) return;
-
-        cam.enabled = state;
-        AudioListener listener = cam.GetComponent<AudioListener>();
-        if (listener != null)
-            listener.enabled = state;
-    }
+    private static void SetCameraState(Camera cam, bool state) => CameraUtils.SetActive(cam, state);
 
     private void UpdateCanvasRaycast()
     {

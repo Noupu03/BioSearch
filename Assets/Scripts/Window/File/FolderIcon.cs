@@ -12,8 +12,7 @@ using System.Collections;
 public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    // ���� �̸��� ǥ���ϴ� TMP �ؽ�Ʈ
-    public TMP_Text fileNameText;
+    [SerializeField] private TMP_Text fileNameText;
 
     // ������ ���� FileWindow ����
     private FileWindow fileWindow;

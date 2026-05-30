@@ -15,20 +15,20 @@ public partial class FileWindow : MonoBehaviour
     public static FileWindow Instance { get; private set; }
 
     [Header("Prefabs")]
-    public GameObject folderIconPrefab;
-    public GameObject fileIconPrefab;
-    public GameObject dummyFolderIconPrefab;
-    public GameObject dummyFileIconPrefab;
+    [SerializeField] private GameObject folderIconPrefab;
+    [SerializeField] private GameObject fileIconPrefab;
+    [SerializeField] private GameObject dummyFolderIconPrefab;
+    [SerializeField] private GameObject dummyFileIconPrefab;
 
     [Header("Scroll Area")]
-    public Transform contentArea;
-    public TMP_Text emptyText;
+    [SerializeField] private Transform contentArea;
+    [SerializeField] private TMP_Text  emptyText;
 
     [Header("Path Panel")]
-    public PathPanelManager pathPanelManager;
+    [SerializeField] private PathPanelManager pathPanelManager;
 
     [Header("Back Button")]
-    public Button backButton;
+    [SerializeField] private Button backButton;
 
     [Header("Inspector File List")]
     [SerializeField] private List<FileData> fileDatas = new List<FileData>();
@@ -47,8 +47,16 @@ public partial class FileWindow : MonoBehaviour
     private Stack<Folder> folderHistory = new Stack<Folder>();
     private List<File> currentFolderFiles = new List<File>();
 
-    [Header("Dummy Icons")]
-    public List<DummyIcon> dummyIcons = new List<DummyIcon>();
+    private readonly List<DummyIcon> dummyIcons = new List<DummyIcon>();
+
+    /// <summary>더미 아이콘을 추가하고 현재 폴더면 즉시 UI 생성.</summary>
+    public void AddDummyIcon(DummyIcon dummy)
+    {
+        if (dummy == null) return;
+        dummyIcons.Add(dummy);
+        if (currentFolder == dummy.parentFolder)
+            CreateDummyIconUI(dummy, dummy.parentFolder);
+    }
 
     public void CreateDummyIconUI(DummyIcon dummy, Folder parentFolder)
     {

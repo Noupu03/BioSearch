@@ -5,7 +5,7 @@ using UnityEngine;
 /// </summary>
 public class ObjectClick : MonoBehaviour
 {
-    public Camera targetCamera;
+    [SerializeField] private Camera targetCamera;
 
     void Update()
     {

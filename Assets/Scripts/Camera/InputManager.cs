@@ -4,26 +4,26 @@ using TMPro;
 
 public class InputManager : MonoBehaviour
 {
-    public static InputManager Instance;
+    public static InputManager Instance { get; private set; }
 
-    public bool APressed { get; private set; }
-    public bool DPressed { get; private set; }
+    public bool APressed           { get; private set; }
+    public bool DPressed           { get; private set; }
+    public bool IsSwitchingLocked  { get; private set; }
 
-    public bool IsSwitchingLocked { get; private set; } // ÀüÈ¯ ÁßÀÎÁö ¿©ºÎ
-
-    public TMP_InputField blockSPressedField;
+    [SerializeField] private TMP_InputField blockSPressedField;
+    [SerializeField] private float          wSwitchDelay = 0.25f;
 
     public event Action OnWPressed;
     public event Action OnSPressed;
     public event Action OnADChanged;
 
-    public float wSwitchDelay = 0.25f; // W ÀüÈ¯ ÀÌÈÄ S Â÷´Ü ½Ã°£
-
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance != null) { Destroy(gameObject); return; }
+        Instance = this;
     }
+
+    void OnDestroy() { if (Instance == this) Instance = null; }
 
     public void LockSInput(bool locked)
     {
@@ -34,9 +34,9 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            // ÀÎÇ²ÇÊµå Æ÷Ä¿½º Áß Â÷´Ü
+            // ï¿½ï¿½Ç²ï¿½Êµï¿½ ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (blockSPressedField != null && blockSPressedField.isFocused) return;
-            // W ÀüÈ¯ µô·¹ÀÌ Áß Â÷´Ü
+            // W ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (IsSwitchingLocked) return;
 
             OnSPressed?.Invoke();
@@ -44,10 +44,10 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.W))
         {
-            // W ´©¸£´Â ¼ø°£ Â÷´Ü ½ÃÀÛ
+            // W ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             LockSInput(true);
             OnWPressed?.Invoke();
-            StartCoroutine(UnlockSAfterDelay()); // µô·¹ÀÌ ½ÃÀÛ
+            StartCoroutine(UnlockSAfterDelay()); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
 
         bool prevA = APressed;

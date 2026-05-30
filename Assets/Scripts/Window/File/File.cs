@@ -3,39 +3,23 @@ using UnityEngine;
 [System.Serializable]
 public class File
 {
-    // ÆÄÀÏ ÀÌ¸§ (È®ÀåÀÚ¸¦ Á¦¿ÜÇÑ ÀÌ¸§)
-    public string name;
+    public string name       { get; }
+    public string extension  { get; set; }  // ExtenseCommandManagerê°€ ë³€ê²½ ê°€ëŠ¥
+    public string textContent  { get; }
+    public Sprite imageContent { get; }
+    public bool   isAbnormal   { get; set; }
 
-    // ÆÄÀÏ È®ÀåÀÚ (¿¹: "txt", "png" µî)
-    public string extension;
+    // Folder.AddFile / RemoveFile ì—ì„œë§Œ ì„¤ì •
+    public Folder parent { get; internal set; }
 
-    // ÅØ½ºÆ® ÆÄÀÏÀÇ ³»¿ë (ÅØ½ºÆ® ÆÄÀÏÀÏ °æ¿ì »ç¿ë)
-    public string textContent;
-
-    // ÀÌ¹ÌÁö ÆÄÀÏÀÇ ³»¿ë (ÀÌ¹ÌÁö ÆÄÀÏÀÏ °æ¿ì »ç¿ë)
-    public Sprite imageContent;
-
-    // »óÀ§ Æú´õ¸¦ ÂüÁ¶ (ÆÄÀÏÀÌ Æ÷ÇÔµÈ Æú´õ)
-    public Folder parent;
-
-    //  ÀÎ½ºÆåÅÍ¿¡¼­ Á÷Á¢ ÁöÁ¤ÇÒ ¼ö ÀÖ´Â ÀÌ»ó ¿©ºÎ
-    //  trueÀÏ °æ¿ì, ºñÁ¤»ó ÆÄÀÏ·Î Ç¥½ÃµÊ
-    public bool isAbnormal = false;
-
-    // ÆÄÀÏ »ı¼ºÀÚ
-    // name : ÆÄÀÏ ÀÌ¸§
-    // extension : È®ÀåÀÚ
-    // parent : ºÎ¸ğ Æú´õ
-    // textContent : ÅØ½ºÆ® ÆÄÀÏ ³»¿ë
-    // imageContent : ÀÌ¹ÌÁö ÆÄÀÏ ³»¿ë
-    // isAbnormal : ÀÌ»ó ¿©ºÎ (±âº»°ª false)
-    public File(string name, string extension, Folder parent = null, string textContent = null, Sprite imageContent = null, bool isAbnormal = false)
+    public File(string name, string extension, Folder parent = null,
+                string textContent = null, Sprite imageContent = null, bool isAbnormal = false)
     {
-        this.name = name;
-        this.extension = extension;
-        this.parent = parent;
-        this.textContent = textContent;
+        this.name         = name;
+        this.extension    = extension;
+        this.parent       = parent;
+        this.textContent  = textContent;
         this.imageContent = imageContent;
-        this.isAbnormal = isAbnormal;
+        this.isAbnormal   = isAbnormal;
     }
 }

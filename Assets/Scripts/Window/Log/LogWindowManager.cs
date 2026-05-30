@@ -63,8 +63,7 @@ public class LogWindowManager : MonoBehaviour
 
         inputField.ActivateInputField();
 
-        int stage = ScoreCount.stageCount;
-        Log($"{stage}번째 검사자 발견..");
+        Log($"{ScoreCount.StageCount}번째 검사자 발견..");
         Log(".......complete");
         Log("BioSearch system 접속..");
         Log(".......complete");
@@ -87,19 +86,17 @@ public class LogWindowManager : MonoBehaviour
         needsScroll = true;
     }
 
-    private bool wasScrollDirty;
     void LateUpdate()
     {
         if (!needsScroll) return;
         needsScroll = false;
 
         float h = logText.preferredHeight;
-        var   s = logText.rectTransform.sizeDelta;
-        logText.rectTransform.sizeDelta = new Vector2(s.x, h);
+        logText.rectTransform.sizeDelta = new Vector2(logText.rectTransform.sizeDelta.x, h);
         scrollRect.verticalNormalizedPosition = 0f;
     }
 
-    private void OnScrollChanged(Vector2 _) { /* userScrolling 플래그 - 현재 미사용 */ }
+    private void OnScrollChanged(Vector2 _) { }
 
     // ── 로그 API ─────────────────────────────────
     public void Log(string message)
