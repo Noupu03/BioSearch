@@ -1,126 +1,90 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using System.Collections.Generic;
 
 [System.Serializable]
 public class BodyPart
 {
-    public string partName;       // ºÎÀ§ ÀÌ¸§ (¿¹: "LeftUpperArm")
-    public Button button;         // ÇØ´ç ºÎÀ§ ¹öÆ°
-    public Sprite normalSprite;   // Á¤»ó »óÅÂ ½ºÇÁ¶óÀÌÆ®
-    public Sprite abnormalSprite; // ÀÌ»ó »óÅÂ ½ºÇÁ¶óÀÌÆ®
+    public string partName;
+    public Button button;
+    public Sprite normalSprite;
+    public Sprite abnormalSprite;
 }
 
+/// <summary>
+/// Xray íŒ¨ë„ì—ì„œ ì‹ ì²´ ë¶€ìœ„ ë²„íŠ¼ì„ í´ë¦­í•˜ë©´
+/// í•´ë‹¹ í´ë”ì˜ ì´ìƒ ì—¬ë¶€ì— ë”°ë¼ ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ êµì²´í•œë‹¤.
+/// </summary>
 public class BodyPartViewer : MonoBehaviour
 {
-    [Header("¿ŞÂÊ Ä«¸Ş¶óÃ¢")]
-    public Image cameraPanel;  // ½ºÇÁ¶óÀÌÆ®¸¦ Ç¥½ÃÇÒ Image
+    [Header("ì¹´ë©”ë¼ì°½")]
+    public Image cameraPanel;
 
-    [Header("ºÎÀ§ & ¹öÆ° ¸ÅÇÎ")]
-    public BodyPart[] bodyParts;  // Inspector¿¡¼­ ºÎÀ§, ¹öÆ°, ½ºÇÁ¶óÀÌÆ® ½Ö µî·Ï
+    [Header("ì‹ ì²´ ë¶€ìœ„ ëª©ë¡")]
+    public BodyPart[] bodyParts;
 
-    [Header("File Window ¿¬°á")]
-    public FileWindow fileWindow; // Æú´õ ÀÌ»ó ¿©ºÎ Á¤º¸¸¦ °¡Á®¿À±â À§ÇÑ ÂüÁ¶
+    [Header("ì°¸ì¡°")]
+    public FileWindow fileWindow;
 
-    // ºÎÀ§¸í ¡æ Folder °æ·Î ¸ÅÇÎ
-    private Dictionary<string, string[]> partNameToFolderPath = new Dictionary<string, string[]>
-    {
-        { "Head", new string[] { "Head" } },
-        { "Chest", new string[] { "Body", "Chest" } },
-        { "LeftUpperArm", new string[] { "LeftArm", "UpperArm" } },
-        { "LeftForeArm", new string[] { "LeftArm", "ForeArm" } },
-        { "LeftHand", new string[]  { "LeftArm", "Hand" } },
-        { "RightUpperArm", new string[] { "RightArm", "UpperAarm" } },
-        { "RightForeArm", new string[] { "RightArm", "ForeArm" } },
-        { "RightHand", new string[] { "RightArm", "Hand" } },
-        { "Stomach", new string[] { "Organ", "Stomach" } },
-        { "Pelvis", new string[] { "Body", "Pelvis" } },
-        { "LeftThigh", new string[] { "LeftLeg", "Thigh" } },
-        { "LeftCalf", new string[] { "LeftLeg", "Calf" } },
-        { "LeftFoot", new string[] { "LeftLeg", "Foot" } },
-        { "RightThigh", new string[] { "RightLeg", "Thigh" } },
-        { "RightCalf", new string[] { "RightLeg", "Calf" } },
-        { "RightFoot", new string[] { "RightLeg", "Foot" } }
-    };
+    // ë¶€ìœ„ëª… â†’ í´ë” ê²½ë¡œ (FileWindowì˜ í´ë” íŠ¸ë¦¬ì™€ ë™ì¼í•œ ê³„ì¸µ)
+    private static readonly Dictionary<string, string[]> PartFolderPaths =
+        new Dictionary<string, string[]>
+        {
+            { "Head",         new[] { "Head" } },
+            { "Chest",        new[] { "Body",    "Chest" } },
+            { "LeftUpperArm", new[] { "LeftArm", "UpperArm" } },
+            { "LeftForeArm",  new[] { "LeftArm", "ForeArm" } },
+            { "LeftHand",     new[] { "LeftArm", "Hand" } },
+            { "RightUpperArm",new[] { "RightArm","UpperArm" } },
+            { "RightForeArm", new[] { "RightArm","ForeArm" } },
+            { "RightHand",    new[] { "RightArm","Hand" } },
+            { "Stomach",      new[] { "Organ",   "Stomach" } },
+            { "Pelvis",       new[] { "Body",    "Pelvis" } },
+            { "LeftThigh",    new[] { "LeftLeg", "Thigh" } },
+            { "LeftCalf",     new[] { "LeftLeg", "Calf" } },
+            { "LeftFoot",     new[] { "LeftLeg", "Foot" } },
+            { "RightThigh",   new[] { "RightLeg","Thigh" } },
+            { "RightCalf",    new[] { "RightLeg","Calf" } },
+            { "RightFoot",    new[] { "RightLeg","Foot" } },
+        };
 
     void Start()
     {
-        // °¢ ¹öÆ° Å¬¸¯ ÀÌº¥Æ® µî·Ï
         foreach (var part in bodyParts)
         {
-            string partName = part.partName; // Áö¿ª º¯¼ö º¹»ç (¶÷´Ù Ä¸Ã³ ¹æÁö)
+            string name = part.partName;
             if (part.button != null)
-            {
-                part.button.onClick.AddListener(() => ShowPart(partName));
-            }
+                part.button.onClick.AddListener(() => ShowPart(name));
         }
     }
 
-    /// <summary>
-    /// ¹öÆ° Å¬¸¯ ½Ã ÇØ´ç ºÎÀ§ÀÇ ½ºÇÁ¶óÀÌÆ® Ç¥½Ã
-    /// </summary>
     public void ShowPart(string partName)
     {
-        if (cameraPanel == null)
+        if (cameraPanel == null || fileWindow == null) return;
+
+        if (!PartFolderPaths.TryGetValue(partName, out var path))
         {
-            Debug.LogWarning("cameraPanelÀÌ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning($"[BodyPartViewer] ì•Œ ìˆ˜ ì—†ëŠ” ë¶€ìœ„: {partName}");
             return;
         }
 
-        if (fileWindow == null)
-        {
-            Debug.LogWarning("fileWindow°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
-            return;
-        }
-
-        // ºÎÀ§¸í ¡æ Folder °æ·Î ¸ÅÇÎ È®ÀÎ
-        if (!partNameToFolderPath.TryGetValue(partName, out var path))
-        {
-            Debug.LogWarning("ºÎÀ§ °æ·Î¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù: " + partName);
-            return;
-        }
-
-        // ·çÆ® Æú´õ¿¡¼­ °æ·Î µû¶ó Folder Å½»ö
-        Folder targetFolder = fileWindow.GetRootFolder();
+        Folder target = fileWindow.GetRootFolder();
         foreach (var node in path)
         {
-            targetFolder = targetFolder.children.Find(f => f.name == node);
-            if (targetFolder == null)
+            target = target?.children.Find(f => f.name == node);
+            if (target == null)
             {
-                Debug.LogWarning("Æú´õ °æ·Î Áß ÀÏºÎ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù: " + string.Join("/", path));
+                Debug.LogWarning($"[BodyPartViewer] í´ë” ê²½ë¡œ íƒìƒ‰ ì‹¤íŒ¨: {string.Join("/", path)}");
                 return;
             }
         }
 
-        // BodyPartViewerÀÇ bodyParts ¸ñ·Ï¿¡¼­ ´ëÀÀµÇ´Â BodyPart Ã£±â
-        var partObj = System.Array.Find(bodyParts, p => p.partName == partName);
-        if (partObj == null) return;
+        var part = System.Array.Find(bodyParts, p => p.partName == partName);
+        if (part == null) return;
 
-        // Folder ÀÌ»ó ¿©ºÎ ±âÁØ
-        bool shouldShowAbnormal = targetFolder.isAbnormal || HasAbnormalInChildren(targetFolder);
-
-        // ½ºÇÁ¶óÀÌÆ® °»½Å
-        cameraPanel.sprite = (shouldShowAbnormal && partObj.abnormalSprite != null) ? partObj.abnormalSprite : partObj.normalSprite;
-    }
-
-    /// <summary>
-    /// ÀÚ½Ä Æú´õ + ÆÄÀÏ ÀÌ»ó ¿©ºÎ È®ÀÎ (Àç±Í)
-    /// </summary>
-    private bool HasAbnormalInChildren(Folder folder)
-    {
-        if (folder == null) return false;
-
-        foreach (var file in folder.files)
-        {
-            if (file.isAbnormal) return true;
-        }
-
-        foreach (var child in folder.children)
-        {
-            if (child.isAbnormal || HasAbnormalInChildren(child)) return true;
-        }
-
-        return false;
+        bool isAbnormal = AbnormalDetector.HasAbnormal(target);
+        cameraPanel.sprite = (isAbnormal && part.abnormalSprite != null)
+            ? part.abnormalSprite
+            : part.normalSprite;
     }
 }

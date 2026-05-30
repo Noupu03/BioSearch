@@ -1,25 +1,14 @@
 using UnityEngine;
 
+/// <summary>
+/// 씬 시작 시 GameEvents.OnSceneInitialized를 발생시켜
+/// 각 매니저가 스스로 초기화하도록 위임한다.
+/// </summary>
 public class SceneStartManager : MonoBehaviour
 {
-    [SerializeField] private TimerManager timer;
-    [SerializeField] private SanityManager sanity;
-    [SerializeField] private GameOverManager gameOver;
-
     void Start()
     {
-        if (timer != null)
-        {
-            timer.ResetTimer();
-            timer.StartTimer();
-        }
-
-        if (sanity != null)
-            sanity.UpdateSanityUI();
-
-        if (gameOver != null)
-            gameOver.ResetGameOver();
-
-        Debug.Log("[SceneStartManager] 초기화 완료: Timer 시작, Sanity UI 갱신, GameOver 상태 초기화");
+        GameEvents.RaiseSceneInitialized();
+        Debug.Log("[SceneStartManager] 씬 초기화 이벤트 발생");
     }
 }

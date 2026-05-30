@@ -3,32 +3,36 @@ using TMPro;
 
 public class SanityManager : MonoBehaviour
 {
-    [Header("Sanity Settings")]
+    [Header("설정")]
     public float maxSanity = 100f;
 
+    // static으로 씬 리로드 시에도 값 유지
     public static float currentSanityStatic;
 
-    [Header("UI (TMP Text)")]
+    [Header("UI")]
     public TextMeshProUGUI sanityText;
-
-    [SerializeField] private GameOverManager gameOverManager;
 
     void Awake()
     {
-        if (currentSanityStatic == 0)
+        if (currentSanityStatic <= 0f)
             currentSanityStatic = maxSanity;
 
         UpdateSanityUI();
     }
 
+    void OnEnable()  => GameEvents.OnSceneInitialized += HandleSceneInit;
+    void OnDisable() => GameEvents.OnSceneInitialized -= HandleSceneInit;
+
+    private void HandleSceneInit() => UpdateSanityUI();
+
     public void DecreaseSanity(float amount)
     {
-        currentSanityStatic -= amount;
-        currentSanityStatic = Mathf.Clamp(currentSanityStatic, 0f, maxSanity);
+        currentSanityStatic = Mathf.Clamp(currentSanityStatic - amount, 0f, maxSanity);
         UpdateSanityUI();
+        GameEvents.RaiseSanityChanged(currentSanityStatic, maxSanity);
 
-        if (currentSanityStatic <= 0f && gameOverManager != null)
-            gameOverManager.TriggerGameOver("Sanity reached zero");
+        if (currentSanityStatic <= 0f)
+            GameEvents.RaiseGameOver("정신력 고갈");
     }
 
     public void UpdateSanityUI()
@@ -41,6 +45,7 @@ public class SanityManager : MonoBehaviour
     {
         currentSanityStatic = maxSanity;
         UpdateSanityUI();
+        GameEvents.RaiseSanityChanged(currentSanityStatic, maxSanity);
     }
 
     public float GetCurrentSanity() => currentSanityStatic;

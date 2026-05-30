@@ -3,54 +3,72 @@ using TMPro;
 
 public class TimerManager : MonoBehaviour
 {
+    [Header("UI")]
     public TextMeshProUGUI timerText;
+
+    [Header("설정")]
     public float totalTime = 60f;
+
     private float currentTime;
-    public bool isRunning = false;
+    private bool  isRunning;
+    private bool  gameOverFired;
 
-    [SerializeField] private GameOverManager gameOverManager;
-
-    void Start()
+    void OnEnable()
     {
-        currentTime = totalTime;
-        UpdateTimerText();
+        GameEvents.OnSceneInitialized += HandleSceneInit;
+        GameEvents.OnGameOver         += HandleGameOver;
     }
+
+    void OnDisable()
+    {
+        GameEvents.OnSceneInitialized -= HandleSceneInit;
+        GameEvents.OnGameOver         -= HandleGameOver;
+    }
+
+    private void HandleSceneInit()
+    {
+        ResetTimer();
+        StartTimer();
+    }
+
+    private void HandleGameOver(string _) => isRunning = false;
 
     void Update()
     {
-        if (!isRunning || gameOverManager == null || gameOverManager.IsGameOver()) return;
+        if (!isRunning) return;
 
         currentTime -= Time.deltaTime;
-        UpdateTimerText();
+        UpdateTimerUI();
 
         if (currentTime <= 0f)
         {
             currentTime = 0f;
-            isRunning = false;
-            gameOverManager.TriggerGameOver("시간 초과로 인한 게임 오버");
+            isRunning   = false;
+            if (!gameOverFired)
+            {
+                gameOverFired = true;
+                GameEvents.RaiseGameOver("시간 초과");
+            }
         }
     }
 
     public void StartTimer()
     {
-        if (!isRunning)
-        {
-            isRunning = true;
-            Debug.Log("[TimerManager] 타이머 시작!");
-        }
+        if (isRunning) return;
+        isRunning = true;
     }
 
     public void StopTimer() => isRunning = false;
 
     public void ResetTimer()
     {
-        currentTime = totalTime;
-        UpdateTimerText();
-        isRunning = false;
-        Debug.Log("[TimerManager] 타이머 초기화 완료!");
+        currentTime   = totalTime;
+        isRunning     = false;
+        gameOverFired = false;
+        UpdateTimerUI();
     }
 
-    private void UpdateTimerText()
+    private void UpdateTimerUI()
     {
         if (timerText != null)
             timerText.text = $"Time: {Mathf.CeilToInt(currentTime)}";
