@@ -3,10 +3,12 @@ using TMPro;
 
 public class SanityManager : MonoBehaviour
 {
+    public static SanityManager Instance { get; private set; }
+
     [Header("설정")]
     public float maxSanity = 100f;
 
-    // static으로 씬 리로드 시에도 값 유지
+    // static: 씬 리로드 사이에도 값 유지
     public static float currentSanityStatic;
 
     [Header("UI")]
@@ -14,11 +16,16 @@ public class SanityManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null) { Destroy(gameObject); return; }
+        Instance = this;
+
         if (currentSanityStatic <= 0f)
             currentSanityStatic = maxSanity;
 
         UpdateSanityUI();
     }
+
+    void OnDestroy() { if (Instance == this) Instance = null; }
 
     void OnEnable()  => GameEvents.OnSceneInitialized += HandleSceneInit;
     void OnDisable() => GameEvents.OnSceneInitialized -= HandleSceneInit;

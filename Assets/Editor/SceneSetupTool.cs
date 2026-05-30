@@ -6,25 +6,30 @@ using System.Collections.Generic;
 using System.Text;
 
 /// <summary>
-/// Tools 메뉴에서 씬 설정을 자동화하는 에디터 툴.
+/// Tools 메뉴 → 씬 설정 자동화.
 ///
-/// - 씬 셋업  : 매니저 간 직렬화 참조를 자동 연결
-/// - 씬 정리  : 오브젝트를 그룹 폴더로 정리 + 이름 정정
+/// 리팩토링 후 배선이 필요한 항목:
+///   1. SelectPopupManager 트리거 버튼 / 팝업 프리팹 / popupParent
+///   2. FileWindow.bodyButtons 경로 초기화 (버튼은 수동 할당)
+///   3. 씬 계층구조 정리 (그룹 폴더 생성 + 이름 정정)
+///
+/// 싱글톤으로 전환된 시스템(FileWindow, SanityManager, LogWindowManager 등)은
+/// 자동 배선이 불필요하다.
 /// </summary>
 public static class SceneSetupTool
 {
     // ──────────────────────────────────────────────
-    //  Body Buttons 기본 경로 (FileWindow.bodyButtons)
+    //  Body Buttons 기본 경로
     // ──────────────────────────────────────────────
     private static readonly string[] DefaultBodyButtonPaths =
     {
         "Head",
-        "Body/Chest",      "Body/Pelvis",
-        "LeftArm/UpperArm","LeftArm/ForeArm","LeftArm/Hand",
+        "Body/Chest",       "Body/Pelvis",
+        "LeftArm/UpperArm", "LeftArm/ForeArm", "LeftArm/Hand",
         "RightArm/UpperArm","RightArm/ForeArm","RightArm/Hand",
         "Organ/Stomach",
-        "LeftLeg/Thigh","LeftLeg/Calf","LeftLeg/Foot",
-        "RightLeg/Thigh","RightLeg/Calf","RightLeg/Foot",
+        "LeftLeg/Thigh",    "LeftLeg/Calf",    "LeftLeg/Foot",
+        "RightLeg/Thigh",   "RightLeg/Calf",   "RightLeg/Foot",
     };
 
     // ──────────────────────────────────────────────
@@ -35,56 +40,40 @@ public static class SceneSetupTool
     {
         var log = new StringBuilder("=== 씬 셋업 ===\n\n");
 
-        // 참조 탐색 (GameEvents 기반으로 바뀐 뒤에도
-        //  SelectPopupManager 직렬화 필드는 여전히 필요)
-        var selectPopup = Object.FindObjectOfType<SelectPopupManager>();
-        var sanity      = Object.FindObjectOfType<SanityManager>();
-        var logWindow   = Object.FindObjectOfType<LogWindowManager>();
-        var fileWindow  = Object.FindObjectOfType<FileWindow>();
-
-        if (selectPopup != null)
-        {
-            var so = new SerializedObject(selectPopup);
-            SetRef(so, "sanityManager", sanity,    "SelectPopupManager.sanityManager", log);
-            SetRef(so, "logWindow",     logWindow, "SelectPopupManager.logWindow",     log);
-            SetRef(so, "fileWindow",    fileWindow,"SelectPopupManager.fileWindow",     log);
-            so.ApplyModifiedProperties();
-        }
-        else log.AppendLine("⚠ SelectPopupManager 없음");
-
-        if (fileWindow != null)
-            SetupBodyButtons(fileWindow, log);
-        else
-            log.AppendLine("⚠ FileWindow 없음");
+        var fw = Object.FindObjectOfType<FileWindow>();
+        if (fw != null) SetupBodyButtons(fw, log);
+        else            log.AppendLine("⚠ FileWindow 없음");
 
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         Debug.Log("[씬 셋업]\n" + log);
-        EditorUtility.DisplayDialog("씬 셋업 완료", log.ToString(), "확인");
+        EditorUtility.DisplayDialog("씬 셋업", log.ToString(), "확인");
     }
 
     // ──────────────────────────────────────────────
-    //  씬 정리 (계층구조 그룹화 + 이름 정정)
+    //  씬 정리
     // ──────────────────────────────────────────────
-    private static readonly Dictionary<string, string[]> SceneGroups = new Dictionary<string, string[]>
-    {
-        ["[Managers]"]    = new[] { "GameManagers","DripRevealManager","InputManager",
-                                    "GlobalColorManager","AudioHub","BGM","CameraManager" },
-        ["[Cameras]"]     = new[] { "Main Camera","Room Camera","MonitorCamera","View" },
-        ["[Lighting]"]    = new[] { "Directional Light","Spot Light","Light","Global Volume" },
-        ["[Environment]"] = new[] { "door","enemy","00" },
-        ["[EscapeRoute]"] = new[] { "point" },
-        ["[UI]"]          = new[] { "EventSystem","HUD_Canvas","Canvas" },
-    };
+    private static readonly Dictionary<string, string[]> SceneGroups =
+        new Dictionary<string, string[]>
+        {
+            ["[Managers]"]    = new[] { "GameManagers","DripRevealManager","InputManager",
+                                        "GlobalColorManager","AudioHub","BGM","CameraManager" },
+            ["[Cameras]"]     = new[] { "Main Camera","Room Camera","MonitorCamera","View" },
+            ["[Lighting]"]    = new[] { "Directional Light","Spot Light","Light","Global Volume" },
+            ["[Environment]"] = new[] { "door","enemy","00" },
+            ["[EscapeRoute]"] = new[] { "point" },
+            ["[UI]"]          = new[] { "EventSystem","HUD_Canvas","Canvas" },
+        };
 
-    private static readonly Dictionary<string, string> Renames = new Dictionary<string, string>
-    {
-        ["on-off Button "]   = "MonitorButton",
-        ["on-off Button"]    = "MonitorButton",
-        ["Time_Canvas"]      = "HUD_Canvas",
-        ["Global Color"]     = "GlobalColorManager",
-        ["SoundManager"]     = "AudioHub",
-        ["GameOver_Manager"] = "GameManagers",
-    };
+    private static readonly Dictionary<string, string> Renames =
+        new Dictionary<string, string>
+        {
+            ["on-off Button "]   = "MonitorButton",
+            ["on-off Button"]    = "MonitorButton",
+            ["Time_Canvas"]      = "HUD_Canvas",
+            ["Global Color"]     = "GlobalColorManager",
+            ["SoundManager"]     = "AudioHub",
+            ["GameOver_Manager"] = "GameManagers",
+        };
 
     [MenuItem("Tools/씬 정리", priority = 2)]
     public static void OrganizeScene()
@@ -93,7 +82,6 @@ public static class SceneSetupTool
         int group = Undo.GetCurrentGroup();
         var log   = new StringBuilder("=== 씬 정리 ===\n\n");
 
-        // 이름 변경
         log.AppendLine("[ 이름 변경 ]");
         foreach (var kv in Renames)
         {
@@ -104,10 +92,8 @@ public static class SceneSetupTool
             go.name = kv.Value;
         }
 
-        // MonitorButton은 루트에 단독 배치
         MoveToRoot("MonitorButton", log);
 
-        // 그룹화
         log.AppendLine("\n[ 그룹 구성 ]");
         foreach (var kv in SceneGroups)
         {
@@ -119,13 +105,11 @@ public static class SceneSetupTool
             }
             if (members.Count == 0) continue;
 
-            var group2 = GameObject.Find(kv.Key)
-                ?? CreateGroup(kv.Key);
-
+            var grp = GameObject.Find(kv.Key) ?? CreateGroup(kv.Key);
             log.AppendLine($"  {kv.Key} ({members.Count}개):");
             foreach (var m in members)
             {
-                Undo.SetTransformParent(m.transform, group2.transform, "Group");
+                Undo.SetTransformParent(m.transform, grp.transform, "Group");
                 log.AppendLine($"    ← {m.name}");
             }
         }
@@ -144,68 +128,65 @@ public static class SceneSetupTool
     // ──────────────────────────────────────────────
     //  내부 헬퍼
     // ──────────────────────────────────────────────
-
-    private static void SetupBodyButtons(FileWindow fileWindow, StringBuilder log)
+    private static void SetupBodyButtons(FileWindow fw, StringBuilder log)
     {
-        var so       = new SerializedObject(fileWindow);
-        var listProp = so.FindProperty("bodyButtons");
-        if (listProp == null) { log.AppendLine("⚠ bodyButtons 프로퍼티 없음"); return; }
+        var so   = new SerializedObject(fw);
+        var list = so.FindProperty("bodyButtons");
+        if (list == null) { log.AppendLine("⚠ bodyButtons 프로퍼티 없음"); return; }
 
-        if (listProp.arraySize == 0)
+        if (list.arraySize == 0)
         {
-            listProp.arraySize = DefaultBodyButtonPaths.Length;
+            list.arraySize = DefaultBodyButtonPaths.Length;
             for (int i = 0; i < DefaultBodyButtonPaths.Length; i++)
             {
-                var elem = listProp.GetArrayElementAtIndex(i);
-                elem.FindPropertyRelative("folderPath").stringValue       = DefaultBodyButtonPaths[i];
-                elem.FindPropertyRelative("button").objectReferenceValue  = null;
+                var elem = list.GetArrayElementAtIndex(i);
+                elem.FindPropertyRelative("folderPath").stringValue      = DefaultBodyButtonPaths[i];
+                elem.FindPropertyRelative("button").objectReferenceValue = null;
             }
             so.ApplyModifiedProperties();
             log.AppendLine($"✓ FileWindow.bodyButtons: {DefaultBodyButtonPaths.Length}개 경로 초기화");
 
-            // 이름 자동 매칭 시도
-            int matched = TryAutoFindButtons(fileWindow);
-            if (matched > 0) log.AppendLine($"  → {matched}개 버튼 이름 자동 연결");
-            else             log.AppendLine("  → 버튼은 인스펙터에서 직접 할당해주세요");
+            int matched = TryAutoMatchButtons(fw);
+            log.AppendLine(matched > 0
+                ? $"  → {matched}개 버튼 이름 자동 연결"
+                : "  → 인스펙터에서 Button 직접 할당 필요");
         }
         else
         {
-            log.AppendLine($"✓ FileWindow.bodyButtons: 기존 {listProp.arraySize}개 유지");
+            log.AppendLine($"✓ FileWindow.bodyButtons: 기존 {list.arraySize}개 유지");
         }
     }
 
-    private static int TryAutoFindButtons(FileWindow fileWindow)
+    private static int TryAutoMatchButtons(FileWindow fw)
     {
-        var allButtons = Object.FindObjectsOfType<Button>();
-        if (allButtons.Length == 0) return 0;
+        var allBtns = Object.FindObjectsOfType<Button>();
+        if (allBtns.Length == 0) return 0;
 
-        var so       = new SerializedObject(fileWindow);
-        var listProp = so.FindProperty("bodyButtons");
-        int filled   = 0;
+        var so   = new SerializedObject(fw);
+        var list = so.FindProperty("bodyButtons");
+        int n    = 0;
 
-        for (int i = 0; i < listProp.arraySize; i++)
+        for (int i = 0; i < list.arraySize; i++)
         {
-            var elem = listProp.GetArrayElementAtIndex(i);
+            var elem = list.GetArrayElementAtIndex(i);
             if (elem.FindPropertyRelative("button").objectReferenceValue != null) continue;
 
             string path    = elem.FindPropertyRelative("folderPath").stringValue;
             string keyword = path.Contains("/") ? path.Substring(path.LastIndexOf('/') + 1) : path;
             string lower   = keyword.ToLower();
 
-            foreach (var btn in allButtons)
+            foreach (var btn in allBtns)
             {
-                string n = btn.gameObject.name.ToLower().Replace(" ", "").Replace("_", "");
-                if (n.Contains(lower))
+                if (btn.gameObject.name.ToLower().Replace(" ","").Replace("_","").Contains(lower))
                 {
                     elem.FindPropertyRelative("button").objectReferenceValue = btn;
-                    filled++;
+                    n++;
                     break;
                 }
             }
         }
-
-        if (filled > 0) so.ApplyModifiedProperties();
-        return filled;
+        if (n > 0) so.ApplyModifiedProperties();
+        return n;
     }
 
     private static GameObject CreateGroup(string name)
@@ -224,14 +205,5 @@ public static class SceneSetupTool
             Undo.SetTransformParent(go.transform, null, "To Root");
             log.AppendLine($"  {name} → 루트 이동");
         }
-    }
-
-    private static void SetRef(SerializedObject so, string prop, Object val, string label, StringBuilder log)
-    {
-        if (val == null) { log.AppendLine($"  ⚠ {label}: 대상 없음"); return; }
-        var p = so.FindProperty(prop);
-        if (p == null) { log.AppendLine($"  ⚠ {label}: 프로퍼티 없음"); return; }
-        p.objectReferenceValue = val;
-        log.AppendLine($"  ✓ {label} → {val.name}");
     }
 }

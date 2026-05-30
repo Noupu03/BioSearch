@@ -3,22 +3,19 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 로그 창에 입력된 'scan 명령'을 처리하는 매니저.
-/// 폴더를 탐색해 이상 파일/폴더를 찾아 진행바로 표시한다.
+/// 로그 창에 입력된 'scan 명령'을 처리한다.
+/// FileWindow와 LogWindowManager는 Instance로 접근하므로
+/// 인스펙터 크로스 참조가 없다.
 /// </summary>
 public class ScanCommandManager : MonoBehaviour
 {
     public static ScanCommandManager Instance { get; private set; }
 
-    [Header("참조")]
-    public FileWindow       fileWindow;
-    public LogWindowManager logWindow;
-    public GameObject       scanPopupPrefab;
-    public Canvas           parentCanvas;
+    [Header("팝업 프리팹")]
+    public GameObject scanPopupPrefab;
 
-    private bool        isScanning;
-    private Slider      scanProgressSlider;
-    private GameObject  scanPopupInstance;
+    private bool   isScanning;
+    private Slider scanProgressSlider;
 
     void Awake()
     {
@@ -26,95 +23,97 @@ public class ScanCommandManager : MonoBehaviour
         Instance = this;
     }
 
+    void OnDestroy() { if (Instance == this) Instance = null; }
+
     void OnEnable()
     {
-        if (logWindow != null)
-            logWindow.OnScanCommandEntered += HandleScanCommand;
+        if (LogWindowManager.Instance != null)
+            LogWindowManager.Instance.OnScanCommandEntered += HandleScanCommand;
     }
 
     void OnDisable()
     {
-        if (logWindow != null)
-            logWindow.OnScanCommandEntered -= HandleScanCommand;
+        if (LogWindowManager.Instance != null)
+            LogWindowManager.Instance.OnScanCommandEntered -= HandleScanCommand;
     }
 
     private void HandleScanCommand(string folderName)
     {
-        if (isScanning) { logWindow.Log("스캔 중입니다..."); return; }
+        var log = LogWindowManager.Instance;
+        if (isScanning) { log?.Log("스캔 중입니다..."); return; }
 
-        Folder root   = fileWindow.GetRootFolder();
-        Folder target = FindFolderByName(root, folderName);
+        var fw = FileWindow.Instance;
+        if (fw == null) return;
 
-        if (target == null) { logWindow.Log("해당 폴더를 찾을 수 없습니다."); return; }
+        Folder target = FindFolderByName(fw.GetRootFolder(), folderName);
+        if (target == null) { log?.Log("해당 폴더를 찾을 수 없습니다."); return; }
 
         StartCoroutine(ScanFolderCoroutine(target));
     }
 
     private IEnumerator ScanFolderCoroutine(Folder folder)
     {
-        isScanning = true;
-        logWindow.DisableInput();
+        var log    = LogWindowManager.Instance;
+        var canvas = GetComponentInParent<Canvas>();
+        if (canvas == null || scanPopupPrefab == null) yield break;
 
-        scanPopupInstance  = Instantiate(scanPopupPrefab, parentCanvas.transform);
-        scanProgressSlider = scanPopupInstance.GetComponentInChildren<Slider>();
-        scanProgressSlider.value = 0f;
+        isScanning = true;
+        log?.DisableInput();
+
+        var popupGo = Instantiate(scanPopupPrefab, canvas.transform);
+        scanProgressSlider = popupGo.GetComponentInChildren<Slider>();
+        if (scanProgressSlider) scanProgressSlider.value = 0f;
 
         int   totalItems    = CountItems(folder);
         float totalScanTime = totalItems * 3f;
         int   abnormalCount = AbnormalDetector.GetAbnormalCount(folder);
 
-        logWindow.Log("이상 스캔 중...");
+        log?.Log("이상 스캔 중...");
 
-        // 버퍼 구간 생성 (진행이 잠시 멈추는 구간)
-        int     bufferCount     = Random.Range(4, 6);
-        float[] bufferTimes     = new float[bufferCount];
-        float[] bufferPositions = new float[bufferCount];
-        float   totalBufferTime = 0f;
+        int     bufCount   = Random.Range(4, 6);
+        float[] bufTimes   = new float[bufCount];
+        float[] bufPos     = new float[bufCount];
+        float   bufTotal   = 0f;
 
-        for (int i = 0; i < bufferCount; i++)
+        for (int i = 0; i < bufCount; i++)
         {
-            bufferTimes[i]      = totalScanTime * Random.Range(0.1f, 0.15f);
-            bufferPositions[i]  = Random.Range(0f, 1f);
-            totalBufferTime    += bufferTimes[i];
+            bufTimes[i]  = totalScanTime * Random.Range(0.1f, 0.15f);
+            bufPos[i]    = Random.Range(0f, 1f);
+            bufTotal    += bufTimes[i];
         }
-        System.Array.Sort(bufferPositions);
+        System.Array.Sort(bufPos);
 
-        float progressTime = Mathf.Max(0f, totalScanTime - totalBufferTime);
+        float progressTime = Mathf.Max(0f, totalScanTime - bufTotal);
         float elapsed      = 0f;
-        int   bufferIndex  = 0;
+        int   bufIdx       = 0;
 
         while (elapsed < progressTime)
         {
             elapsed += Time.deltaTime;
             float progress = Mathf.Clamp01(elapsed / progressTime);
 
-            while (bufferIndex < bufferCount && progress >= bufferPositions[bufferIndex])
+            while (bufIdx < bufCount && progress >= bufPos[bufIdx])
             {
-                yield return new WaitForSeconds(bufferTimes[bufferIndex]);
-                bufferIndex++;
+                yield return new WaitForSeconds(bufTimes[bufIdx]);
+                bufIdx++;
             }
 
-            scanProgressSlider.value = progress;
+            if (scanProgressSlider) scanProgressSlider.value = progress;
             yield return null;
         }
 
-        scanProgressSlider.value = 1f;
-        logWindow.ReplaceLastScanLog("스캔 완료");
+        if (scanProgressSlider) scanProgressSlider.value = 1f;
+        log?.ReplaceLastScanLog("스캔 완료");
 
-        Destroy(scanPopupInstance);
-        logWindow.EnableInput();
+        Destroy(popupGo);
+        log?.EnableInput();
         isScanning = false;
-
-        logWindow.Log($"이상 감지 수: {abnormalCount}");
+        log?.Log($"이상 감지 수: {abnormalCount}");
     }
-
-    // ── 유틸리티 ─────────────────────────────────
 
     private static Folder FindFolderByName(Folder folder, string name)
     {
-        if (folder.name.Equals(name, System.StringComparison.OrdinalIgnoreCase))
-            return folder;
-
+        if (folder.name.Equals(name, System.StringComparison.OrdinalIgnoreCase)) return folder;
         foreach (var child in folder.children)
         {
             var found = FindFolderByName(child, name);
@@ -126,8 +125,7 @@ public class ScanCommandManager : MonoBehaviour
     private static int CountItems(Folder folder)
     {
         int count = 1 + folder.files.Count;
-        foreach (var child in folder.children)
-            count += CountItems(child);
+        foreach (var child in folder.children) count += CountItems(child);
         return count;
     }
 }

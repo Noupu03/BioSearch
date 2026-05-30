@@ -2,6 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// 수락/방류 팝업을 생성하고 판정 결과를 처리한다.
+/// FileWindow, LogWindowManager, SanityManager는 Instance로 접근하므로
+/// 인스펙터 크로스 참조가 없다.
+/// </summary>
 public class SelectPopupManager : MonoBehaviour
 {
     [Header("트리거 버튼")]
@@ -12,11 +17,6 @@ public class SelectPopupManager : MonoBehaviour
     public GameObject acceptPopupPrefab;
     public GameObject releasePopupPrefab;
     public Transform  popupParent;
-
-    [Header("참조")]
-    public SanityManager    sanityManager;
-    public LogWindowManager logWindow;
-    public FileWindow       fileWindow;
 
     private SelectPopup currentPopup;
 
@@ -30,7 +30,7 @@ public class SelectPopupManager : MonoBehaviour
     {
         if (currentPopup != null || prefab == null || popupParent == null) return;
 
-        var go = Instantiate(prefab, popupParent);
+        var go    = Instantiate(prefab, popupParent);
         var popup = go.GetComponent<SelectPopup>();
         if (popup == null) return;
 
@@ -41,29 +41,31 @@ public class SelectPopupManager : MonoBehaviour
 
     private void HandleYes(bool isAccept)
     {
-        if (fileWindow == null) return;
+        var fw = FileWindow.Instance;
+        if (fw == null) return;
 
-        Folder root = fileWindow.GetRootFolder();
-        if (root == null) return;
+        Folder root         = fw.GetRootFolder();
+        int    abnormal     = AbnormalDetector.GetAbnormalCount(root);
+        bool   success      = (isAccept && abnormal == 0) || (!isAccept && abnormal > 0);
 
-        int  abnormalCount = AbnormalDetector.GetAbnormalCount(root);
-        bool success       = (isAccept && abnormalCount == 0) || (!isAccept && abnormalCount > 0);
+        var log = LogWindowManager.Instance;
 
         if (success)
         {
-            logWindow?.Log("성공!");
+            log?.Log("성공!");
             ScoreCount.successCount++;
         }
         else
         {
-            logWindow?.Log("실패!");
+            log?.Log("실패!");
             ScoreCount.failCount++;
 
-            if (sanityManager != null)
+            var sanity = SanityManager.Instance;
+            if (sanity != null)
             {
-                sanityManager.DecreaseSanity(40f);
-                if (sanityManager.GetCurrentSanity() <= 0f)
-                    return; // SanityManager → GameEvents.OnGameOver → GameOverManager 처리
+                sanity.DecreaseSanity(40f);
+                // DecreaseSanity 내부에서 고갈 시 GameEvents.RaiseGameOver 발생
+                if (sanity.GetCurrentSanity() <= 0f) return;
             }
         }
 

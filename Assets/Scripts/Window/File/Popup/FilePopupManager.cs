@@ -5,209 +5,127 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 /// <summary>
-/// ÆË¾÷ UI¸¦ °ü¸®ÇÏ´Â ¸Å´ÏÀú
-/// - ÆÄÀÏ ´õºíÅ¬¸¯ ½Ã ÆË¾÷ »ı¼º
-/// - Áßº¹ ÆË¾÷ ¹æÁö
-/// - È®ÀåÀÚ º¯°æ ½Ã °ü·Ã ÆË¾÷ ÀÚµ¿ ´İÈû
+/// íŒŒì¼ íŒì—… ì°½ì„ ê´€ë¦¬í•˜ëŠ” ì‹±ê¸€í†¤.
+/// CanvasëŠ” ì»´í¬ë„ŒíŠ¸ ê³„ì¸µì—ì„œ ìë™ìœ¼ë¡œ ì°¾ìœ¼ë¯€ë¡œ ì¸ìŠ¤í™í„° ì°¸ì¡° ë¶ˆí•„ìš”.
 /// </summary>
 public class FilePopupManager : MonoBehaviour
 {
-    public static FilePopupManager Instance;
+    public static FilePopupManager Instance { get; private set; }
 
-    [Header("Prefab & Canvas")]
-    public GameObject popupPrefab;  // Popup ÇÁ¸®ÆÕ
-    public Canvas canvas;           // Inspector¿¡¼­ ÁöÁ¤ °¡´É
+    [Header("íŒì—… í”„ë¦¬íŒ¹")]
+    public GameObject popupPrefab;
 
-    // ÇöÀç ¿­¸° ÆË¾÷ ¸ñ·Ï (ÆÄÀÏ ÀÌ¸§ ±âÁØ)
-    private Dictionary<string, GameObject> openPopups = new Dictionary<string, GameObject>();
+    private Canvas canvas;
+    private readonly Dictionary<string, GameObject> openPopups = new Dictionary<string, GameObject>();
 
-    private void Awake()
+    void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-
+        if (Instance != null) { Destroy(gameObject); return; }
+        Instance = this;
+        canvas   = GetComponentInParent<Canvas>();
         if (canvas == null)
-            canvas = FindObjectOfType<Canvas>();
+            Debug.LogError("[FilePopupManager] ë¶€ëª¨ ê³„ì¸µì— Canvasê°€ ì—†ìŠµë‹ˆë‹¤.");
     }
 
-    /// <summary>
-    /// ÆÄÀÏ ¿­±â - ÆË¾÷ »ı¼º (Áßº¹ ¹æÁö)
-    /// </summary>
+    void OnDestroy() { if (Instance == this) Instance = null; }
+
     public void OpenFile(File file)
     {
-        if (file == null) return;
+        if (file == null || canvas == null || popupPrefab == null) return;
+        if (openPopups.ContainsKey(file.name)) return;
 
-        if (canvas == null)
+        var go     = Instantiate(popupPrefab, canvas.transform, false);
+        var popup  = go.GetComponent<FilePopup>();
+
+        openPopups[file.name] = go;
+
+        if (popup != null)
         {
-            Debug.LogError("PopupManager: Canvas°¡ ÁöÁ¤µÇÁö ¾Ê¾Ò½À´Ï´Ù!");
-            return;
+            popup.Initialize(file.name, file.extension, canvas);
+            popup.SetFileKey(file.name);
+            SetupDragTrigger(popup);
         }
 
-        if (popupPrefab == null)
-        {
-            Debug.LogError("PopupManager: popupPrefabÀÌ ÁöÁ¤µÇÁö ¾Ê¾Ò½À´Ï´Ù!");
-            return;
-        }
+        go.transform.SetAsLastSibling();
+        SetupContent(go, file);
+    }
 
-        string popupKey = file.name;
+    public void ClosePopup(string fileName)
+    {
+        if (!openPopups.TryGetValue(fileName, out var go)) return;
+        if (go != null) Destroy(go);
+        openPopups.Remove(fileName);
+    }
 
-        // ÀÌ¹Ì °°Àº ÀÌ¸§ÀÇ ÆË¾÷ÀÌ ¿­·Á ÀÖ´Ù¸é »õ·Î »ı¼ºÇÏÁö ¾ÊÀ½
-        if (openPopups.ContainsKey(popupKey))
-        {
-            Debug.Log($"PopupManager: '{popupKey}' ÆË¾÷ÀÌ ÀÌ¹Ì ¿­·Á ÀÖ½À´Ï´Ù.");
-            return;
-        }
+    public void OnPopupDestroyed(string fileKey) => openPopups.Remove(fileKey);
 
-        // ÆË¾÷ »ı¼º
-        GameObject popupInstance = Instantiate(popupPrefab, canvas.transform, false);
-        if (popupInstance == null)
-        {
-            Debug.LogError("PopupManager: Popup »ı¼º ½ÇÆĞ!");
-            return;
-        }
+    public void CloseAllPopups()
+    {
+        foreach (var go in openPopups.Values)
+            if (go != null) Destroy(go);
+        openPopups.Clear();
+    }
 
-        // ¸ñ·Ï¿¡ µî·Ï
-        openPopups.Add(popupKey, popupInstance);
+    public bool IsPopupOpen(string fileName) => openPopups.ContainsKey(fileName);
 
-        // Popup ½ºÅ©¸³Æ® °¡Á®¿À±â
-        FilePopup popupScript = popupInstance.GetComponent<FilePopup>();
-        if (popupScript != null)
-        {
-            popupScript.Initialize(file.name, file.extension, canvas);
-            popupScript.SetFileKey(popupKey); // ÆÄÀÏ ÀÌ¸§ Å° ÀúÀå
+    // â”€â”€ ë‚´ë¶€ í—¬í¼ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-            // Å¾¹Ù µå·¡±× ÀÌº¥Æ® ¿¬°á (ÀÌ ºÎºĞÀÌ Å¾¹Ù µå·¡±×°¡ ¾È µÇ´ø ¿øÀÎ ÇØ°á)
-            if (popupScript.topBar != null)
-            {
-                EventTrigger trigger = popupScript.topBar.gameObject.GetComponent<EventTrigger>();
-                if (trigger == null)
-                    trigger = popupScript.topBar.gameObject.AddComponent<EventTrigger>();
+    private static void SetupDragTrigger(FilePopup popup)
+    {
+        if (popup.topBar == null) return;
 
-                // ±âÁ¸ Æ®¸®°Å ÃÊ±âÈ­ (Áßº¹ ¿¬°á ¹æÁö)
-                trigger.triggers.Clear();
+        var trigger = popup.topBar.gameObject.GetComponent<EventTrigger>()
+                   ?? popup.topBar.gameObject.AddComponent<EventTrigger>();
+        trigger.triggers.Clear();
 
-                // PointerDown
-                EventTrigger.Entry entryDown = new EventTrigger.Entry
-                {
-                    eventID = EventTriggerType.PointerDown
-                };
-                entryDown.callback.AddListener((data) => popupScript.OnTopBarPointerDown((BaseEventData)data));
-                trigger.triggers.Add(entryDown);
+        AddTrigger(trigger, EventTriggerType.PointerDown,
+            d => popup.OnTopBarPointerDown((BaseEventData)d));
+        AddTrigger(trigger, EventTriggerType.Drag,
+            d => popup.OnTopBarDrag((BaseEventData)d));
+    }
 
-                // Drag
-                EventTrigger.Entry entryDrag = new EventTrigger.Entry
-                {
-                    eventID = EventTriggerType.Drag
-                };
-                entryDrag.callback.AddListener((data) => popupScript.OnTopBarDrag((BaseEventData)data));
-                trigger.triggers.Add(entryDrag);
-            }
-            else
-            {
-                Debug.LogWarning("PopupManager: ÆË¾÷ ÇÁ¸®ÆÕÀÇ topBar°¡ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù. µå·¡±× ºÒ°¡.");
-            }
-        }
-        else
-        {
-            Debug.LogError("PopupManager: Popup ÇÁ¸®ÆÕ¿¡ Popup ½ºÅ©¸³Æ®°¡ ¾ø½À´Ï´Ù!");
-            return;
-        }
+    private static void AddTrigger(EventTrigger trigger, EventTriggerType type,
+        UnityEngine.Events.UnityAction<BaseEventData> action)
+    {
+        var entry = new EventTrigger.Entry { eventID = type };
+        entry.callback.AddListener(d => action((BaseEventData)d));
+        trigger.triggers.Add(entry);
+    }
 
-        // »ı¼º ÈÄ ÃÖ»ó´ÜÀ¸·Î
-        popupInstance.transform.SetAsLastSibling();
+    private static void SetupContent(GameObject go, File file)
+    {
+        var popupImage = FindDeepChild(go.transform, "PopupImage");
+        var popupText  = FindDeepChild(go.transform, "PopupText");
+        if (popupImage == null || popupText == null) return;
 
-        // È®ÀåÀÚ¿¡ µû¶ó ³»¿ë Ç¥½Ã
-        Transform popupImage = FindDeepChild(popupInstance.transform, "PopupImage");
-        Transform popupText = FindDeepChild(popupInstance.transform, "PopupText");
-
-        if (popupImage == null || popupText == null)
-        {
-            Debug.LogError("PopupPrefab ¾È¿¡ 'PopupImage' ¶Ç´Â 'PopupText' ¿ÀºêÁ§Æ®°¡ ¾ø½À´Ï´Ù!");
-            return;
-        }
-
-        // È®ÀåÀÚº° Ç¥½Ã
-        string ext = file.extension != null ? file.extension.ToLower() : "";
         popupImage.gameObject.SetActive(false);
         popupText.gameObject.SetActive(false);
 
+        string ext = (file.extension ?? "").ToLower();
         switch (ext)
         {
-            case "png":
-            case "jpg":
-            case "jpeg":
+            case "png": case "jpg": case "jpeg":
                 popupImage.gameObject.SetActive(true);
-                Image img = popupImage.GetComponent<Image>();
+                var img = popupImage.GetComponent<Image>();
                 if (img != null && file.imageContent != null)
                     img.sprite = file.imageContent;
-                else
-                    Debug.LogWarning($"{file.name}.{file.extension} : ÀÌ¹ÌÁö ³»¿ë ¾øÀ½");
                 break;
 
             case "txt":
                 popupText.gameObject.SetActive(true);
-                TMP_Text textComp = popupText.GetComponent<TMP_Text>();
-                if (textComp != null)
-                    textComp.text = file.textContent ?? $"{file.name}.{file.extension} (³»¿ë ¾øÀ½)";
-                else
-                    Debug.LogWarning($"{file.name}.{file.extension} : TMP_Text ÄÄÆ÷³ÍÆ® ¾øÀ½");
-                break;
-
-            default:
-                Debug.LogWarning($"{file.name}.{file.extension} : Áö¿øµÇÁö ¾Ê´Â ÆÄÀÏ Çü½Ä");
+                var txt = popupText.GetComponent<TMP_Text>();
+                if (txt != null)
+                    txt.text = file.textContent ?? $"{file.name}.{file.extension}";
                 break;
         }
     }
 
-    /// <summary>
-    /// Æ¯Á¤ ÀÌ¸§ÀÇ ÆË¾÷ ´İ±â
-    /// </summary>
-    public void ClosePopup(string fileName)
-    {
-        if (openPopups.TryGetValue(fileName, out GameObject popup))
-        {
-            if (popup != null)
-                Destroy(popup);
-            openPopups.Remove(fileName);
-        }
-    }
-
-    /// <summary>
-    /// ÆË¾÷ÀÌ »èÁ¦µÉ ¶§ ¸Å´ÏÀú¿¡¼­µµ Á¦°Å
-    /// </summary>
-    public void OnPopupDestroyed(string fileKey)
-    {
-        if (openPopups.ContainsKey(fileKey))
-            openPopups.Remove(fileKey);
-    }
-
-    /// <summary>
-    /// ¸ğµç ÆË¾÷ ´İ±â
-    /// </summary>
-    public void CloseAllPopups()
-    {
-        foreach (var popup in openPopups.Values)
-        {
-            if (popup != null) Destroy(popup);
-        }
-        openPopups.Clear();
-    }
-
-    /// <summary>
-    /// ÆË¾÷ Á¸Àç ¿©ºÎ È®ÀÎ
-    /// </summary>
-    public bool IsPopupOpen(string fileName)
-    {
-        return openPopups.ContainsKey(fileName);
-    }
-
-    // ÇÁ¸®ÆÕ ³»ºÎ Àç±Í Å½»ö
-    private Transform FindDeepChild(Transform parent, string name)
+    private static Transform FindDeepChild(Transform parent, string name)
     {
         foreach (Transform child in parent)
         {
             if (child.name == name) return child;
-            Transform result = FindDeepChild(child, name);
+            var result = FindDeepChild(child, name);
             if (result != null) return result;
         }
         return null;

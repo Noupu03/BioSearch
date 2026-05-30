@@ -1,97 +1,64 @@
 using UnityEngine;
 
 /// <summary>
-/// extense ¸í·É¾î¸¦ Ã³¸®ÇÏ´Â Å¬·¡½º
-/// - Æ¯Á¤ ÆÄÀÏÀÇ È®ÀåÀÚ¸¦ º¯°æ
+/// 'extense íŒŒì¼ëª… í™•ì¥ì' ëª…ë ¹ì–´ë¥¼ ì²˜ë¦¬í•œë‹¤.
+/// FileWindowì™€ LogWindowManagerëŠ” Instanceë¡œ ì ‘ê·¼í•˜ë¯€ë¡œ
+/// ì¸ìŠ¤í™í„° í¬ë¡œìŠ¤ ì°¸ì¡°ê°€ ì—†ë‹¤.
 /// </summary>
 public class ExtenseCommandManager : MonoBehaviour
 {
-    [Header("References")]
-    public FileWindow fileWindow;          // È®ÀåÀÚ º¯°æ ´ë»óÀÌ µÇ´Â ÆÄÀÏ ±¸Á¶
-    public LogWindowManager logWindow;     // ·Î±× Ãâ·Â Ã¢
-
-    private void OnEnable()
+    void OnEnable()
     {
-        if (logWindow != null)
-            logWindow.OnExtenseCommandEntered += HandleExtenseCommand;
+        if (LogWindowManager.Instance != null)
+            LogWindowManager.Instance.OnExtenseCommandEntered += HandleExtenseCommand;
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
-        if (logWindow != null)
-            logWindow.OnExtenseCommandEntered -= HandleExtenseCommand;
+        if (LogWindowManager.Instance != null)
+            LogWindowManager.Instance.OnExtenseCommandEntered -= HandleExtenseCommand;
     }
 
-    /// <summary>
-    /// extense ¸í·É¾î ÀÔ·Â ½Ã È£ÃâµÇ´Â Ã³¸® ÇÔ¼ö
-    /// </summary>
-    private void HandleExtenseCommand(string commandArgs)
+    private void HandleExtenseCommand(string args)
     {
-        // ÀÎÀÚ ÆÄ½Ì: "ÆÄÀÏ¸í È®ÀåÀÚ"
-        string[] parts = commandArgs.Split(' ');
+        var log = LogWindowManager.Instance;
+        string[] parts = args.Split(' ');
         if (parts.Length < 2)
         {
-            logWindow.Log("»ç¿ë¹ı: extense [ÆÄÀÏ¸í] [»õ È®ÀåÀÚ]");
+            log?.Log("ì‚¬ìš©ë²•: extense [íŒŒì¼ëª…] [ìƒˆ í™•ì¥ì]");
             return;
         }
-
-        string fileName = parts[0];
-        string newExtension = parts[1];
-
-        ChangeFileExtension(fileName, newExtension);
+        ChangeFileExtension(parts[0], parts[1]);
     }
 
-    /// <summary>
-    /// ÆÄÀÏÀÇ È®ÀåÀÚ¸¦ º¯°æ
-    /// </summary>
-    private void ChangeFileExtension(string fileName, string newExtension)
+    private void ChangeFileExtension(string fileName, string newExt)
     {
-        if (fileWindow == null)
-        {
-            logWindow.Log("FileWindow ÂüÁ¶°¡ ¾ø½À´Ï´Ù.");
-            return;
-        }
+        var log = LogWindowManager.Instance;
+        var fw  = FileWindow.Instance;
 
-        Folder root = fileWindow.GetRootFolder();
-        File target = FindFileByName(root, fileName);
+        if (fw == null) { log?.Log("FileWindowê°€ ì—†ìŠµë‹ˆë‹¤."); return; }
 
-        if (target == null)
-        {
-            logWindow.Log($"ÆÄÀÏ '{fileName}'À»(¸¦) Ã£À» ¼ö ¾ø½À´Ï´Ù.");
-            return;
-        }
+        File target = FindFileByName(fw.GetRootFolder(), fileName);
+        if (target == null) { log?.Log($"'{fileName}' íŒŒì¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤."); return; }
 
         string oldExt = target.extension;
-        target.extension = newExtension;
+        target.extension = newExt;
 
-        // ÆÄÀÏ ÀÌ¸§°ú µ¿ÀÏÇÑ ÆË¾÷ÀÌ ¿­·ÁÀÖ´Ù¸é Áï½Ã ´İ±â
-        if (FilePopupManager.Instance != null)
-            FilePopupManager.Instance.ClosePopup(fileName);
-
-        logWindow.Log($"'{target.name}' ÆÄÀÏ È®ÀåÀÚ º¯°æ: {oldExt} ¡æ {newExtension}");
-
-        fileWindow.RefreshWindow(); // UI °»½Å
+        FilePopupManager.Instance?.ClosePopup(fileName);
+        log?.Log($"'{target.name}' í™•ì¥ì ë³€ê²½: {oldExt} â†’ {newExt}");
+        fw.RefreshWindow();
     }
 
-    /// <summary>
-    /// ÆÄÀÏ ÀÌ¸§À¸·Î Àç±Í °Ë»ö
-    /// </summary>
-    private File FindFileByName(Folder folder, string name)
+    private static File FindFileByName(Folder folder, string name)
     {
-        // ÇöÀç Æú´õ ³» ÆÄÀÏ °Ë»ö
         foreach (var file in folder.files)
-        {
-            if (file.name.Equals(name, System.StringComparison.OrdinalIgnoreCase))
-                return file;
-        }
+            if (file.name.Equals(name, System.StringComparison.OrdinalIgnoreCase)) return file;
 
-        // ÇÏÀ§ Æú´õ Àç±Í Å½»ö
         foreach (var child in folder.children)
         {
             var found = FindFileByName(child, name);
             if (found != null) return found;
         }
-
         return null;
     }
 }

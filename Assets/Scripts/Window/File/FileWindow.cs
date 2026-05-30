@@ -12,6 +12,8 @@ public class BodyButtonEntry
 
 public partial class FileWindow : MonoBehaviour
 {
+    public static FileWindow Instance { get; private set; }
+
     [Header("Prefabs")]
     public GameObject folderIconPrefab;
     public GameObject fileIconPrefab;
@@ -72,8 +74,15 @@ public partial class FileWindow : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null) { Destroy(gameObject); return; }
+        Instance = this;
         if (pathPanelManager != null)
             pathPanelManager.Initialize(this);
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     void Start()
