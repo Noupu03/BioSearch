@@ -61,7 +61,7 @@ public class CameraSwitcher : MonoBehaviour
         if (isSwitching || activeCamera != camera2) return;
 
         if (switchCoroutine != null) StopCoroutine(switchCoroutine);
-        switchCoroutine = StartCoroutine(Switch2To1Routine());
+        Switch2To1();
     }
 
     IEnumerator Switch1To2Routine()
@@ -74,21 +74,13 @@ public class CameraSwitcher : MonoBehaviour
         activeCamera = camera2;
         currentView  = ViewMode.Front;
         isSwitching  = false;
-
-        InputManager.Instance?.LockSInput(false);
     }
 
-    IEnumerator Switch2To1Routine()
+    private void Switch2To1()
     {
-        isSwitching = true;
-
         CameraUtils.SetActive(camera2, false);
         CameraUtils.SetActive(camera1, true);
         activeCamera = camera1;
         currentView  = ViewMode.Front;
-        isSwitching  = false;
-
-        InputManager.Instance?.LockSInput(false);
-        yield return null;
     }
 }

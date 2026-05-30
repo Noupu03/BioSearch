@@ -45,7 +45,7 @@ public class ScanCommandManager : MonoBehaviour
         var fw = FileWindow.Instance;
         if (fw == null) return;
 
-        Folder target = FindFolderByName(fw.GetRootFolder(), folderName);
+        Folder target = fw.FindFolder(folderName);
         if (target == null) { log?.Log("해당 폴더를 찾을 수 없습니다."); return; }
 
         StartCoroutine(ScanFolderCoroutine(target));
@@ -109,17 +109,6 @@ public class ScanCommandManager : MonoBehaviour
         log?.EnableInput();
         isScanning = false;
         log?.Log($"이상 감지 수: {abnormalCount}");
-    }
-
-    private static Folder FindFolderByName(Folder folder, string name)
-    {
-        if (folder.name.Equals(name, System.StringComparison.OrdinalIgnoreCase)) return folder;
-        foreach (var child in folder.children)
-        {
-            var found = FindFolderByName(child, name);
-            if (found != null) return found;
-        }
-        return null;
     }
 
     private static int CountItems(Folder folder)

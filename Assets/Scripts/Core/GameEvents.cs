@@ -19,16 +19,12 @@ public static class GameEvents
     public static event Action<float, float> OnSanityChanged;
 
     // ── 스코어/스테이지 ──────────────────────────
-    /// <summary>한 스테이지 결과가 확정됐을 때. true=성공, false=실패</summary>
-    public static event Action<bool> OnStageResult;
-
     /// <summary>스코어 값이 바뀌었을 때 (UI 갱신 트리거)</summary>
     public static event Action OnScoreChanged;
 
     // ── 발생 메서드 ──────────────────────────────
-    public static void RaiseSceneInitialized()              => OnSceneInitialized?.Invoke();
-    public static void RaiseGameOver(string reason)         => OnGameOver?.Invoke(reason);
+    public static void RaiseSceneInitialized()                  => OnSceneInitialized?.Invoke();
+    public static void RaiseGameOver(string reason)             => OnGameOver?.Invoke(reason);
     public static void RaiseSanityChanged(float cur, float max) => OnSanityChanged?.Invoke(cur, max);
-    public static void RaiseStageResult(bool success)       => OnStageResult?.Invoke(success);
-    public static void RaiseScoreChanged()                  => OnScoreChanged?.Invoke();
+    public static void RaiseScoreChanged()                      => OnScoreChanged?.Invoke();
 }

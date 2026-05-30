@@ -35,8 +35,7 @@ public class GameOverManager : MonoBehaviour
     private IEnumerator ReturnToStart()
     {
         yield return null;
-        // SanityManager가 OnGameOver를 받아 스스로 리셋하므로 여기서 직접 호출 불필요
-        SanityManager.currentSanityStatic = 0f; // 다음 씬 Awake에서 maxSanity로 초기화됨
+        SanityManager.PrepareForNewGame(); // 다음 게임 씬 Awake에서 maxSanity로 재초기화됨
         SceneManager.LoadScene(startSceneName);
     }
 

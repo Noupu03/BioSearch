@@ -59,7 +59,6 @@ public class LogWindowManager : MonoBehaviour
         inputField.onSubmit.AddListener(OnInputSubmitted);
         // 텍스트가 바뀔 때만 높이 재계산 (LateUpdate 폴링 제거)
         logText.RegisterDirtyLayoutCallback(OnLogTextDirty);
-        scrollRect.onValueChanged.AddListener(OnScrollChanged);
 
         inputField.ActivateInputField();
 
@@ -74,9 +73,8 @@ public class LogWindowManager : MonoBehaviour
     void OnDestroy()
     {
         if (Instance == this) Instance = null;
-        if (inputField != null)  inputField.onSubmit.RemoveListener(OnInputSubmitted);
-        if (logText != null)     logText.UnregisterDirtyLayoutCallback(OnLogTextDirty);
-        if (scrollRect != null)  scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
+        if (inputField != null) inputField.onSubmit.RemoveListener(OnInputSubmitted);
+        if (logText != null)    logText.UnregisterDirtyLayoutCallback(OnLogTextDirty);
     }
 
     // ── 텍스트 변경 콜백 (LateUpdate 대체) ─────────
@@ -95,8 +93,6 @@ public class LogWindowManager : MonoBehaviour
         logText.rectTransform.sizeDelta = new Vector2(logText.rectTransform.sizeDelta.x, h);
         scrollRect.verticalNormalizedPosition = 0f;
     }
-
-    private void OnScrollChanged(Vector2 _) { }
 
     // ── 로그 API ─────────────────────────────────
     public void Log(string message)

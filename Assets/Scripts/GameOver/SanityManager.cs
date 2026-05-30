@@ -56,4 +56,7 @@ public class SanityManager : MonoBehaviour
     }
 
     public float GetCurrentSanity() => currentSanityStatic;
+
+    /// <summary>게임오버 후 다음 게임 시작 시 만수치로 재초기화되도록 예약. Awake에서 감지.</summary>
+    public static void PrepareForNewGame() => currentSanityStatic = 0f;
 }
