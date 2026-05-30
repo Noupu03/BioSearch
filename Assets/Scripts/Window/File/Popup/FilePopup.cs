@@ -23,11 +23,11 @@ public class FilePopup : MonoBehaviour
         if (closeButton != null)
             closeButton.onClick.AddListener(() => Destroy(gameObject));
 
-        // topBar에 DragHandler가 없으면 자동 추가 (팝업 자체를 target으로)
+        // topBar에 DragHandler가 없으면 자동 추가 — 팝업 루트 전체를 이동 대상으로 지정
         if (topBar != null && topBar.GetComponent<DragHandler>() == null)
         {
             var dh = topBar.gameObject.AddComponent<DragHandler>();
-            // target 미지정 시 팝업 RectTransform 자체로 이동
+            dh.Init(GetComponent<RectTransform>());
         }
     }
 

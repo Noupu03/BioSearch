@@ -22,6 +22,13 @@ public class DragHandler : MonoBehaviour, IPointerDownHandler, IDragHandler
         canvas     = GetComponentInParent<Canvas>();
     }
 
+    /// <summary>코드에서 AddComponent 후 즉시 이동 대상을 지정할 때 사용.</summary>
+    public void Init(RectTransform dragTarget)
+    {
+        moveTarget = dragTarget;
+        canvas     = GetComponentInParent<Canvas>();
+    }
+
     public void OnPointerDown(PointerEventData e)
     {
         if (canvas == null) return;
