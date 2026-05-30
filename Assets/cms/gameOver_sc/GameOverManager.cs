@@ -5,51 +5,36 @@ using System.Collections;
 public class GameOverManager : MonoBehaviour
 {
     private bool isGameOver = false;
-    public float returnDelay = 0f; // 5ÃÊ ÈÄ º¹±Í
-    public string startSceneName = "StartScene"; // º¹±ÍÇÒ ¾À ÀÌ¸§
+    public float returnDelay = 0f;
+    public string startSceneName = "StartScene";
+
+    [SerializeField] private SanityManager sanityManager;
 
     public void TriggerGameOver(string reason)
     {
-        if (isGameOver) return; // Áßº¹ È£Ãâ ¹æÁö
+        if (isGameOver) return;
         isGameOver = true;
 
-        Debug.Log($"[GameOver] ¹ß»ı! ÀÌÀ¯: {reason}");
-
-        // °ÔÀÓ¿À¹ö ½Ã ½ºÅ×ÀÌÁö/¼º°ø/½ÇÆĞ Ä«¿îÆ® ÃÊ±âÈ­
-        // SelectPopupManager popupManager = FindObjectOfType<SelectPopupManager>();
-        //if (popupManager != null)
-        //popupManager.ResetCounts();
+        Debug.Log($"[GameOver] ë°œìƒ! ì›ì¸: {reason}");
         ScoreCount.Reset();
-
         StartCoroutine(ReturnToStartScene());
-
-
     }
 
- IEnumerator ReturnToStartScene()
-{
-    // optional delay
-    yield return null;
+    IEnumerator ReturnToStartScene()
+    {
+        yield return null;
 
-    // °ÔÀÓ¿À¹ö ½Ã ÃÊ±âÈ­
-    SanityManager sanity = FindObjectOfType<SanityManager>();
-    if (sanity != null)
-        sanity.ResetSanity();
+        if (sanityManager != null)
+            sanityManager.ResetSanity();
 
-    // ½ÃÀÛ ¾À ·Îµå
-    SceneManager.LoadScene(startSceneName);
-}
-
+        SceneManager.LoadScene(startSceneName);
+    }
 
     public void ResetGameOver()
     {
         isGameOver = false;
-        Debug.Log("[GameOverManager] »óÅÂ ÃÊ±âÈ­µÊ.");
+        Debug.Log("[GameOverManager] ìƒíƒœ ì´ˆê¸°í™”ë¨.");
     }
 
-    public bool IsGameOver()
-    {
-        return isGameOver;
-
-    }
+    public bool IsGameOver() => isGameOver;
 }

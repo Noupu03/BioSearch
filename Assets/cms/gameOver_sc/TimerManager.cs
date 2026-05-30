@@ -8,13 +8,12 @@ public class TimerManager : MonoBehaviour
     private float currentTime;
     public bool isRunning = false;
 
-    private GameOverManager gameOverManager;
+    [SerializeField] private GameOverManager gameOverManager;
 
     void Start()
     {
         currentTime = totalTime;
         UpdateTimerText();
-        gameOverManager = FindObjectOfType<GameOverManager>();
     }
 
     void Update()
@@ -26,11 +25,9 @@ public class TimerManager : MonoBehaviour
 
         if (currentTime <= 0f)
         {
-
             currentTime = 0f;
             isRunning = false;
-            
-            gameOverManager.TriggerGameOver("½Ã°£ ÃÊ°ú·Î ÀÎÇÑ °ÔÀÓ ¿À¹ö");
+            gameOverManager.TriggerGameOver("ì‹œê°„ ì´ˆê³¼ë¡œ ì¸í•œ ê²Œìž„ ì˜¤ë²„");
         }
     }
 
@@ -39,7 +36,7 @@ public class TimerManager : MonoBehaviour
         if (!isRunning)
         {
             isRunning = true;
-            Debug.Log("[TimerManager] Å¸ÀÌ¸Ó ½ÃÀÛ!");
+            Debug.Log("[TimerManager] íƒ€ì´ë¨¸ ì‹œìž‘!");
         }
     }
 
@@ -50,7 +47,7 @@ public class TimerManager : MonoBehaviour
         currentTime = totalTime;
         UpdateTimerText();
         isRunning = false;
-        Debug.Log("[TimerManager] Å¸ÀÌ¸Ó ÃÊ±âÈ­ ¿Ï·á!");
+        Debug.Log("[TimerManager] íƒ€ì´ë¨¸ ì´ˆê¸°í™” ì™„ë£Œ!");
     }
 
     private void UpdateTimerText()

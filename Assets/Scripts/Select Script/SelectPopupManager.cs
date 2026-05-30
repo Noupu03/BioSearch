@@ -3,25 +3,24 @@ using UnityEngine.UI;
 
 public class SelectPopupManager : MonoBehaviour
 {
-    [Header("¹öÆ° ¿¬°á")]
+    [Header("ë²„íŠ¼ ì°¸ì¡°")]
     public Button acceptButton;
     public Button releaseButton;
 
-    [Header("ÆË¾÷ ÇÁ¸®ÆÕ")]
+    [Header("íŒì—… í”„ë¦¬íŒ¹")]
     public GameObject acceptPopupPrefab;
     public GameObject releasePopupPrefab;
 
-    [Header("ÆË¾÷ ºÎ¸ğ")]
+    [Header("íŒì—… ë¶€ëª¨")]
     public Transform popupParent;
 
     private GameObject currentPopup;
 
-    // »÷Æ¼Æ¼/·Î±× ¿¬µ¿
+    [Header("ë§¤ë‹ˆì € ì°¸ì¡°")]
     public SanityManager sanityManager;
     public LogWindowManager logWindow;
     public FileWindow fileWindow;
-    TimerManager timerManager;
-
+    [SerializeField] private GameOverManager gameOverManager;
 
     void Start()
     {
@@ -32,21 +31,15 @@ public class SelectPopupManager : MonoBehaviour
             releaseButton.onClick.AddListener(() => ShowPopup(releasePopupPrefab, false));
     }
 
-
-    //½Ã°£ ÃÊ°ú·Î °ÔÀÓ¿À¹ö½Ã °ª ÃÊ±âÈ­
-
-
-	private void ShowPopup(GameObject popupPrefab, bool isAccept)
+    private void ShowPopup(GameObject popupPrefab, bool isAccept)
     {
         if (currentPopup != null) return;
         if (popupPrefab == null || popupParent == null) return;
 
         currentPopup = Instantiate(popupPrefab, popupParent);
 
-        // PopupPanel ¾È X ¹öÆ° Ã£±â
         Button xButton = currentPopup.transform.Find("PopupPanel/XButton")?.GetComponent<Button>();
 
-        // contentPanel ¾È Yes/No ¹öÆ° Ã£±â
         Transform content = currentPopup.transform.Find("PopupPanel/contentPanel");
         if (content != null)
         {
@@ -60,14 +53,11 @@ public class SelectPopupManager : MonoBehaviour
                 popupComp.noButton = noButton;
                 popupComp.closeButton = xButton;
 
-                // Yes Å¬¸¯ ½Ã Ã³¸®
                 popupComp.onYes += () =>
                 {
                     HandleYes(isAccept);
                     ClosePopup();
                 };
-
-                // No Å¬¸¯Àº ±×³É ´İ±â
             }
         }
 
@@ -81,46 +71,31 @@ public class SelectPopupManager : MonoBehaviour
         if (root == null) return;
 
         int abnormalCount = AbnormalDetector.GetAbnormalCount(root);
-
         bool success = (isAccept && abnormalCount == 0) || (!isAccept && abnormalCount > 0);
 
         if (success)
         {
-            logWindow.Log("¼º°ø!");
+            logWindow.Log("ì„±ê³µ!");
             ScoreCount.successCount++;
         }
         else
         {
-            logWindow.Log("½ÇÆĞ!");
+            logWindow.Log("ì‹¤íŒ¨!");
             ScoreCount.failCount++;
 
             if (sanityManager != null)
             {
                 sanityManager.DecreaseSanity(40f);
-
-                //  °ÔÀÓ¿À¹ö È®ÀÎ
                 if (sanityManager.GetCurrentSanity() <= 0f)
-                {
-                    // °ÔÀÓ¿À¹ö Ã³¸®
-                    GameOverManager gameOver = FindObjectOfType<GameOverManager>();
-                    if (gameOver != null)
-                    {
-                        gameOver.TriggerGameOver("Á¤½Å·Â 0À¸·Î ÀÎÇÑ °ÔÀÓ¿À¹ö");
-                    }
-
-                    // ¾À Reload³ª stage Áõ°¡ Áß´Ü
-                    return;
-                }
+                    return; // SanityManagerê°€ ì´ë¯¸ GameOver ì²˜ë¦¬
             }
         }
 
-        // °ÔÀÓ¿À¹ö°¡ ¾Æ´Ï¸é ½ºÅ×ÀÌÁö ÁøÇà
         ScoreCount.stageCount++;
         UnityEngine.SceneManagement.SceneManager.LoadScene(
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
         );
     }
-
 
     private void ClosePopup()
     {
@@ -130,6 +105,4 @@ public class SelectPopupManager : MonoBehaviour
             currentPopup = null;
         }
     }
-
-    
 }

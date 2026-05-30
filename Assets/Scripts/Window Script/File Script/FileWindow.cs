@@ -3,6 +3,13 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class BodyButtonEntry
+{
+    public string folderPath; // e.g. "Head", "Body/Chest", "LeftArm/UpperArm"
+    public Button button;
+}
+
 public partial class FileWindow : MonoBehaviour
 {
     [Header("Prefabs")]
@@ -24,23 +31,8 @@ public partial class FileWindow : MonoBehaviour
     [Header("Inspector File List")]
     public List<FileData> fileDatas = new List<FileData>();
 
-    [Header("Body Buttons (16)")]
-    public Button headButton;
-    public Button chestButton;
-    public Button leftUpperArmButton;
-    public Button leftForeArmButton;
-    public Button leftHandButton;
-    public Button rightUpperArmButton;
-    public Button rightForeArmButton;
-    public Button rightHandButton;
-    public Button stomachButton;
-    public Button pelvisButton;
-    public Button leftThighButton;
-    public Button leftCalfButton;
-    public Button leftFootButton;
-    public Button rightThighButton;
-    public Button rightCalfButton;
-    public Button rightFootButton;
+    [Header("Body Buttons")]
+    public List<BodyButtonEntry> bodyButtons = new List<BodyButtonEntry>();
 
     [Header("Special Prefabs")]
     public GameObject upButtonPrefab;
@@ -88,6 +80,7 @@ public partial class FileWindow : MonoBehaviour
     {
         rootFolder = new Folder("Root");
         CreateDefaultFolders();
+        LinkBodyButtons();
         InitializeFilesFromInspector();
         AssignAbnormalParameters(rootFolder);
 
@@ -109,7 +102,7 @@ public partial class FileWindow : MonoBehaviour
             Folder targetParent = FindFolderByName(rootFolder, data.parentFolderName);
             if (targetParent == null)
             {
-                Debug.LogWarning($"ºÎ¸ð Æú´õ '{data.parentFolderName}'À»(¸¦) Ã£À» ¼ö ¾ø½À´Ï´Ù. Root¿¡ Ãß°¡ÇÕ´Ï´Ù.");
+                Debug.LogWarning($"ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ '{data.parentFolderName}'ï¿½ï¿½(ï¿½ï¿½) Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. Rootï¿½ï¿½ ï¿½ß°ï¿½ï¿½Õ´Ï´ï¿½.");
                 targetParent = rootFolder;
             }
 
@@ -192,24 +185,32 @@ public partial class FileWindow : MonoBehaviour
         rootFolder.children.AddRange(new List<Folder> {
             Head, Body, LeftArm, RightArm, LeftLeg, RightLeg, Organ
         });
+    }
 
-        // ¼öµ¿ ¹öÆ° ¸ÅÇÎ (16°³)
-        if (headButton != null) Head.linkedBodyButton = headButton;
-        if (chestButton != null) Body.children.Find(f => f.name == "Chest").linkedBodyButton = chestButton;
-        if (leftUpperArmButton != null) LeftArm.children.Find(f => f.name == "UpperArm").linkedBodyButton = leftUpperArmButton;
-        if (leftForeArmButton != null) LeftArm.children.Find(f => f.name == "ForeArm").linkedBodyButton = leftForeArmButton;
-        if (leftHandButton != null) LeftArm.children.Find(f => f.name == "Hand").linkedBodyButton = leftHandButton;
-        if (rightUpperArmButton != null) RightArm.children.Find(f => f.name == "UpperArm").linkedBodyButton = rightUpperArmButton;
-        if (rightForeArmButton != null) RightArm.children.Find(f => f.name == "ForeArm").linkedBodyButton = rightForeArmButton;
-        if (rightHandButton != null) RightArm.children.Find(f => f.name == "Hand").linkedBodyButton = rightHandButton;
-        if (stomachButton != null) Organ.children.Find(f => f.name == "Stomach").linkedBodyButton = stomachButton;
-        if (pelvisButton != null) Body.children.Find(f => f.name == "Pelvis").linkedBodyButton = pelvisButton;
-        if (leftThighButton != null) LeftLeg.children.Find(f => f.name == "Thigh").linkedBodyButton = leftThighButton;
-        if (leftCalfButton != null) LeftLeg.children.Find(f => f.name == "Calf").linkedBodyButton = leftCalfButton;
-        if (leftFootButton != null) LeftLeg.children.Find(f => f.name == "Foot").linkedBodyButton = leftFootButton;
-        if (rightThighButton != null) RightLeg.children.Find(f => f.name == "Thigh").linkedBodyButton = rightThighButton;
-        if (rightCalfButton != null) RightLeg.children.Find(f => f.name == "Calf").linkedBodyButton = rightCalfButton;
-        if (rightFootButton != null) RightLeg.children.Find(f => f.name == "Foot").linkedBodyButton = rightFootButton;
+    private void LinkBodyButtons()
+    {
+        foreach (var entry in bodyButtons)
+        {
+            if (entry.button == null || string.IsNullOrEmpty(entry.folderPath)) continue;
+            var folder = FindFolderByPath(rootFolder, entry.folderPath);
+            if (folder != null)
+                folder.linkedBodyButton = entry.button;
+            else
+                Debug.LogWarning($"[FileWindow] ê²½ë¡œ '{entry.folderPath}'ì˜ í´ë”ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+        }
+    }
+
+    private Folder FindFolderByPath(Folder root, string path)
+    {
+        if (string.IsNullOrEmpty(path)) return null;
+        var parts = path.Split('/');
+        Folder current = root;
+        foreach (var part in parts)
+        {
+            current = current.children.Find(f => string.Equals(f.name, part.Trim(), System.StringComparison.OrdinalIgnoreCase));
+            if (current == null) return null;
+        }
+        return current;
     }
 
     void AssignAbnormalParameters(Folder folder)

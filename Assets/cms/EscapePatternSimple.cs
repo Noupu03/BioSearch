@@ -1,45 +1,45 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EscapePatternSimple : MonoBehaviour
 {
-    public Transform pointA;      // ½ÃÀÛ À§Ä¡
-    public Transform pointB;      // Áß°£ À§Ä¡
-    public Transform pointC;      // ÃÖÁ¾ À§Ä¡
-    public float speed = 2f;      // ÀÌµ¿ ¼Óµµ
-    private bool isMoving = false;
+    [Tooltip("ì´ë™ ê²½ìœ ì§€ ëª©ë¡. [0]=ì‹œì‘(A), [1]=ì¤‘ê°„(B), [2]=ë(C) ìˆœì„œë¡œ ë°°ì¹˜")]
+    public List<Transform> waypoints = new List<Transform>();
+    public float speed = 2f;
 
-    // A -> B -> C ÀÌµ¿ (Å»ÁÖ ½Ã È£Ãâ)
+    // ì•ë°©í–¥ ì´ë™: waypoints[0] -> ... -> waypoints[ë§ˆì§€ë§‰] (íƒˆì¶œ ì‹œ í˜¸ì¶œ)
     public void MoveToEscape()
     {
         StopAllCoroutines();
-        StartCoroutine(MoveToEscapeSequence());
+        StartCoroutine(MoveSequenceForward());
     }
 
-    // C -> B -> A º¹±Í (¹® Å¬¸¯ ½Ã È£Ãâ)
+    // ì—­ë°©í–¥ ì´ë™: waypoints[ë§ˆì§€ë§‰] -> ... -> waypoints[0] (ë³µê·€ ì‹œ í˜¸ì¶œ)
     public void MoveBack()
     {
         StopAllCoroutines();
-        StartCoroutine(MoveBackSequence());
+        StartCoroutine(MoveSequenceReverse());
     }
 
-    private IEnumerator MoveToEscapeSequence()
+    private IEnumerator MoveSequenceForward()
     {
-        isMoving = true;
-        yield return MoveTo(pointB);
-        yield return MoveTo(pointC);
-        isMoving = false;
-        Debug.Log("[EscapePatternSimple] Àû ¹®¾Õ¿¡ µµÂø ");
-
+        for (int i = 1; i < waypoints.Count; i++)
+        {
+            if (waypoints[i] != null)
+                yield return MoveTo(waypoints[i]);
+        }
+        Debug.Log("[EscapePatternSimple] íƒˆì¶œ ìœ„ì¹˜ì— ë„ë‹¬");
     }
 
-    private IEnumerator MoveBackSequence()
+    private IEnumerator MoveSequenceReverse()
     {
-        isMoving = true;
-        yield return MoveTo(pointB);
-        yield return MoveTo(pointA);
-        isMoving = false;
-        Debug.Log("[EscapePatternSimple] Àû ¿ø À§Ä¡·Î µ¹¾Æ°¨ ");
+        for (int i = waypoints.Count - 2; i >= 0; i--)
+        {
+            if (waypoints[i] != null)
+                yield return MoveTo(waypoints[i]);
+        }
+        Debug.Log("[EscapePatternSimple] ì›ë˜ ìœ„ì¹˜ë¡œ ë³µê·€");
     }
 
     private IEnumerator MoveTo(Transform target)

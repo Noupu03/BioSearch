@@ -1,14 +1,13 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class SceneStartManager : MonoBehaviour
 {
+    [SerializeField] private TimerManager timer;
+    [SerializeField] private SanityManager sanity;
+    [SerializeField] private GameOverManager gameOver;
+
     void Start()
     {
-        TimerManager timer = FindObjectOfType<TimerManager>();
-        SanityManager sanity = FindObjectOfType<SanityManager>();
-        GameOverManager gameOver = FindObjectOfType<GameOverManager>();
-
         if (timer != null)
         {
             timer.ResetTimer();
@@ -16,15 +15,11 @@ public class SceneStartManager : MonoBehaviour
         }
 
         if (sanity != null)
-        {
-            sanity.UpdateSanityUI(); // ÇöÀç ¼öÄ¡ ±×´ë·Î Ç¥½Ã
-        }
+            sanity.UpdateSanityUI();
 
         if (gameOver != null)
-        {
             gameOver.ResetGameOver();
-        }
 
-        Debug.Log("[SceneStartManager] ÃÊ±âÈ­ ¿Ï·á, Timer ½ÃÀÛ, Sanity UI °»½Å, GameOver »óÅÂ ÃÊ±âÈ­");
+        Debug.Log("[SceneStartManager] ì´ˆê¸°í™” ì™„ë£Œ: Timer ì‹œì‘, Sanity UI ê°±ì‹ , GameOver ìƒíƒœ ì´ˆê¸°í™”");
     }
 }
