@@ -2,67 +2,50 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class BodyPart
-{
-    public string partName;
-    public Button button;
-    public Sprite normalSprite;
-    public Sprite abnormalSprite;
-}
-
 /// <summary>
-/// Xray 패널에서 신체 부위 버튼을 클릭하면 해당 폴더의 이상 여부에 따라
-/// 카메라 패널 스프라이트를 교체한다.
-/// FileWindow는 Instance로 접근하므로 인스펙터 크로스 참조가 없다.
+/// Xray 패널 코디네이터. 각 신체 버튼(BodyPartButton)이 Start에서 자기 자신을
+/// Register()로 등록하므로 Inspector에서 버튼 목록을 수동 할당할 필요가 없다.
 /// </summary>
-public class BodyPartViewer : MonoBehaviour
+public class XRayPanel : MonoBehaviour
 {
     [Header("카메라창")]
     public Image cameraPanel;
 
-    [Header("신체 부위 목록")]
-    [SerializeField] private BodyPart[] bodyParts;
+    private readonly List<BodyPartButton> parts = new();
+    private BodyPartButton currentPart;
 
-    private static readonly Dictionary<string, string[]> PartFolderPaths =
-        new Dictionary<string, string[]>
-        {
-            { "Head",         new[] { "Head" } },
-            { "Chest",        new[] { "Body",    "Chest" } },
-            { "LeftUpperArm", new[] { "LeftArm", "UpperArm" } },
-            { "LeftForeArm",  new[] { "LeftArm", "ForeArm" } },
-            { "LeftHand",     new[] { "LeftArm", "Hand" } },
-            { "RightUpperArm",new[] { "RightArm","UpperArm" } },
-            { "RightForeArm", new[] { "RightArm","ForeArm" } },
-            { "RightHand",    new[] { "RightArm","Hand" } },
-            { "Stomach",      new[] { "Organ",   "Stomach" } },
-            { "Pelvis",       new[] { "Body",    "Pelvis" } },
-            { "LeftThigh",    new[] { "LeftLeg", "Thigh" } },
-            { "LeftCalf",     new[] { "LeftLeg", "Calf" } },
-            { "LeftFoot",     new[] { "LeftLeg", "Foot" } },
-            { "RightThigh",   new[] { "RightLeg","Thigh" } },
-            { "RightCalf",    new[] { "RightLeg","Calf" } },
-            { "RightFoot",    new[] { "RightLeg","Foot" } },
-        };
-
-    void Start()
+    public void Register(BodyPartButton btn)
     {
-        foreach (var part in bodyParts)
-        {
-            string name = part.partName;
-            if (part.button != null)
-                part.button.onClick.AddListener(() => ShowPart(name));
-        }
+        if (!parts.Contains(btn))
+            parts.Add(btn);
     }
 
-    public void ShowPart(string partName)
+    public void ShowPart(BodyPartButton btn)
+    {
+        // 재클릭 시 선택 해제
+        if (currentPart == btn)
+        {
+            currentPart.SetHighlight(false);
+            currentPart = null;
+            return;
+        }
+
+        currentPart?.SetHighlight(false);
+        currentPart = btn;
+        btn.SetHighlight(true);
+
+        UpdateCameraPanel(btn);
+    }
+
+    private void UpdateCameraPanel(BodyPartButton btn)
     {
         if (cameraPanel == null) return;
 
         var fw = FileWindow.Instance;
         if (fw == null) return;
 
-        if (!PartFolderPaths.TryGetValue(partName, out var path)) return;
+        string[] path = btn.FolderPath;
+        if (path == null || path.Length == 0) return;
 
         Folder target = fw.GetRootFolder();
         foreach (var node in path)
@@ -72,15 +55,17 @@ public class BodyPartViewer : MonoBehaviour
             foreach (var child in target.children)
                 if (child.name == node) { next = child; break; }
             target = next;
-            if (target == null) return;
         }
 
-        var part = System.Array.Find(bodyParts, p => p.partName == partName);
-        if (part == null) return;
+        if (target == null)
+        {
+            cameraPanel.sprite = btn.NormalSprite;
+            return;
+        }
 
         bool isAbnormal    = AbnormalDetector.HasAbnormal(target);
-        cameraPanel.sprite = (isAbnormal && part.abnormalSprite != null)
-            ? part.abnormalSprite
-            : part.normalSprite;
+        cameraPanel.sprite = (isAbnormal && btn.AbnormalSprite != null)
+            ? btn.AbnormalSprite
+            : btn.NormalSprite;
     }
 }

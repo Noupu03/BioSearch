@@ -3576,6 +3576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 463f38c604043304fb243a66fb3e1cc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCanvas: {fileID: 0}
 --- !u!114 &693352157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9891,6 +9892,7 @@ GameObject:
   - component: {fileID: 1951300655}
   - component: {fileID: 1951300654}
   - component: {fileID: 1951300653}
+  - component: {fileID: 1951300656}
   m_Layer: 5
   m_Name: Head
   m_TagString: Untagged
@@ -9999,6 +10001,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1951300651}
   m_CullTransparentMesh: 1
+--- !u!114 &1951300656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951300651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5137bcd7e15495145b219885c6d04e97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  partName: Head
+  folderPath:
+  - '["Head"]'
+  normalSprite: {fileID: 0}
+  abnormalSprite: {fileID: 0}
+  selectedColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!4 &1957914112 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7440583285097904010, guid: 2f1465a673ffdeb489f31b2c364abbdb, type: 3}
@@ -10162,7 +10182,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2079028863}
   - component: {fileID: 2079028864}
-  - component: {fileID: 2079028865}
   m_Layer: 5
   m_Name: Man
   m_TagString: Untagged
@@ -10218,101 +10237,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraPanel: {fileID: 641262713}
-  bodyParts:
-  - partName: Head
-    button: {fileID: 1951300653}
-    normalSprite: {fileID: -112907207, guid: 7c91a8e2db504bf41abb0714a540366b, type: 3}
-    abnormalSprite: {fileID: 1095033861, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: Chest
-    button: {fileID: 986509041}
-    normalSprite: {fileID: -819747698, guid: 7c91a8e2db504bf41abb0714a540366b, type: 3}
-    abnormalSprite: {fileID: 2052538358, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: LeftUpperArm
-    button: {fileID: 505242233}
-    normalSprite: {fileID: 1716087899, guid: 7c91a8e2db504bf41abb0714a540366b, type: 3}
-    abnormalSprite: {fileID: 1494969288, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: LeftForeArm
-    button: {fileID: 1717382884}
-    normalSprite: {fileID: -1461304648, guid: 7c91a8e2db504bf41abb0714a540366b, type: 3}
-    abnormalSprite: {fileID: 166725174, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: LeftHand
-    button: {fileID: 1501751766}
-    normalSprite: {fileID: -1092139047, guid: 7c91a8e2db504bf41abb0714a540366b, type: 3}
-    abnormalSprite: {fileID: -600746582, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: RightUpperArm
-    button: {fileID: 601944739}
-    normalSprite: {fileID: 2095219562, guid: 7c91a8e2db504bf41abb0714a540366b, type: 3}
-    abnormalSprite: {fileID: -2103249532, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: RightForeArm
-    button: {fileID: 846809128}
-    normalSprite: {fileID: 415557190, guid: e84c8ff923e4e3441af3f1cf29900576, type: 3}
-    abnormalSprite: {fileID: -1853977718, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: RightHand
-    button: {fileID: 872512556}
-    normalSprite: {fileID: 1044918656, guid: e84c8ff923e4e3441af3f1cf29900576, type: 3}
-    abnormalSprite: {fileID: -466698587, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: Stomach
-    button: {fileID: 1503946656}
-    normalSprite: {fileID: 2087137691, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
-    abnormalSprite: {fileID: -1250428622, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: Pelvis
-    button: {fileID: 1806648558}
-    normalSprite: {fileID: -833976916, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
-    abnormalSprite: {fileID: 433656760, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: LeftThigh
-    button: {fileID: 1620888642}
-    normalSprite: {fileID: -833976916, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
-    abnormalSprite: {fileID: 433656760, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: LeftCalf
-    button: {fileID: 487459018}
-    normalSprite: {fileID: -833976916, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
-    abnormalSprite: {fileID: 433656760, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: LeftFoot
-    button: {fileID: 436541330}
-    normalSprite: {fileID: -833976916, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
-    abnormalSprite: {fileID: 433656760, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: RightThigh
-    button: {fileID: 1310237701}
-    normalSprite: {fileID: -833976916, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
-    abnormalSprite: {fileID: 433656760, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: RightCalf
-    button: {fileID: 619393171}
-    normalSprite: {fileID: -833976916, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
-    abnormalSprite: {fileID: 433656760, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
-  - partName: RightFoot
-    button: {fileID: 1628225562}
-    normalSprite: {fileID: -833976916, guid: d33a71d92c0f37a489ba632579aaebdb, type: 3}
-    abnormalSprite: {fileID: 433656760, guid: 238e99e9ce52bd64e869d0c4588099f4, type: 3}
---- !u!114 &2079028865
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2079028862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c1741095320e69459606696317454d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bodyButtons:
-  - {fileID: 1951300653}
-  - {fileID: 986509041}
-  - {fileID: 505242233}
-  - {fileID: 1717382884}
-  - {fileID: 1501751766}
-  - {fileID: 601944739}
-  - {fileID: 846809128}
-  - {fileID: 872512556}
-  - {fileID: 1503946656}
-  - {fileID: 1806648558}
-  - {fileID: 1620888642}
-  - {fileID: 487459018}
-  - {fileID: 436541330}
-  - {fileID: 1310237701}
-  - {fileID: 619393171}
-  - {fileID: 1628225562}
-  selectedColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &2121517774
 GameObject:
   m_ObjectHideFlags: 0
