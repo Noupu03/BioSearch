@@ -3676,6 +3676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 463f38c604043304fb243a66fb3e1cc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ghostMaterial: {fileID: 2100000, guid: 2fb7ab25c8d3f2e4eaf5804b13eb6fe3, type: 2}
   mainCanvas: {fileID: 1152194525}
 --- !u!114 &693352157
 MonoBehaviour:
