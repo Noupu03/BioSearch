@@ -7443,7 +7443,7 @@ GameObject:
   - component: {fileID: 1369091289}
   - component: {fileID: 1369091290}
   m_Layer: 0
-  m_Name: 00
+  m_Name: cameraPostFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
