@@ -135,6 +135,13 @@ public class CameraPostFX : MonoBehaviour
         transitionCoroutine = null;
     }
 
+    /// <summary>스테이지 전환 시 Room PostFX로 즉시 복귀 (진행 중인 전환 코루틴 중단).</summary>
+    public void ApplyRoomPostFX()
+    {
+        if (transitionCoroutine != null) { StopCoroutine(transitionCoroutine); transitionCoroutine = null; }
+        ApplyRoomValues();
+    }
+
     private void ApplyRoomValues()
     {
         if (bloom == null) return;

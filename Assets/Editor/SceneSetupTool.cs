@@ -51,6 +51,10 @@ public static class SceneSetupTool
         var spm = Object.FindObjectOfType<SelectPopupManager>();
         if (spm != null && glm != null) SetupSelectPopupManager(spm, glm, log);
 
+        var hcc = Object.FindObjectOfType<HybridCameraController>(true);
+        if (hcc != null) SetupHybridCameraController(hcc, log);
+        else             log.AppendLine("⚠ HybridCameraController 없음");
+
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         Debug.Log("[씬 셋업]\n" + log);
         EditorUtility.DisplayDialog("씬 셋업", log.ToString(), "확인");
@@ -153,16 +157,99 @@ public static class SceneSetupTool
             }
         }
 
-        TryConnect("sanityManager",    Object.FindObjectOfType<SanityManager>());
-        TryConnect("fileWindow",       Object.FindObjectOfType<FileWindow>());
-        TryConnect("dummyIconSpawner", Object.FindObjectOfType<DummyIconSpawner>());
-        TryConnect("logWindowManager", Object.FindObjectOfType<LogWindowManager>());
-        TryConnect("gameStateManager", Object.FindObjectOfType<GameStateManager>());
-        TryConnect("timerManager",     Object.FindObjectOfType<TimerManager>());
-        TryConnect("gameOverManager",  Object.FindObjectOfType<GameOverManager>());
+        TryConnect("sanityManager",      Object.FindObjectOfType<SanityManager>());
+        TryConnect("fileWindow",         Object.FindObjectOfType<FileWindow>());
+        TryConnect("dummyIconSpawner",   Object.FindObjectOfType<DummyIconSpawner>());
+        TryConnect("logWindowManager",   Object.FindObjectOfType<LogWindowManager>());
+        TryConnect("gameStateManager",   Object.FindObjectOfType<GameStateManager>());
+        TryConnect("timerManager",       Object.FindObjectOfType<TimerManager>());
+        TryConnect("gameOverManager",    Object.FindObjectOfType<GameOverManager>());
+        TryConnect("hybridCamera",   Object.FindObjectOfType<HybridCameraController>());
+        TryConnect("cameraSwitcher", Object.FindObjectOfType<CameraSwitcher>());
+        TryConnect("cameraPostFX",   Object.FindObjectOfType<CameraPostFX>());
 
         so.ApplyModifiedProperties();
         log.AppendLine($"✓ GameLoopManager: {connected}개 연결");
+    }
+
+    private static void SetupHybridCameraController(HybridCameraController hcc, StringBuilder log)
+    {
+        var so  = new SerializedObject(hcc);
+        int hit = 0;
+
+        void Link(string field, Object obj)
+        {
+            if (obj == null) return;
+            var prop = so.FindProperty(field);
+            if (prop == null || prop.objectReferenceValue != null) return;
+            prop.objectReferenceValue = obj;
+            hit++;
+            log.AppendLine($"  ✓ HybridCamera.{field} → {obj.name}");
+        }
+
+        // ── camera1 / camera2: CameraSwitcher에서 복사 ─────────────────
+        var sw = Object.FindObjectOfType<CameraSwitcher>(true);
+        if (sw != null)
+        {
+            var swSO = new SerializedObject(sw);
+            Link("camera1", swSO.FindProperty("camera1")?.objectReferenceValue as Camera);
+            Link("camera2", swSO.FindProperty("camera2")?.objectReferenceValue as Camera);
+        }
+
+        // 못 찾으면 이름으로 검색
+        if (so.FindProperty("camera1")?.objectReferenceValue == null)
+        {
+            foreach (var cam in Object.FindObjectsOfType<Camera>(true))
+                if (cam.name.ToLower().Contains("room") || cam.name == "Main Camera")
+                { Link("camera1", cam); break; }
+        }
+        if (so.FindProperty("camera2")?.objectReferenceValue == null)
+        {
+            foreach (var cam in Object.FindObjectsOfType<Camera>(true))
+                if (cam.name.ToLower().Contains("monitor"))
+                { Link("camera2", cam); break; }
+        }
+
+        // ── view 트랜스폼: 이름 후보로 검색 ────────────────────────────
+        GameObject FindByNames(params string[] names)
+        {
+            foreach (var n in names)
+            {
+                // 씬에서 비활성 포함 전체 검색
+                foreach (var go in Resources.FindObjectsOfTypeAll<GameObject>())
+                    if (go.scene.IsValid() && go.name == n) return go;
+            }
+            return null;
+        }
+
+        var view2GO     = FindByNames("view2",    "View2",    "View",       "MonitorView",  "CamView2");
+        var leftViewGO  = FindByNames("leftView", "LeftView", "Left View",  "CamLeft",  "LeftMonitorView");
+        var rightViewGO = FindByNames("rightView","RightView","Right View", "CamRight", "RightMonitorView");
+
+        if (view2GO)     Link("view2",     view2GO.transform);
+        if (leftViewGO)  Link("leftView",  leftViewGO.transform);
+        if (rightViewGO) Link("rightView", rightViewGO.transform);
+
+        // ── Canvas: "Canvas" → "HUD_Canvas" 순으로 시도 ─────────────────
+        var canvasGO = GameObject.Find("Canvas") ?? GameObject.Find("HUD_Canvas");
+        if (canvasGO) Link("targetCanvas", canvasGO.GetComponent<Canvas>());
+
+        // ── TMP_InputField: LogWindowManager에서 복사 ───────────────────
+        var lwm = Object.FindObjectOfType<LogWindowManager>(true);
+        if (lwm != null)
+        {
+            var lwmSO    = new SerializedObject(lwm);
+            var inputRef = lwmSO.FindProperty("inputField")?.objectReferenceValue;
+            if (inputRef) Link("targetInputField", inputRef);
+        }
+
+        so.ApplyModifiedProperties();
+        log.AppendLine($"✓ HybridCameraController: {hit}개 연결");
+
+        // 핵심 필드 미연결 경고
+        foreach (var req in new[] { "camera1", "camera2", "view2" })
+            if (so.FindProperty(req)?.objectReferenceValue == null)
+                log.AppendLine($"  ⚠ {req} 미연결 — 수동 설정 필요");
     }
 
     private static void SetupSelectPopupManager(SelectPopupManager spm, GameLoopManager glm, StringBuilder log)

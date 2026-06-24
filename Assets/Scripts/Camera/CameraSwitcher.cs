@@ -83,4 +83,13 @@ public class CameraSwitcher : MonoBehaviour
         activeCamera = camera1;
         currentView  = ViewMode.Front;
     }
+
+    /// <summary>스테이지 전환 시 카메라를 Camera1(방)으로 즉시 복귀 (현재 상태 무관하게 강제).</summary>
+    public void ReturnToRoomView()
+    {
+        if (switchCoroutine != null) { StopCoroutine(switchCoroutine); switchCoroutine = null; }
+        isSwitching = false;
+        Debug.Log($"[CameraSwitcher] ReturnToRoomView — activeCamera={activeCamera?.name}, camera1={camera1?.name}, camera2={camera2?.name}");
+        Switch2To1();
+    }
 }

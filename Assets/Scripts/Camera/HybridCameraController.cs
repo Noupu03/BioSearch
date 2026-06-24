@@ -138,6 +138,27 @@ public class HybridCameraController : MonoBehaviour
         camera2.fieldOfView      = Mathf.Lerp(camera2.fieldOfView, targetFOV, Time.deltaTime * transitionSpeed);
     }
 
+    /// <summary>
+    /// 스테이지 전환 시 Camera1(방뷰)으로 강제 복귀.
+    /// Camera2를 view2 기본 위치로 스냅하여 다음 진입 시 기본 뷰에서 시작하도록 한다.
+    /// </summary>
+    public void ReturnToRoomView()
+    {
+        // Camera2를 default view 위치로 즉시 스냅 (Lerp 잔여 상태 제거)
+        if (camera2 != null && view2 != null)
+        {
+            camera2.transform.SetPositionAndRotation(view2.position, view2.rotation);
+            camera2.fieldOfView = defaultFOV;
+        }
+
+        currentView      = view2;
+        targetFOV        = defaultFOV;
+        mustPassThroughS = false;
+        wPressed         = false;
+
+        SwitchFrom2To1();
+    }
+
     private static void SetCameraState(Camera cam, bool state) => CameraUtils.SetActive(cam, state);
 
     private void UpdateCanvasRaycast()

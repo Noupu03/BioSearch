@@ -30,6 +30,9 @@ public class InputManager : MonoBehaviour
         IsSwitchingLocked = locked;
     }
 
+    /// <summary>S키 입력을 강제로 발생. 잠금 무시 (씬 초기화용).</summary>
+    public void SimulateSPress() => OnSPressed?.Invoke();
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.S))

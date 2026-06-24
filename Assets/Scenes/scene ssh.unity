@@ -1038,6 +1038,10 @@ MonoBehaviour:
   gameStateManager: {fileID: 1135300294}
   timerManager: {fileID: 168379753}
   gameOverManager: {fileID: 168379754}
+  hybridCamera: {fileID: 1135300295}
+  transitionFadeDuration: 0.5
+  transitionHoldDuration: 1.5
+  transitionMessage: "\uB2E4\uC74C \uC2E4\uD5D8\uCCB4\uB97C \uBC1B\uC2B5\uB2C8\uB2E4..."
   startSceneName: StartScene
 --- !u!1 &171645015
 GameObject:
@@ -3730,7 +3734,7 @@ MonoBehaviour:
   acceptPopupPrefab: {fileID: 7727029378613877681, guid: 663ea21af39244a478e6b35e6ffb9e8e, type: 3}
   releasePopupPrefab: {fileID: 7727029378613877681, guid: 6605fe490f3ab934084989c65c1fc66f, type: 3}
   popupParent: {fileID: 1152194526}
-  gameLoopManager: {fileID: 0}
+  gameLoopManager: {fileID: 168379757}
 --- !u!114 &693352159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6021,6 +6025,7 @@ GameObject:
   - component: {fileID: 1135300293}
   - component: {fileID: 1135300292}
   - component: {fileID: 1135300294}
+  - component: {fileID: 1135300295}
   m_Layer: 0
   m_Name: CameraManager
   m_TagString: Untagged
@@ -6073,6 +6078,29 @@ MonoBehaviour:
   currentState: 0
   escapeDelay: 3
   escapeMover: {fileID: 1754632840}
+--- !u!114 &1135300295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1135300291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6df4279ad2a6eda4aa9dc70a857e56dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera1: {fileID: 1110581901}
+  camera2: {fileID: 919113284}
+  view2: {fileID: 1454907862}
+  leftView: {fileID: 661166835}
+  rightView: {fileID: 1177477598}
+  transitionSpeed: 5
+  defaultFOV: 60
+  zoomFOV: 40
+  switchDelay: 1.5
+  targetCanvas: {fileID: 1152194525}
+  targetInputField: {fileID: 1666166031}
 --- !u!1 &1152194522
 GameObject:
   m_ObjectHideFlags: 0
