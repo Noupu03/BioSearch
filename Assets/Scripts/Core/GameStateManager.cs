@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameStateManager : MonoBehaviour
+public class GameStateManager : MonoBehaviour, IStageResettable
 {
     public static GameStateManager Instance { get; private set; }
 
@@ -55,5 +55,13 @@ public class GameStateManager : MonoBehaviour
     {
         if (escapeCoroutine != null) { StopCoroutine(escapeCoroutine); escapeCoroutine = null; }
         ChangeState(GameState.Normal);
+    }
+
+    /// <summary>스테이지 전환 시 Escape 상태를 초기화.</summary>
+    public void ResetForNewStage()
+    {
+        if (escapeCoroutine != null) { StopCoroutine(escapeCoroutine); escapeCoroutine = null; }
+        if (currentState != GameState.Normal)
+            ChangeState(GameState.Normal);
     }
 }

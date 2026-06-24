@@ -22,9 +22,14 @@ public static class GameEvents
     /// <summary>스코어 값이 바뀌었을 때 (UI 갱신 트리거)</summary>
     public static event Action OnScoreChanged;
 
+    // ── 스테이지 시작 ────────────────────────────
+    /// <summary>새 스테이지가 시작될 때 (GameLoopManager가 모든 리셋 완료 후 발생)</summary>
+    public static event Action OnStageStarted;
+
     // ── 발생 메서드 ──────────────────────────────
     public static void RaiseSceneInitialized()                  => OnSceneInitialized?.Invoke();
     public static void RaiseGameOver(string reason)             => OnGameOver?.Invoke(reason);
     public static void RaiseSanityChanged(float cur, float max) => OnSanityChanged?.Invoke(cur, max);
     public static void RaiseScoreChanged()                      => OnScoreChanged?.Invoke();
+    public static void RaiseStageStarted()                      => OnStageStarted?.Invoke();
 }

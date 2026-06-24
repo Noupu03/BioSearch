@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class TimerManager : MonoBehaviour
+public class TimerManager : MonoBehaviour, IStageResettable
 {
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI timerText;
@@ -13,23 +13,8 @@ public class TimerManager : MonoBehaviour
     private bool  isRunning;
     private bool  gameOverFired;
 
-    void OnEnable()
-    {
-        GameEvents.OnSceneInitialized += HandleSceneInit;
-        GameEvents.OnGameOver         += HandleGameOver;
-    }
-
-    void OnDisable()
-    {
-        GameEvents.OnSceneInitialized -= HandleSceneInit;
-        GameEvents.OnGameOver         -= HandleGameOver;
-    }
-
-    private void HandleSceneInit()
-    {
-        ResetTimer();
-        StartTimer();
-    }
+    void OnEnable()  => GameEvents.OnGameOver += HandleGameOver;
+    void OnDisable() => GameEvents.OnGameOver -= HandleGameOver;
 
     private void HandleGameOver(string _) => isRunning = false;
 
@@ -50,6 +35,13 @@ public class TimerManager : MonoBehaviour
                 GameEvents.RaiseGameOver("시간 초과");
             }
         }
+    }
+
+    /// <summary>스테이지 시작 시 타이머 초기화 후 시작.</summary>
+    public void ResetForNewStage()
+    {
+        ResetTimer();
+        StartTimer();
     }
 
     public void StartTimer()

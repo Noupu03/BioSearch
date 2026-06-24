@@ -5,11 +5,14 @@ using System.Collections.Generic;
 /// 정신력에 비례한 확률로 더미 아이콘을 생성한다.
 /// FileWindow는 Instance로 접근하므로 인스펙터 크로스 참조가 없다.
 /// </summary>
-public class DummyIconSpawner : MonoBehaviour
+public class DummyIconSpawner : MonoBehaviour, IStageResettable
 {
     [SerializeField] private float spawnInterval = 1f;
 
     private float timer;
+
+    /// <summary>스테이지 전환 시 타이머 리셋.</summary>
+    public void ResetForNewStage() => timer = 0f;
 
     void Update()
     {

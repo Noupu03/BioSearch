@@ -9,6 +9,7 @@ public class SceneStartManager : MonoBehaviour
     void Start()
     {
         GameEvents.RaiseSceneInitialized();
-        Debug.Log("[SceneStartManager] 씬 초기화 이벤트 발생");
+        GameLoopManager.Instance?.RequestFirstStage();
+        Debug.Log("[SceneStartManager] 씬 초기화 완료");
     }
 }

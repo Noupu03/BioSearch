@@ -10,7 +10,7 @@ using System.Text;
 /// - 최대 줄 수 제한
 /// - 입력 필드 활성화/비활성화
 /// </summary>
-public class LogWindowManager : MonoBehaviour
+public class LogWindowManager : MonoBehaviour, IStageResettable
 {
     public static LogWindowManager Instance { get; private set; }
 
@@ -157,6 +157,17 @@ public class LogWindowManager : MonoBehaviour
         sb.Clear();
         logText.text = "";
         needsScroll  = true;
+    }
+
+    /// <summary>스테이지 전환 시 로그 초기화 후 스테이지 시작 메시지 출력.</summary>
+    public void ResetForNewStage()
+    {
+        StopAllCoroutines();
+        messageQueue.Clear();
+        isTyping = false;
+        ClearLog();
+        Log($"{ScoreCount.StageCount}번째 검사자 발견..");
+        Log(".......complete");
     }
 
     public void DisableInput()

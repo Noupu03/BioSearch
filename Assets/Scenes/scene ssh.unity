@@ -514,7 +514,7 @@ GameObject:
   - component: {fileID: 84406842}
   - component: {fileID: 84406841}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Background
   m_TagString: Background
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -956,6 +956,7 @@ GameObject:
   - component: {fileID: 168379754}
   - component: {fileID: 168379753}
   - component: {fileID: 168379756}
+  - component: {fileID: 168379757}
   m_Layer: 0
   m_Name: GameManagers
   m_TagString: Untagged
@@ -989,7 +990,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e67bf6c4c6f5c44ebc7ef3d7373e8b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startSceneName: StartScene
 --- !u!4 &168379755
 Transform:
   m_ObjectHideFlags: 0
@@ -1019,6 +1019,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSanity: 100
   sanityText: {fileID: 2121517776}
+--- !u!114 &168379757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168379752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4a0cccc693b6074b85c8a02aaeb0cca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sanityManager: {fileID: 168379756}
+  fileWindow: {fileID: 1796863570}
+  dummyIconSpawner: {fileID: 693352161}
+  logWindowManager: {fileID: 942185077}
+  gameStateManager: {fileID: 1135300294}
+  timerManager: {fileID: 168379753}
+  gameOverManager: {fileID: 168379754}
+  startSceneName: StartScene
 --- !u!1 &171645015
 GameObject:
   m_ObjectHideFlags: 0
@@ -3710,6 +3730,7 @@ MonoBehaviour:
   acceptPopupPrefab: {fileID: 7727029378613877681, guid: 663ea21af39244a478e6b35e6ffb9e8e, type: 3}
   releasePopupPrefab: {fileID: 7727029378613877681, guid: 6605fe490f3ab934084989c65c1fc66f, type: 3}
   popupParent: {fileID: 1152194526}
+  gameLoopManager: {fileID: 0}
 --- !u!114 &693352159
 MonoBehaviour:
   m_ObjectHideFlags: 0

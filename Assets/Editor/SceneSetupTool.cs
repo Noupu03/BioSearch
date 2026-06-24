@@ -44,6 +44,13 @@ public static class SceneSetupTool
         if (fw != null) SetupBodyButtons(fw, log);
         else            log.AppendLine("⚠ FileWindow 없음");
 
+        var glm = Object.FindObjectOfType<GameLoopManager>();
+        if (glm != null) SetupGameLoopManager(glm, log);
+        else             log.AppendLine("⚠ GameLoopManager 없음 — 씬에 추가 후 재실행");
+
+        var spm = Object.FindObjectOfType<SelectPopupManager>();
+        if (spm != null && glm != null) SetupSelectPopupManager(spm, glm, log);
+
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         Debug.Log("[씬 셋업]\n" + log);
         EditorUtility.DisplayDialog("씬 셋업", log.ToString(), "확인");
@@ -128,6 +135,48 @@ public static class SceneSetupTool
     // ──────────────────────────────────────────────
     //  내부 헬퍼
     // ──────────────────────────────────────────────
+    private static void SetupGameLoopManager(GameLoopManager glm, StringBuilder log)
+    {
+        var so = new SerializedObject(glm);
+        int connected = 0;
+
+        void TryConnect(string field, Object target)
+        {
+            if (target == null) return;
+            var prop = so.FindProperty(field);
+            if (prop == null) return;
+            if (prop.objectReferenceValue == null)
+            {
+                prop.objectReferenceValue = target;
+                connected++;
+                log.AppendLine($"  ✓ GameLoopManager.{field} → {target.name}");
+            }
+        }
+
+        TryConnect("sanityManager",    Object.FindObjectOfType<SanityManager>());
+        TryConnect("fileWindow",       Object.FindObjectOfType<FileWindow>());
+        TryConnect("dummyIconSpawner", Object.FindObjectOfType<DummyIconSpawner>());
+        TryConnect("logWindowManager", Object.FindObjectOfType<LogWindowManager>());
+        TryConnect("gameStateManager", Object.FindObjectOfType<GameStateManager>());
+        TryConnect("timerManager",     Object.FindObjectOfType<TimerManager>());
+        TryConnect("gameOverManager",  Object.FindObjectOfType<GameOverManager>());
+
+        so.ApplyModifiedProperties();
+        log.AppendLine($"✓ GameLoopManager: {connected}개 연결");
+    }
+
+    private static void SetupSelectPopupManager(SelectPopupManager spm, GameLoopManager glm, StringBuilder log)
+    {
+        var so   = new SerializedObject(spm);
+        var prop = so.FindProperty("gameLoopManager");
+        if (prop != null && prop.objectReferenceValue == null)
+        {
+            prop.objectReferenceValue = glm;
+            so.ApplyModifiedProperties();
+            log.AppendLine("✓ SelectPopupManager.gameLoopManager 연결");
+        }
+    }
+
     private static void SetupBodyButtons(FileWindow fw, StringBuilder log)
     {
         var so   = new SerializedObject(fw);

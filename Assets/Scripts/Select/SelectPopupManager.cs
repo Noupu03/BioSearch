@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class SelectPopupManager : MonoBehaviour
 {
@@ -12,6 +11,9 @@ public class SelectPopupManager : MonoBehaviour
     [SerializeField] private GameObject acceptPopupPrefab;
     [SerializeField] private GameObject releasePopupPrefab;
     [SerializeField] private Transform  popupParent;
+
+    [Header("게임 루프")]
+    [SerializeField] private GameLoopManager gameLoopManager;
 
     private SelectPopup currentPopup;
 
@@ -52,17 +54,13 @@ public class SelectPopupManager : MonoBehaviour
         {
             log?.Log("실패!");
             ScoreCount.AddFail();
-
-            var sanity = SanityManager.Instance;
-            if (sanity != null)
-            {
-                sanity.DecreaseSanity(40f);
-                if (sanity.GetCurrentSanity() <= 0f) return;
-            }
+            SanityManager.Instance?.DecreaseSanity(40f);
+            // 게임오버 여부는 SanityManager → GameEvents.OnGameOver → GameLoopManager가 처리
+            // _isTransitioning 플래그로 RequestNextStage 중복 실행이 차단됨
         }
 
         ScoreCount.NextStage();
         GameEvents.RaiseScoreChanged();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        gameLoopManager?.RequestNextStage();
     }
 }

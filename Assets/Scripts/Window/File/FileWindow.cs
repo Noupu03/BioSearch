@@ -10,7 +10,7 @@ public class BodyButtonEntry
     public Button button;
 }
 
-public partial class FileWindow : MonoBehaviour
+public partial class FileWindow : MonoBehaviour, IStageResettable
 {
     public static FileWindow Instance { get; private set; }
 
@@ -95,18 +95,32 @@ public partial class FileWindow : MonoBehaviour
 
     void Start()
     {
-        rootFolder = new Folder("Root");
-        CreateDefaultFolders();
-        LinkBodyButtons();
-        InitializeFilesFromInspector();
-        AssignAbnormalParameters(rootFolder);
-
         if (backButton != null)
         {
             backButton.onClick.AddListener(OnBackButtonClicked);
             backButton.gameObject.SetActive(true);
         }
 
+        ResetForNewStage();
+    }
+
+    /// <summary>스테이지 전환 시 파일 트리 및 UI를 초기화한다.</summary>
+    public void ResetForNewStage()
+    {
+        foreach (Transform child in contentArea)
+            Destroy(child.gameObject);
+
+        dummyIcons.Clear();
+        folderHistory.Clear();
+        currentFolderFiles.Clear();
+        selectedFolderIcon = null;
+        selectedFileIcon   = null;
+
+        rootFolder = new Folder("Root");
+        CreateDefaultFolders();
+        LinkBodyButtons();
+        InitializeFilesFromInspector();
+        AssignAbnormalParameters(rootFolder);
         OpenFolder(rootFolder, false);
     }
 

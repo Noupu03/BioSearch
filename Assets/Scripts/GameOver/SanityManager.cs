@@ -1,14 +1,13 @@
 using UnityEngine;
 using TMPro;
 
-public class SanityManager : MonoBehaviour
+public class SanityManager : MonoBehaviour, IStageResettable
 {
     public static SanityManager Instance { get; private set; }
 
     [Header("설정")]
     public float maxSanity = 100f;
 
-    // static: 씬 리로드 사이에도 값 유지
     public static float currentSanityStatic;
 
     [Header("UI")]
@@ -18,19 +17,22 @@ public class SanityManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-
-        if (currentSanityStatic <= 0f)
-            currentSanityStatic = maxSanity;
-
+        currentSanityStatic = maxSanity;
         UpdateSanityUI();
     }
 
     void OnDestroy() { if (Instance == this) Instance = null; }
 
-    void OnEnable()  => GameEvents.OnSceneInitialized += HandleSceneInit;
-    void OnDisable() => GameEvents.OnSceneInitialized -= HandleSceneInit;
+    /// <summary>스테이지 전환 시: Sanity 값은 유지하고 UI만 갱신.</summary>
+    public void ResetForNewStage() => UpdateSanityUI();
 
-    private void HandleSceneInit() => UpdateSanityUI();
+    /// <summary>게임오버 후 새 게임 시작 시 GameLoopManager가 호출.</summary>
+    public void ResetSanityForNewGame()
+    {
+        currentSanityStatic = maxSanity;
+        UpdateSanityUI();
+        GameEvents.RaiseSanityChanged(currentSanityStatic, maxSanity);
+    }
 
     public void DecreaseSanity(float amount)
     {
@@ -48,15 +50,5 @@ public class SanityManager : MonoBehaviour
             sanityText.text = $"Sanity: {currentSanityStatic:0}";
     }
 
-    public void ResetSanity()
-    {
-        currentSanityStatic = maxSanity;
-        UpdateSanityUI();
-        GameEvents.RaiseSanityChanged(currentSanityStatic, maxSanity);
-    }
-
     public float GetCurrentSanity() => currentSanityStatic;
-
-    /// <summary>게임오버 후 다음 게임 시작 시 만수치로 재초기화되도록 예약. Awake에서 감지.</summary>
-    public static void PrepareForNewGame() => currentSanityStatic = 0f;
 }
