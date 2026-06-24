@@ -100,8 +100,7 @@ public partial class FileWindow : MonoBehaviour, IStageResettable
             backButton.onClick.AddListener(OnBackButtonClicked);
             backButton.gameObject.SetActive(true);
         }
-
-        ResetForNewStage();
+        // 콘텐츠 초기화는 GameLoopManager.RequestFirstStage()가 담당
     }
 
     /// <summary>스테이지 전환 시 파일 트리 및 UI를 초기화한다.</summary>

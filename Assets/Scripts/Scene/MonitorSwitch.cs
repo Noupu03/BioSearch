@@ -8,14 +8,17 @@ public class MonitorSwitch : MonoBehaviour
 
     private bool isOn = true;
 
-    void OnMouseDown() // 오브젝트 클릭 시 실행
-    {
-        ToggleMonitor();
-    }
+    void Start() => ApplyState();
 
-    void ToggleMonitor()
+    void OnMouseDown()
     {
         isOn = !isOn;
+        ApplyState();
+    }
+
+    private void ApplyState()
+    {
+        if (monitorCamera == null || monitorMaterial == null || renderTexture == null) return;
 
         if (isOn)
         {
@@ -25,7 +28,7 @@ public class MonitorSwitch : MonoBehaviour
         else
         {
             monitorCamera.targetTexture = null;
-            monitorMaterial.mainTexture = Texture2D.blackTexture; // 꺼진 화면
+            monitorMaterial.mainTexture = Texture2D.blackTexture;
         }
     }
 }

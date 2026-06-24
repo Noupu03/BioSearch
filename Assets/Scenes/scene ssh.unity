@@ -953,7 +953,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 168379755}
-  - component: {fileID: 168379754}
   - component: {fileID: 168379753}
   - component: {fileID: 168379756}
   - component: {fileID: 168379757}
@@ -978,18 +977,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timerText: {fileID: 1093830573}
   totalTime: 60
---- !u!114 &168379754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 168379752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e67bf6c4c6f5c44ebc7ef3d7373e8b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &168379755
 Transform:
   m_ObjectHideFlags: 0
@@ -1031,13 +1018,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4a0cccc693b6074b85c8a02aaeb0cca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageResettables:
+  - {fileID: 168379756}
+  - {fileID: 1796863570}
+  - {fileID: 693352161}
+  - {fileID: 942185077}
+  - {fileID: 1135300294}
+  - {fileID: 168379753}
   sanityManager: {fileID: 168379756}
-  fileWindow: {fileID: 1796863570}
-  dummyIconSpawner: {fileID: 693352161}
-  logWindowManager: {fileID: 942185077}
-  gameStateManager: {fileID: 1135300294}
-  timerManager: {fileID: 168379753}
-  gameOverManager: {fileID: 168379754}
   hybridCamera: {fileID: 1135300295}
   transitionFadeDuration: 0.5
   transitionHoldDuration: 1.5
@@ -6023,7 +6011,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1135300293}
-  - component: {fileID: 1135300292}
   - component: {fileID: 1135300294}
   - component: {fileID: 1135300295}
   m_Layer: 0
@@ -6033,21 +6020,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1135300292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1135300291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2955ac083c0521d4a81c7e0fa7e18a5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  camera1: {fileID: 919113284}
-  camera2: {fileID: 1110581901}
-  switchDelay: 1.5
 --- !u!4 &1135300293
 Transform:
   m_ObjectHideFlags: 0
@@ -6090,8 +6062,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df4279ad2a6eda4aa9dc70a857e56dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera1: {fileID: 1110581901}
-  camera2: {fileID: 919113284}
+  camera1: {fileID: 919113284}
+  camera2: {fileID: 220796607}
   view2: {fileID: 1454907862}
   leftView: {fileID: 661166835}
   rightView: {fileID: 1177477598}

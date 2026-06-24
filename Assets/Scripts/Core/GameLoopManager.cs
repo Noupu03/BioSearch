@@ -1,23 +1,23 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// 게임 루프의 유일한 소유자.
-/// SerializeField가 비어있으면 Awake에서 FindObjectOfType으로 자동 할당.
+///
+/// DIP(의존 역전 원칙): 구체 매니저 참조 대신 IStageResettable 배열로
+/// 리셋 대상을 받아, 새 매니저 추가 시 이 파일을 수정하지 않아도 된다.
 /// </summary>
 public class GameLoopManager : MonoBehaviour
 {
     public static GameLoopManager Instance { get; private set; }
 
-    [Header("리셋 대상 매니저 (비워두면 자동 검색)")]
-    [SerializeField] private SanityManager    sanityManager;
-    [SerializeField] private FileWindow       fileWindow;
-    [SerializeField] private DummyIconSpawner dummyIconSpawner;
-    [SerializeField] private LogWindowManager logWindowManager;
-    [SerializeField] private GameStateManager gameStateManager;
-    [SerializeField] private TimerManager     timerManager;
-    [SerializeField] private GameOverManager  gameOverManager;
+    [Header("리셋 순서대로 배치 (IStageResettable 구현체)")]
+    [SerializeField] private MonoBehaviour[] stageResettables;
+
+    [Header("게임오버 시 Sanity 전체 리셋")]
+    [SerializeField] private SanityManager sanityManager;
 
     [Header("카메라 복귀 (비워두면 자동 검색)")]
     [SerializeField] private HybridCameraController hybridCamera;
@@ -47,28 +47,24 @@ public class GameLoopManager : MonoBehaviour
 
     private void AutoAssign()
     {
-        if (!sanityManager)    sanityManager    = FindObjectOfType<SanityManager>(true);
-        if (!fileWindow)       fileWindow       = FindObjectOfType<FileWindow>(true);
-        if (!dummyIconSpawner) dummyIconSpawner = FindObjectOfType<DummyIconSpawner>(true);
-        if (!logWindowManager) logWindowManager = FindObjectOfType<LogWindowManager>(true);
-        if (!gameStateManager) gameStateManager = FindObjectOfType<GameStateManager>(true);
-        if (!timerManager)     timerManager     = FindObjectOfType<TimerManager>(true);
-        if (!gameOverManager)  gameOverManager  = FindObjectOfType<GameOverManager>(true);
-        if (!hybridCamera)     hybridCamera     = FindObjectOfType<HybridCameraController>(true);
+        if (!hybridCamera)  hybridCamera  = FindObjectOfType<HybridCameraController>(true);
+        if (!sanityManager) sanityManager = FindObjectOfType<SanityManager>(true);
 
-        LogMissingRefs();
-    }
+        if (stageResettables == null || stageResettables.Length == 0)
+        {
+            var list = new List<MonoBehaviour>();
+            var sm  = FindObjectOfType<SanityManager>(true);    if (sm  != null) list.Add(sm);
+            var fw  = FindObjectOfType<FileWindow>(true);       if (fw  != null) list.Add(fw);
+            var dis = FindObjectOfType<DummyIconSpawner>(true); if (dis != null) list.Add(dis);
+            var lwm = FindObjectOfType<LogWindowManager>(true); if (lwm != null) list.Add(lwm);
+            var gsm = FindObjectOfType<GameStateManager>(true); if (gsm != null) list.Add(gsm);
+            var tm  = FindObjectOfType<TimerManager>(true);     if (tm  != null) list.Add(tm);
+            stageResettables = list.ToArray();
+            Debug.Log($"[GameLoopManager] stageResettables 자동 구성: {stageResettables.Length}개");
+        }
 
-    private void LogMissingRefs()
-    {
-        if (!sanityManager)    Debug.LogWarning("[GameLoopManager] SanityManager 없음");
-        if (!fileWindow)       Debug.LogWarning("[GameLoopManager] FileWindow 없음");
-        if (!dummyIconSpawner) Debug.LogWarning("[GameLoopManager] DummyIconSpawner 없음");
-        if (!logWindowManager) Debug.LogWarning("[GameLoopManager] LogWindowManager 없음");
-        if (!gameStateManager) Debug.LogWarning("[GameLoopManager] GameStateManager 없음");
-        if (!timerManager)     Debug.LogWarning("[GameLoopManager] TimerManager 없음");
-        if (!gameOverManager)  Debug.LogWarning("[GameLoopManager] GameOverManager 없음");
-        if (!hybridCamera)     Debug.LogWarning("[GameLoopManager] HybridCameraController 없음 — camera2 스냅 불가");
+        if (!hybridCamera)  Debug.LogWarning("[GameLoopManager] HybridCameraController 없음");
+        if (!sanityManager) Debug.LogWarning("[GameLoopManager] SanityManager 없음 — 게임오버 리셋 불가");
     }
 
     void OnDestroy() { if (Instance == this) Instance = null; }
@@ -76,15 +72,14 @@ public class GameLoopManager : MonoBehaviour
     void OnEnable()  => GameEvents.OnGameOver += HandleGameOver;
     void OnDisable() => GameEvents.OnGameOver -= HandleGameOver;
 
-    /// <summary>씬 최초 로드 시 SceneStartManager가 호출. 리셋 없이 타이머만 시작.</summary>
+    /// <summary>씬 최초 로드 시 SceneStartManager가 호출.</summary>
     public void RequestFirstStage()
     {
-        timerManager?.ResetForNewStage();
-        gameOverManager?.ResetForNewStage();
+        ResetAll();
         GameEvents.RaiseStageStarted();
     }
 
-    /// <summary>판정 완료 후 SelectPopupManager가 호출. 전환 연출 후 다음 스테이지 시작.</summary>
+    /// <summary>판정 완료 후 SelectPopupManager가 호출.</summary>
     public void RequestNextStage()
     {
         if (_isTransitioning) return;
@@ -92,25 +87,20 @@ public class GameLoopManager : MonoBehaviour
         StartCoroutine(DoNextStage());
     }
 
+    private void ResetAll()
+    {
+        foreach (var r in stageResettables)
+            (r as IStageResettable)?.ResetForNewStage();
+    }
+
     private IEnumerator DoNextStage()
     {
-        // 1. 검은 화면 페이드 인 + 메시지 표시
         yield return _transition.FadeToBlack();
 
-        // 2. 검은 화면 동안 리셋 (플레이어에게 보이지 않음)
-        sanityManager?.ResetForNewStage();
-        fileWindow?.ResetForNewStage();
-        dummyIconSpawner?.ResetForNewStage();
-        logWindowManager?.ResetForNewStage();
-        gameStateManager?.ResetForNewStage();
-        timerManager?.ResetForNewStage();
-        gameOverManager?.ResetForNewStage();
+        ResetAll();
+        hybridCamera?.ReturnToRoomView();
+        InputManager.Instance?.SimulateSPress();
 
-        // 3. 카메라를 초기화면(방뷰)으로 복귀 — S키 누른 것과 동일한 경로
-        hybridCamera?.ReturnToRoomView();           // camera2를 view2로 스냅 후 camera1 전환
-        InputManager.Instance?.SimulateSPress();    // OnSPressed 발생 → CameraSwitcher, CameraPostFX 반응
-
-        // 4. 페이드 아웃 → 초기화면 노출
         yield return _transition.FadeFromBlack();
 
         GameEvents.RaiseStageStarted();

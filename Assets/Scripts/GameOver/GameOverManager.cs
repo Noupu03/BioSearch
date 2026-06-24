@@ -1,21 +1,7 @@
 using UnityEngine;
 
-public class GameOverManager : MonoBehaviour, IStageResettable
-{
-    private bool isGameOver;
-
-    void OnEnable()  => GameEvents.OnGameOver += HandleGameOver;
-    void OnDisable() => GameEvents.OnGameOver -= HandleGameOver;
-
-    private void HandleGameOver(string reason)
-    {
-        if (isGameOver) return;
-        isGameOver = true;
-        // 실제 씬 전환 및 리셋은 GameLoopManager.HandleGameOver가 담당
-    }
-
-    /// <summary>새 스테이지 시작 시 GameLoopManager가 호출.</summary>
-    public void ResetForNewStage() => isGameOver = false;
-
-    public bool IsGameOver() => isGameOver;
-}
+/// <summary>
+/// 8차 리팩토링: 기능이 GameLoopManager로 통합됨.
+/// 씬에서 이 컴포넌트를 제거하세요.
+/// </summary>
+public class GameOverManager : MonoBehaviour { }

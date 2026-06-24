@@ -142,34 +142,42 @@ public static class SceneSetupTool
     private static void SetupGameLoopManager(GameLoopManager glm, StringBuilder log)
     {
         var so = new SerializedObject(glm);
-        int connected = 0;
 
-        void TryConnect(string field, Object target)
+        // stageResettables 배열 — 순서가 실행 순서이므로 고정
+        var resettables = new List<Object>
+        {
+            Object.FindObjectOfType<SanityManager>(),
+            Object.FindObjectOfType<FileWindow>(),
+            Object.FindObjectOfType<DummyIconSpawner>(),
+            Object.FindObjectOfType<LogWindowManager>(),
+            Object.FindObjectOfType<GameStateManager>(),
+            Object.FindObjectOfType<TimerManager>(),
+        };
+        resettables.RemoveAll(r => r == null);
+
+        var arr = so.FindProperty("stageResettables");
+        if (arr != null)
+        {
+            arr.ClearArray();
+            arr.arraySize = resettables.Count;
+            for (int i = 0; i < resettables.Count; i++)
+                arr.GetArrayElementAtIndex(i).objectReferenceValue = resettables[i];
+            log.AppendLine($"✓ GameLoopManager.stageResettables: {resettables.Count}개 설정");
+        }
+
+        void TryLink(string field, Object target)
         {
             if (target == null) return;
             var prop = so.FindProperty(field);
-            if (prop == null) return;
-            if (prop.objectReferenceValue == null)
-            {
-                prop.objectReferenceValue = target;
-                connected++;
-                log.AppendLine($"  ✓ GameLoopManager.{field} → {target.name}");
-            }
+            if (prop == null || prop.objectReferenceValue != null) return;
+            prop.objectReferenceValue = target;
+            log.AppendLine($"  ✓ GameLoopManager.{field} → {target.name}");
         }
 
-        TryConnect("sanityManager",      Object.FindObjectOfType<SanityManager>());
-        TryConnect("fileWindow",         Object.FindObjectOfType<FileWindow>());
-        TryConnect("dummyIconSpawner",   Object.FindObjectOfType<DummyIconSpawner>());
-        TryConnect("logWindowManager",   Object.FindObjectOfType<LogWindowManager>());
-        TryConnect("gameStateManager",   Object.FindObjectOfType<GameStateManager>());
-        TryConnect("timerManager",       Object.FindObjectOfType<TimerManager>());
-        TryConnect("gameOverManager",    Object.FindObjectOfType<GameOverManager>());
-        TryConnect("hybridCamera",   Object.FindObjectOfType<HybridCameraController>());
-        TryConnect("cameraSwitcher", Object.FindObjectOfType<CameraSwitcher>());
-        TryConnect("cameraPostFX",   Object.FindObjectOfType<CameraPostFX>());
+        TryLink("sanityManager", Object.FindObjectOfType<SanityManager>());
+        TryLink("hybridCamera",  Object.FindObjectOfType<HybridCameraController>());
 
         so.ApplyModifiedProperties();
-        log.AppendLine($"✓ GameLoopManager: {connected}개 연결");
     }
 
     private static void SetupHybridCameraController(HybridCameraController hcc, StringBuilder log)
@@ -177,6 +185,20 @@ public static class SceneSetupTool
         var so  = new SerializedObject(hcc);
         int hit = 0;
 
+        // camera1/camera2는 잘못 설정돼 있을 수 있으므로 항상 덮어씀
+        void ForceLink(string field, Object obj)
+        {
+            if (obj == null) return;
+            var prop = so.FindProperty(field);
+            if (prop == null) return;
+            var old = prop.objectReferenceValue;
+            prop.objectReferenceValue = obj;
+            hit++;
+            string arrow = (old != null && old != obj) ? $"{old.name} → " : "";
+            log.AppendLine($"  ✓ HybridCamera.{field}: {arrow}{obj.name}");
+        }
+
+        // 선택적 연결 (이미 있으면 유지)
         void Link(string field, Object obj)
         {
             if (obj == null) return;
@@ -187,28 +209,22 @@ public static class SceneSetupTool
             log.AppendLine($"  ✓ HybridCamera.{field} → {obj.name}");
         }
 
-        // ── camera1 / camera2: CameraSwitcher에서 복사 ─────────────────
-        var sw = Object.FindObjectOfType<CameraSwitcher>(true);
-        if (sw != null)
+        // ── camera1(방) / camera2(모니터): 항상 이름 기반으로 강제 설정 ─────
+        // camera1 = 방뷰 카메라 (기본 활성), camera2 = 모니터 카메라 (W 누를 때 활성)
+        Camera roomCam    = null;
+        Camera monitorCam = null;
+        foreach (var cam in Object.FindObjectsOfType<Camera>(true))
         {
-            var swSO = new SerializedObject(sw);
-            Link("camera1", swSO.FindProperty("camera1")?.objectReferenceValue as Camera);
-            Link("camera2", swSO.FindProperty("camera2")?.objectReferenceValue as Camera);
+            string n = cam.name.ToLower();
+            if (n.Contains("room"))    { roomCam    = cam; }
+            if (n.Contains("monitor")) { monitorCam = cam; }
         }
+        if (roomCam    != null) ForceLink("camera1", roomCam);
+        if (monitorCam != null) ForceLink("camera2", monitorCam);
 
-        // 못 찾으면 이름으로 검색
-        if (so.FindProperty("camera1")?.objectReferenceValue == null)
-        {
-            foreach (var cam in Object.FindObjectsOfType<Camera>(true))
-                if (cam.name.ToLower().Contains("room") || cam.name == "Main Camera")
-                { Link("camera1", cam); break; }
-        }
-        if (so.FindProperty("camera2")?.objectReferenceValue == null)
-        {
-            foreach (var cam in Object.FindObjectsOfType<Camera>(true))
-                if (cam.name.ToLower().Contains("monitor"))
-                { Link("camera2", cam); break; }
-        }
+        // 이름 매칭 실패 시 경고만
+        if (roomCam    == null) log.AppendLine("  ⚠ camera1: 'room' 포함 카메라 없음 — 수동 설정");
+        if (monitorCam == null) log.AppendLine("  ⚠ camera2: 'monitor' 포함 카메라 없음 — 수동 설정");
 
         // ── view 트랜스폼: 이름 후보로 검색 ────────────────────────────
         GameObject FindByNames(params string[] names)
