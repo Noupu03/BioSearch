@@ -49,6 +49,17 @@ Both are static classes (no MonoBehaviour). `ScoreCount` tracks Success/Fail/Sta
 ### SceneSetupTool (Editor only)
 `Assets/Editor/SceneSetupTool.cs` — auto-wires all SerializeField references. Run **Tools → 씬 셋업** after structural changes. Also groups scene objects under named parents (**Tools → 씬 정리**).
 
+### Haare framework (`Assets/Scripts/Haare`)
+Partial adoption of [HaareFramework](https://github.com/kirihara-unity/HaareFramework), added for new features going forward. The existing `GameLoopManager`/`GameEvents`/singleton-manager architecture above is untouched and coexists with it — this is not a migration.
+
+Brought in: `Processor` (`Haare.Client.Core`, a `SingletonMonoBehaviour<Processor>` that centrally drives Update/LateUpdate/FixedUpdate for all registered routines), `MonoRoutine`/`NativeRoutine` (`Haare.Client.Routine` — MonoRoutine is a MonoBehaviour-based routine with a unified lifecycle; NativeRoutine is a plain C# class with the same lifecycle, for logic that shouldn't be a MonoBehaviour), `Singleton<T>`/`SingletonMonoBehaviour<T>` (`Haare.Client.Core.Singleton`), `LogHelper`/`HashGenerator` (`Haare.Util.*`), and DOTween-backed UI components `CustomButton`/`CustomImage`/`CustomSlider`/`CustomText` (`Haare.Client.UI`) with `UIAnimator` (`Haare.Scripts.Client.UI.Animator`) for hover/click/slide/popup tweens. `HaareClient.Main()` (`RuntimeInitializeOnLoadMethod(BeforeSceneLoad)`) bootstraps `Processor` on startup — it's been adapted to skip creating an `EventSystem`/`AudioListener` if the scene already has one (BioSearch's scenes already place both).
+
+Not brought in (would require Addressables + a much larger surface area): `CoreLifetimeScope`/`GamePresenter`/`IPresenter`/`UIPresenter` (VContainer DI + Presenter layer), the stack-based `SceneUIManager`/`[PanelAttribute]` panel system, `DataManager`, `SceneService`, `AssetLoader`. If a future feature needs DI, define its own `LifetimeScope` directly via VContainer rather than porting `CoreLifetimeScope`.
+
+Dependencies added to `Packages/manifest.json`: `com.cysharp.r3` (R3 reactive streams), `com.cysharp.unitask` (UniTask async), `jp.hadashikick.vcontainer` (VContainer DI, currently unused but available), `com.github-glitchenzo.nugetforunity` — all via git URL, so the Editor must resolve them (needs network access) before the project compiles. DOTween binaries live at `Assets/Plugins/Demigiant/DOTween` (no `DOTweenSettings.asset` — DOTween falls back to built-in defaults).
+
+**Important**: `com.cysharp.r3` (the UPM package) only wraps Unity-specific extensions — R3's actual core types (`Observable<>`, `Subject<>`, `Unit`, `ReactiveProperty<>`, etc.) ship as a **NuGet** package, not UPM. `Assets/packages.config` + `Assets/NuGet.config` declare that NuGet dependency (R3 + BCL polyfills: `Microsoft.Bcl.AsyncInterfaces`, `Microsoft.Bcl.TimeProvider`, `System.ComponentModel.Annotations`, `System.Runtime.CompilerServices.Unsafe`, `System.Threading.Channels`), restored via NuGetForUnity into `Assets/Packages` (gitignored — regenerated per machine). If R3 types fail to resolve after opening the Editor, use **NuGet → Restore Packages** from the Unity menu to force it.
+
 ## Naming conventions
 - Managers: `XxxManager` (MonoBehaviour singletons with `public static Instance`)
 - Static event hub: `GameEvents`
