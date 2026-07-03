@@ -15,7 +15,7 @@ using Haare.Client.UI;
 ///   3. 씬 계층구조 정리 (그룹 폴더 생성 + 이름 정정)
 ///   4. GameLifetimeScope 생성 (Haare/VContainer DI 루트, 없으면 생성)
 ///
-/// 싱글톤으로 전환된 시스템(FileWindow, SanityManager, LogWindowManager 등)은
+/// 싱글톤으로 전환된 시스템(FileWindow, LogWindowManager 등)은
 /// 자동 배선이 불필요하다.
 /// </summary>
 public static class SceneSetupTool
@@ -123,6 +123,21 @@ public static class SceneSetupTool
         }
         if (removedMissing == 0) log.AppendLine("  없음");
 
+        log.AppendLine("\n[ 중복 AudioListener 제거 ]");
+        // HybridCameraController 로직상 camera2(MonitorCamera)만 방/모니터 모드 둘 다 항상 활성 상태라
+        // 오디오 리스너는 거기 하나만 남긴다. Room Camera / Main Camera 등 다른 카메라의 리스너는 제거.
+        var listeners = Object.FindObjectsOfType<AudioListener>(true);
+        int removedListeners = 0;
+        foreach (var al in listeners)
+        {
+            string goName = al.gameObject.name;
+            if (goName.ToLower().Contains("monitor")) continue;
+            Undo.DestroyObjectImmediate(al);
+            removedListeners++;
+            log.AppendLine($"  {goName}에서 제거");
+        }
+        if (removedListeners == 0) log.AppendLine("  없음 (또는 이미 1개)");
+
         log.AppendLine("\n[ 그룹 구성 ]");
         foreach (var kv in SceneGroups)
         {
@@ -164,10 +179,8 @@ public static class SceneSetupTool
         // stageResettables 배열 — 순서가 실행 순서이므로 고정
         var resettables = new List<Object>
         {
-            Object.FindObjectOfType<SanityManager>(),
             Object.FindObjectOfType<FileWindow>(),
             Object.FindObjectOfType<LogWindowManager>(),
-            Object.FindObjectOfType<GameStateManager>(),
             Object.FindObjectOfType<TimerManager>(),
         };
         resettables.RemoveAll(r => r == null);
@@ -191,7 +204,6 @@ public static class SceneSetupTool
             log.AppendLine($"  ✓ GameLoopManager.{field} → {target.name}");
         }
 
-        TryLink("sanityManager", Object.FindObjectOfType<SanityManager>());
         TryLink("hybridCamera",  Object.FindObjectOfType<HybridCameraController>());
 
         so.ApplyModifiedProperties();

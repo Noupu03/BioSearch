@@ -954,7 +954,6 @@ GameObject:
   m_Component:
   - component: {fileID: 168379755}
   - component: {fileID: 168379753}
-  - component: {fileID: 168379756}
   - component: {fileID: 168379757}
   m_Layer: 0
   m_Name: GameManagers
@@ -992,20 +991,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1808887676}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &168379756
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 168379752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c8561ef2421dc646b7ffa54fdf2b44c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxSanity: 100
-  sanityText: {fileID: 2121517776}
 --- !u!114 &168379757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1019,12 +1004,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageResettables:
-  - {fileID: 168379756}
+  - {fileID: 0}
   - {fileID: 1796863570}
   - {fileID: 942185077}
-  - {fileID: 1135300294}
+  - {fileID: 0}
   - {fileID: 168379753}
-  sanityManager: {fileID: 168379756}
   hybridCamera: {fileID: 1135300295}
   transitionFadeDuration: 0.5
   transitionHoldDuration: 1.5
@@ -3805,7 +3789,6 @@ GameObject:
   - component: {fileID: 708220951}
   - component: {fileID: 708220950}
   - component: {fileID: 708220949}
-  - component: {fileID: 708220953}
   m_Layer: 0
   m_Name: door
   m_TagString: EscapeCancelObject
@@ -3902,18 +3885,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2009164830}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &708220953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 708220948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef496296ca103804e8af68cc0d9f2b10, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &728626210
 GameObject:
   m_ObjectHideFlags: 0
@@ -4795,7 +4766,6 @@ GameObject:
   m_Component:
   - component: {fileID: 919113285}
   - component: {fileID: 919113284}
-  - component: {fileID: 919113283}
   - component: {fileID: 919113282}
   - component: {fileID: 919113287}
   - component: {fileID: 919113286}
@@ -4850,14 +4820,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!81 &919113283
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919113281}
-  m_Enabled: 0
 --- !u!20 &919113284
 Camera:
   m_ObjectHideFlags: 0
@@ -5905,7 +5867,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1110581902}
   - component: {fileID: 1110581901}
-  - component: {fileID: 1110581900}
   - component: {fileID: 1110581903}
   m_Layer: 0
   m_Name: Main Camera
@@ -5914,14 +5875,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1110581900
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1110581899}
-  m_Enabled: 1
 --- !u!20 &1110581901
 Camera:
   m_ObjectHideFlags: 0
@@ -6041,7 +5994,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1135300293}
-  - component: {fileID: 1135300294}
   - component: {fileID: 1135300295}
   m_Layer: 0
   m_Name: CameraManager
@@ -6065,21 +6017,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1808887676}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1135300294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1135300291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38a08996e86712f4d8db5ad8e80356da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: 0
-  escapeDelay: 3
-  escapeMover: {fileID: 1754632840}
 --- !u!114 &1135300295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9547,7 +9484,6 @@ GameObject:
   - component: {fileID: 1754632843}
   - component: {fileID: 1754632842}
   - component: {fileID: 1754632841}
-  - component: {fileID: 1754632840}
   m_Layer: 0
   m_Name: enemy
   m_TagString: Untagged
@@ -9555,20 +9491,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1754632840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754632839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9dccc2d3c55c27547a441ac5b932f25d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waypoints: []
-  speed: 4
 --- !u!136 &1754632841
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -17,9 +17,6 @@ public class GameLoopManager : MonoBehaviour
     [Header("리셋 순서대로 배치 (IStageResettable 구현체)")]
     [SerializeField] private MonoBehaviour[] stageResettables;
 
-    [Header("게임오버 시 Sanity 전체 리셋")]
-    [SerializeField] private SanityManager sanityManager;
-
     [Header("카메라 복귀 (비워두면 자동 검색)")]
     [SerializeField] private HybridCameraController hybridCamera;
 
@@ -46,22 +43,18 @@ public class GameLoopManager : MonoBehaviour
     private void AutoAssign()
     {
         if (!hybridCamera)  hybridCamera  = FindObjectOfType<HybridCameraController>(true);
-        if (!sanityManager) sanityManager = FindObjectOfType<SanityManager>(true);
 
         if (stageResettables == null || stageResettables.Length == 0)
         {
             var list = new List<MonoBehaviour>();
-            var sm  = FindObjectOfType<SanityManager>(true);    if (sm  != null) list.Add(sm);
             var fw  = FindObjectOfType<FileWindow>(true);       if (fw  != null) list.Add(fw);
             var lwm = FindObjectOfType<LogWindowManager>(true); if (lwm != null) list.Add(lwm);
-            var gsm = FindObjectOfType<GameStateManager>(true); if (gsm != null) list.Add(gsm);
             var tm  = FindObjectOfType<TimerManager>(true);     if (tm  != null) list.Add(tm);
             stageResettables = list.ToArray();
             Debug.Log($"[GameLoopManager] stageResettables 자동 구성: {stageResettables.Length}개");
         }
 
         if (!hybridCamera)  Debug.LogWarning("[GameLoopManager] HybridCameraController 없음");
-        if (!sanityManager) Debug.LogWarning("[GameLoopManager] SanityManager 없음 — 게임오버 리셋 불가");
     }
 
     void OnDestroy() { if (Instance == this) Instance = null; }
@@ -116,7 +109,6 @@ public class GameLoopManager : MonoBehaviour
     {
         yield return null;
         ScoreCount.Reset();
-        sanityManager?.ResetSanityForNewGame();
         yield return SceneService.Instance.LoadScene(SceneName.StartScene).ToCoroutine();
     }
 }

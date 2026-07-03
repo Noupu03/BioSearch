@@ -1,8 +1,9 @@
 using UnityEngine;
 using System;
 using TMPro;
+using Haare.Client.Routine;
 
-public class InputManager : MonoBehaviour
+public class InputManager : MonoRoutine
 {
     public static InputManager Instance { get; private set; }
 
@@ -17,8 +18,9 @@ public class InputManager : MonoBehaviour
     public event Action OnSPressed;
     public event Action OnADChanged;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
     }
@@ -33,8 +35,9 @@ public class InputManager : MonoBehaviour
     /// <summary>S키 입력을 강제로 발생. 잠금 무시 (씬 초기화용).</summary>
     public void SimulateSPress() => OnSPressed?.Invoke();
 
-    void Update()
+    protected override void UpdateProcess()
     {
+        base.UpdateProcess();
         if (Input.GetKeyDown(KeyCode.S))
         {
             // ��ǲ�ʵ� ��Ŀ�� �� ����

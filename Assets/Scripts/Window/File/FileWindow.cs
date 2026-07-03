@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using Haare.Client.Routine;
 
 [System.Serializable]
 public class BodyButtonEntry
@@ -10,7 +11,7 @@ public class BodyButtonEntry
     public Button button;
 }
 
-public partial class FileWindow : MonoBehaviour, IStageResettable
+public partial class FileWindow : MonoRoutine, IStageResettable
 {
     public static FileWindow Instance { get; private set; }
 
@@ -45,8 +46,9 @@ public partial class FileWindow : MonoBehaviour, IStageResettable
     private Stack<Folder> folderHistory = new Stack<Folder>();
     private List<File> currentFolderFiles = new List<File>();
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
         if (pathPanelManager != null)
@@ -89,7 +91,7 @@ public partial class FileWindow : MonoBehaviour, IStageResettable
 
     private void InitializeFilesFromInspector()
     {
-        float abnormalChance = GetAbnormalProbabilityBySanity();
+        float abnormalChance = GameConfig.AbnormalChanceMid;
 
         foreach (var data in fileDatas)
         {
@@ -188,7 +190,7 @@ public partial class FileWindow : MonoBehaviour, IStageResettable
 
     void AssignAbnormalParameters(Folder folder)
     {
-        float abnormalChance = GetAbnormalProbabilityBySanity();
+        float abnormalChance = GameConfig.AbnormalChanceMid;
         foreach (var child in folder.children)
         {
             child.abnormalParameter = abnormalChance;

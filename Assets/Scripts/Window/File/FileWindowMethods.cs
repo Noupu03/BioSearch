@@ -76,27 +76,4 @@ public partial class FileWindow
         selectedFileIcon?.SetSelected(true);
     }
 
-    public List<object> GetAllFilesAndFolders()
-    {
-        var result = new List<object>();
-        AddFolderAndFilesRecursive(rootFolder, result);
-        return result;
-    }
-
-    private void AddFolderAndFilesRecursive(Folder folder, List<object> list)
-    {
-        list.Add(folder);
-        foreach (var file in folder.files) list.Add(file);
-        foreach (var child in folder.children) AddFolderAndFilesRecursive(child, list);
-    }
-
-    private static float GetAbnormalProbabilityBySanity()
-    {
-        float sanity = SanityManager.currentSanityStatic;
-
-        // 미초기화(0) 또는 양호(70 이상): 최소 확률
-        if (sanity <= 0f || sanity >= 70f) return GameConfig.AbnormalChanceMin;
-        if (sanity >= 30f)                 return GameConfig.AbnormalChanceMid;
-        return                             GameConfig.AbnormalChanceMax;
-    }
 }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Text;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 로그 창 및 명령어 입력 관리.
@@ -10,7 +11,7 @@ using System.Text;
 /// - 최대 줄 수 제한
 /// - 입력 필드 활성화/비활성화
 /// </summary>
-public class LogWindowManager : MonoBehaviour, IStageResettable
+public class LogWindowManager : MonoRoutine, IStageResettable
 {
     public static LogWindowManager Instance { get; private set; }
 
@@ -35,8 +36,9 @@ public class LogWindowManager : MonoBehaviour, IStageResettable
     public event System.Action<string> OnScanCommandEntered;
     public event System.Action<string> OnExtenseCommandEntered;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
 
@@ -84,8 +86,9 @@ public class LogWindowManager : MonoBehaviour, IStageResettable
         needsScroll = true;
     }
 
-    void LateUpdate()
+    protected override void LateUpdateProcess()
     {
+        base.LateUpdateProcess();
         if (!needsScroll) return;
         needsScroll = false;
 

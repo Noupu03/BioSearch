@@ -70,9 +70,6 @@ public class SelectPopupManager : MonoBehaviour
         {
             log?.Log("실패!");
             ScoreCount.AddFail();
-            SanityManager.Instance?.DecreaseSanity(40f);
-            // 게임오버 여부는 SanityManager → GameEvents.OnGameOver → GameLoopManager가 처리
-            // _isTransitioning 플래그로 RequestNextStage 중복 실행이 차단됨
         }
 
         ScoreCount.NextStage();

@@ -1,6 +1,7 @@
-Assets\Scripts\Haare\Client\Core\HaareClient.cs(16,6): error CS0246: The type or namespace name 'RuntimeInitializeOnLoadMethodAttribute' could not be found (are you missing a using directive or an assembly reference?)
-
-Assets\Scripts\Haare\Client\Core\HaareClient.cs(16,6): error CS0246: The type or namespace name 'RuntimeInitializeOnLoadMethod' could not be found (are you missing a using directive or an assembly reference?)
-
-Assets\Scripts\Haare\Client\Core\HaareClient.cs(16,37): error CS0103: The name 'RuntimeInitializeLoadType' does not exist in the current context
+MissingReferenceException: The object of type 'UnityEngine.AudioListener' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <612ea0208cc847f49d539e6511ed3cd5>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <612ea0208cc847f49d539e6511ed3cd5>:0)
+UnityEngine.Component.get_gameObject () (at <612ea0208cc847f49d539e6511ed3cd5>:0)
+SceneSetupTool.OrganizeScene () (at Assets/Editor/SceneSetupTool.cs:136)
 
