@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using System.Collections;
+using Haare.Client.Routine;
 
-public class CameraSwitch : MonoBehaviour
+public class CameraSwitch : MonoRoutine
 {
     [Header("카메라 설정")]
     [SerializeField] private Camera targetCamera;
@@ -62,7 +63,8 @@ public class CameraSwitch : MonoBehaviour
         }
     }
 
-    void OnDestroy()
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable()
     {
         if (InputManager.Instance != null)
         {
@@ -71,8 +73,9 @@ public class CameraSwitch : MonoBehaviour
         }
     }
 
-    void Update()
+    protected override void UpdateProcess()
     {
+        base.UpdateProcess();
         // A/D ���� ��ȯ (S ����(view2)������)
         if (inView2)
         {

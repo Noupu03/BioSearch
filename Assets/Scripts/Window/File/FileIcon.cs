@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using Haare.Client.Routine;
 
 /// <summary>
 /// ���յ� ���� ������
@@ -10,7 +11,7 @@ using TMPro;
 /// - �巡�� �� ��� ����
 /// - isAbnormal ���ο� ���� �ؽ�Ʈ ���� ����
 /// </summary>
-public class FileIcon : MonoBehaviour, IPointerClickHandler,
+public class FileIcon : MonoRoutine, IPointerClickHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("UI Components")]

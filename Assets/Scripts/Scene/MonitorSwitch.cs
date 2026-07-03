@@ -1,6 +1,7 @@
 using UnityEngine;
+using Haare.Client.Routine;
 
-public class MonitorSwitch : MonoBehaviour
+public class MonitorSwitch : MonoRoutine
 {
     [SerializeField] private Camera monitorCamera;
     [SerializeField] private RenderTexture renderTexture;

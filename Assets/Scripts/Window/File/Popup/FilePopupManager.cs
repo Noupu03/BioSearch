@@ -2,12 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 파일 팝업 창을 관리하는 싱글톤.
 /// Canvas는 컴포넌트 계층에서 자동으로 찾으므로 인스펙터 참조 불필요.
 /// </summary>
-public class FilePopupManager : MonoBehaviour
+public class FilePopupManager : MonoRoutine
 {
     public static FilePopupManager Instance { get; private set; }
 
@@ -17,8 +18,9 @@ public class FilePopupManager : MonoBehaviour
     private Canvas canvas;
     private readonly Dictionary<string, GameObject> openPopups = new Dictionary<string, GameObject>();
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
         canvas   = GetComponentInParent<Canvas>();
@@ -26,7 +28,8 @@ public class FilePopupManager : MonoBehaviour
             Debug.LogError("[FilePopupManager] 부모 계층에 Canvas가 없습니다.");
     }
 
-    void OnDestroy() { if (Instance == this) Instance = null; }
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable() { if (Instance == this) Instance = null; }
 
     public void OpenFile(File file)
     {

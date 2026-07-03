@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 팝업 창을 드래그로 이동시키는 재사용 가능한 컴포넌트.
@@ -7,7 +8,7 @@ using UnityEngine.EventSystems;
 /// FilePopup과 LoadingDragHandler 양쪽에서 사용.
 /// </summary>
 [RequireComponent(typeof(RectTransform))]
-public class DragHandler : MonoBehaviour, IPointerDownHandler, IDragHandler
+public class DragHandler : MonoRoutine, IPointerDownHandler, IDragHandler
 {
     /// <summary>드래그할 때 이동시킬 대상. null이면 이 GameObject의 RectTransform 사용.</summary>
     [SerializeField] private RectTransform target;
@@ -16,8 +17,9 @@ public class DragHandler : MonoBehaviour, IPointerDownHandler, IDragHandler
     private Canvas        canvas;
     private Vector2       offset;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         moveTarget = target != null ? target : GetComponent<RectTransform>();
         canvas     = GetComponentInParent<Canvas>();
     }

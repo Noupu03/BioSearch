@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 드래그 앤 드롭 고스트 아이콘을 관리하는 싱글톤.
@@ -10,7 +11,7 @@ using UnityEngine.EventSystems;
 /// 게임에서 쓰는 커스텀 쉐이더가 그대로 적용된다 (미할당 시 기본 UI 쉐이더).
 /// OnDisable / OnApplicationFocus / Update 에서 잔상을 강제 정리한다.
 /// </summary>
-public class FolderDragManager : MonoBehaviour
+public class FolderDragManager : MonoRoutine
 {
     public static FolderDragManager Instance { get; private set; }
 
@@ -29,8 +30,9 @@ public class FolderDragManager : MonoBehaviour
     //  생명주기
     // ──────────────────────────────────────────────
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
 
@@ -40,17 +42,22 @@ public class FolderDragManager : MonoBehaviour
             Debug.LogError("[FolderDragManager] Canvas를 찾을 수 없습니다.");
     }
 
-    void OnDestroy() { if (Instance == this) Instance = null; }
-
-    void OnDisable() => DestroyGhost();
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), Instance 해제는
+    // 기존 OnDisable(ghost 정리)에 같이 넣는다.
+    void OnDisable()
+    {
+        DestroyGhost();
+        if (Instance == this) Instance = null;
+    }
 
     void OnApplicationFocus(bool hasFocus)
     {
         if (!hasFocus) DestroyGhost();
     }
 
-    void Update()
+    protected override void UpdateProcess()
     {
+        base.UpdateProcess();
         // 마우스 버튼이 이미 떼어진 상태인데 ghost가 남아있으면 정리
         if (ghostIcon != null && !Input.GetMouseButton(0))
             DestroyGhost();

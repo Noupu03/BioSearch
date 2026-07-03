@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Haare.Client.Routine;
 using Haare.Client.UI;
 using TMPro;
 using UnityEngine;
@@ -15,7 +16,7 @@ public class SelectPopupData : IPanelData
 }
 
 [Panel("SelectPopup")]
-public class SelectPopup : MonoBehaviour, ICustomPanel
+public class SelectPopup : MonoRoutine, ICustomPanel
 {
     [Header("텍스트")]
     [SerializeField] private TMP_Text questionText;
@@ -31,8 +32,9 @@ public class SelectPopup : MonoBehaviour, ICustomPanel
     public SceneUIManager uiManager { get; set; }
     public GameObject panel { get; set; }
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         panel = gameObject;
     }
 

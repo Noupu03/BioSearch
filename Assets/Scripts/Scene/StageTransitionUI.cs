@@ -2,13 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 스테이지 전환 연출 (검은 화면 페이드 + 메시지).
-/// GameLoopManager.Awake()에서 AddComponent로 생성되며,
+/// GameLoopManager.Constructor()에서 AddComponent로 생성되며,
 /// 씬에 별도 오브젝트를 만들 필요 없다.
 /// </summary>
-public class StageTransitionUI : MonoBehaviour
+public class StageTransitionUI : MonoRoutine
 {
     private CanvasGroup     overlay;
     private TextMeshProUGUI messageText;

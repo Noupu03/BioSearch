@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Haare.Client.Routine;
 
 /// <summary>
 /// UI 색상을 씬 시작 시 한 번만 적용한다.
 /// 색상 변경이 필요하면 Apply()를 직접 호출하거나 OnValidate에서 에디터 미리보기 가능.
 /// </summary>
-public class GlobalColorManager : MonoBehaviour
+public class GlobalColorManager : MonoRoutine
 {
     public static GlobalColorManager Instance { get; private set; }
 
@@ -34,14 +35,16 @@ public class GlobalColorManager : MonoBehaviour
     [Header("6. 이상 폴더 텍스트 색")]
     public Color abnormalFolderTextColor = Color.red;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
         Apply();
     }
 
-    void OnDestroy() { if (Instance == this) Instance = null; }
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable() { if (Instance == this) Instance = null; }
 
     /// <summary>색상을 모든 UI에 적용. 런타임에서 색상을 바꾼 경우 수동 호출.</summary>
     public void Apply()

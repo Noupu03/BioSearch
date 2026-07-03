@@ -4,13 +4,14 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 파일 탐색기 상단 경로 패널 (breadcrumb).
 /// 버튼마다 PathDropReceiver 컴포넌트를 붙여 드롭 이벤트를 처리한다.
 /// EventTrigger를 직접 AddComponent하지 않으므로 리스너 누적이 없다.
 /// </summary>
-public class PathPanelManager : MonoBehaviour
+public class PathPanelManager : MonoRoutine
 {
     [SerializeField] public Transform contentArea;
     [SerializeField] public Button    pathButtonPrefab;
@@ -56,7 +57,7 @@ public class PathPanelManager : MonoBehaviour
 /// 경로 버튼 위에 드롭됐을 때 폴더/파일 이동을 처리하는 전용 컴포넌트.
 /// 버튼 GameObject와 수명이 같으므로 리스너가 자동 정리된다.
 /// </summary>
-public class PathDropReceiver : MonoBehaviour, IDropHandler
+public class PathDropReceiver : MonoRoutine, IDropHandler
 {
     private int        pathIndex;
     private FileWindow fileWindow;

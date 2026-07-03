@@ -1,7 +1,8 @@
 using UnityEngine;
 using TMPro;
+using Haare.Client.Routine;
 
-public class ScoreStageUIManager : MonoBehaviour
+public class ScoreStageUIManager : MonoRoutine
 {
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI successText;

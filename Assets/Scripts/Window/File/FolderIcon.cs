@@ -3,8 +3,9 @@ using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
+using Haare.Client.Routine;
 
-public class FolderIcon : MonoBehaviour, IPointerClickHandler, IDropHandler,
+public class FolderIcon : MonoRoutine, IPointerClickHandler, IDropHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField] private TMP_Text fileNameText;

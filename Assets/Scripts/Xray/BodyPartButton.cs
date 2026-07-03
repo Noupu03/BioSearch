@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Haare.Client.Routine;
 
 [RequireComponent(typeof(Button))]
-public class BodyPartButton : MonoBehaviour
+public class BodyPartButton : MonoRoutine
 {
     [Header("부위 설정")]
     [SerializeField] private string partName;

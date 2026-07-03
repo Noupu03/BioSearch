@@ -1,9 +1,10 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using Haare.Client.Routine;
 
 [RequireComponent(typeof(AudioSource))]
-public class TypingSFX : MonoBehaviour
+public class TypingSFX : MonoRoutine
 {
     [Header("Bindings")]
     public TMP_InputField inputField;
@@ -24,7 +25,7 @@ public class TypingSFX : MonoBehaviour
 
     [Header("Behavior")]
     public bool onlyOnKeyDown = true;
-    public bool playBackspaceOnEmpty = true; // ¡ç ºóÄ­/°æ°è¿¡¼­µµ ¹é½ºÆäÀÌ½º SFX Àç»ý
+    public bool playBackspaceOnEmpty = true; // ï¿½ï¿½ ï¿½ï¿½Ä­/ï¿½ï¿½è¿¡ï¿½ï¿½ï¿½ï¿½ ï¿½é½ºï¿½ï¿½ï¿½Ì½ï¿½ SFX ï¿½ï¿½ï¿½
 
     private AudioSource src;
     private int lastIndex = -1;
@@ -36,8 +37,9 @@ public class TypingSFX : MonoBehaviour
     private int lastTextLength = 0;
     private bool enterGuard = false;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         src = GetComponent<AudioSource>();
         src.playOnAwake = false;
         src.spatialBlend = 0f;
@@ -57,13 +59,14 @@ public class TypingSFX : MonoBehaviour
         inputField.onSubmit.RemoveListener(OnSubmit);
     }
 
-    void Update()
+    protected override void UpdateProcess()
     {
-        // ¦¡¦¡ °æ°è(backspace/delete) Àü¿ë Ã³¸® ¦¡¦¡
+        base.UpdateProcess();
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½(backspace/delete) ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (!inputField || !inputField.isFocused) return;
-        if (!string.IsNullOrEmpty(Input.compositionString)) return; // IME Á¶ÇÕ Áß ¹«½Ã
+        if (!string.IsNullOrEmpty(Input.compositionString)) return; // IME ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        // Backspace/Delete Å°´Ù¿îÀÌÁö¸¸ ½ÇÁ¦ ÅØ½ºÆ® º¯È­°¡ ¾øÀ» »óÈ²:
+        // Backspace/Delete Å°ï¿½Ù¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È²:
         bool backspaceDown = Input.GetKeyDown(KeyCode.Backspace);
         bool deleteDown = Input.GetKeyDown(KeyCode.Delete);
 
@@ -71,12 +74,12 @@ public class TypingSFX : MonoBehaviour
         {
             int len = inputField.text?.Length ?? 0;
 
-            // Ä¿¼­ À§Ä¡ (TMP 3.x: caretPosition »ç¿ë; selection °í·ÁÇØ anchor/focus µ¿ÀÏ ½Ã ´ÜÀÏ Ä¿¼­·Î °£ÁÖ)
+            // Ä¿ï¿½ï¿½ ï¿½ï¿½Ä¡ (TMP 3.x: caretPosition ï¿½ï¿½ï¿½; selection ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ anchor/focus ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
             int caret = inputField.caretPosition;
 
             bool atEmpty = len == 0;
-            bool atLeftBoundary = caret <= 0 && backspaceDown;   // ¿ÞÂÊ¿¡ Áö¿ï ¹®ÀÚ°¡ ¾øÀ½
-            bool atRightBoundary = caret >= len && deleteDown;    // ¿À¸¥ÂÊ¿¡ Áö¿ï ¹®ÀÚ°¡ ¾øÀ½
+            bool atLeftBoundary = caret <= 0 && backspaceDown;   // ï¿½ï¿½ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½
+            bool atRightBoundary = caret >= len && deleteDown;    // ï¿½ï¿½ï¿½ï¿½ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½
 
             if (atEmpty || atLeftBoundary || atRightBoundary)
             {
@@ -97,28 +100,28 @@ public class TypingSFX : MonoBehaviour
         int delta = newText.Length - lastTextLength;
         lastTextLength = newText.Length;
 
-        // ¿£ÅÍ °³ÇàÀº onSubmit¿¡¼­¸¸ Ã³¸®
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ onSubmitï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         if (delta > 0 && (newText.EndsWith("\n") || newText.EndsWith("\r")))
         {
             if (enterGuard) enterGuard = false;
             return;
         }
 
-        // ºÙ¿©³Ö±â °ú´Ù ÀÔ·Â ¾ïÁ¦
+        // ï¿½Ù¿ï¿½ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (delta > 3) delta = 1;
 
-        // onlyOnKeyDown °¡µå: ½ÇÁ¦ Å°´Ù¿î ÇÁ·¹ÀÓ¸¸ Àç»ý
+        // onlyOnKeyDown ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ Å°ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½ ï¿½ï¿½ï¿½
         bool keyDownGate =
             !onlyOnKeyDown ||
             Input.anyKeyDown ||
-            Input.GetKeyDown(KeyCode.V) || // ºÙ¿©³Ö±â ´ëÀÀ
+            Input.GetKeyDown(KeyCode.V) || // ï¿½Ù¿ï¿½ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½
             Input.GetKeyDown(KeyCode.Return) ||
             Input.GetKeyDown(KeyCode.KeypadEnter) ||
             Input.GetKeyDown(KeyCode.Backspace) ||
             Input.GetKeyDown(KeyCode.Delete);
         if (!keyDownGate) return;
 
-        // »èÁ¦(½ÇÁ¦ ÅØ½ºÆ® º¯È­°¡ ¹ß»ýÇÑ °æ¿ì)
+        // ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½È­ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
         if (delta < 0)
         {
             if (backspaceClip != null && (Input.GetKeyDown(KeyCode.Backspace) || Input.GetKeyDown(KeyCode.Delete)))
@@ -132,7 +135,7 @@ public class TypingSFX : MonoBehaviour
             return;
         }
 
-        // ÀÏ¹Ý Å¸ÀÌÇÎ
+        // ï¿½Ï¹ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½
         if (delta > 0 && Time.time - lastTypingTime >= typingCooldown)
         {
             PlayTypingOneShot();
@@ -153,7 +156,7 @@ public class TypingSFX : MonoBehaviour
 
     IEnumerator ClearEnterGuardNextFrame()
     {
-        yield return null; // 1ÇÁ·¹ÀÓ ÈÄ °³Çà ¹«À½ Ã³¸® Á¾·á
+        yield return null; // 1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         enterGuard = false;
     }
 

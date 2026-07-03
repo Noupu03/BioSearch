@@ -3,19 +3,20 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using Haare.Client.Routine;
 
 [RequireComponent(typeof(AudioSource))]
-public class GlobalMousePressReleaseSfxExposed : MonoBehaviour
+public class GlobalMousePressReleaseSfxExposed : MonoRoutine
 {
-    [Header("Mixer ¶ó¿ìÆÃ")]
-    [Tooltip("Ãâ·ÂÇÒ AudioMixerGroup (¿¹: UI ¶Ç´Â SFX ±×·ì)")]
+    [Header("Mixer ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ AudioMixerGroup (ï¿½ï¿½: UI ï¿½Ç´ï¿½ SFX ï¿½×·ï¿½)")]
     public AudioMixerGroup outputGroup;
 
-    [Header("UI ¿µ¿ª Ã³¸®")]
-    [Tooltip("¸¶¿ì½º°¡ UI À§¿¡ ÀÖÀ» ¶§´Â »ç¿îµå¸¦ ³»Áö ¾ÊÀ½")]
+    [Header("UI ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ï¿½ì½ºï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public bool ignoreWhenOverUI = false;
 
-    [Header("°¨ÁöÇÒ ¹öÆ°")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°")]
     public bool useLeft = true;
     public bool useRight = false;
     public bool useMiddle = false;
@@ -23,22 +24,22 @@ public class GlobalMousePressReleaseSfxExposed : MonoBehaviour
     [System.Serializable]
     public class ClipSettings
     {
-        [Tooltip("Àç»ýÇÒ Å¬¸³")]
+        [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½")]
         public AudioClip clip;
         [Range(0f, 1f)] public float volume = 1f;
         [Range(0.5f, 2f)] public float pitch = 1f;
-        [Tooltip("ÇÇÄ¡ ·£´ý °¡°¨(¡¾)")]
+        [Tooltip("ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)")]
         [Range(0f, 0.2f)] public float pitchVariance = 0.03f;
-        [Tooltip("¿¬Å¸ ÃÖ¼Ò °£°Ý(ms). 0ÀÌ¸é Á¦ÇÑ ¾øÀ½")]
+        [Tooltip("ï¿½ï¿½Å¸ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½(ms). 0ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
         [Range(0, 200)] public int minIntervalMs = 30;
     }
 
-    [Header("´©¸¦ ¶§(Down) »ç¿îµå")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½(Down) ï¿½ï¿½ï¿½ï¿½")]
     public ClipSettings leftDown = new ClipSettings();
     public ClipSettings rightDown = new ClipSettings();
     public ClipSettings middleDown = new ClipSettings();
 
-    [Header("¶¿ ¶§(Up) »ç¿îµå")]
+    [Header("ï¿½ï¿½ ï¿½ï¿½(Up) ï¿½ï¿½ï¿½ï¿½")]
     public ClipSettings leftUp = new ClipSettings();
     public ClipSettings rightUp = new ClipSettings();
     public ClipSettings middleUp = new ClipSettings();
@@ -46,16 +47,18 @@ public class GlobalMousePressReleaseSfxExposed : MonoBehaviour
     private AudioSource _src;
     private readonly Dictionary<string, double> _lastDsp = new Dictionary<string, double>();
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         _src = GetComponent<AudioSource>();
         _src.playOnAwake = false;
-        _src.spatialBlend = 0f; // Àü¿ª UI¼º ÇÇµå¹éÀÌ¹Ç·Î 2D ±ÇÀå
+        _src.spatialBlend = 0f; // ï¿½ï¿½ï¿½ï¿½ UIï¿½ï¿½ ï¿½Çµï¿½ï¿½ï¿½Ì¹Ç·ï¿½ 2D ï¿½ï¿½ï¿½ï¿½
         if (outputGroup) _src.outputAudioMixerGroup = outputGroup;
     }
 
-    void Update()
+    protected override void UpdateProcess()
     {
+        base.UpdateProcess();
         if (ignoreWhenOverUI && EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
@@ -85,7 +88,7 @@ public class GlobalMousePressReleaseSfxExposed : MonoBehaviour
     {
         if (cfg == null || cfg.clip == null) return;
 
-        // ½ºÆÔ ¾ïÁ¦
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (cfg.minIntervalMs > 0 && _lastDsp.TryGetValue(key, out var last))
         {
             double dtMs = (AudioSettings.dspTime - last) * 1000.0;
@@ -93,12 +96,12 @@ public class GlobalMousePressReleaseSfxExposed : MonoBehaviour
         }
         _lastDsp[key] = AudioSettings.dspTime;
 
-        // ÇÇÄ¡ ·£´ý Àû¿ë
+        // ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         float prevPitch = _src.pitch;
         _src.pitch = Mathf.Clamp(cfg.pitch + Random.Range(-cfg.pitchVariance, cfg.pitchVariance), 0.5f, 2f);
 
         _src.PlayOneShot(cfg.clip, cfg.volume);
 
-        _src.pitch = prevPitch; // º¹±¸
+        _src.pitch = prevPitch; // ï¿½ï¿½ï¿½ï¿½
     }
 }

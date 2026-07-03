@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections;
+using Haare.Client.Routine;
 
-public class AmbientHum : MonoBehaviour
+public class AmbientHum : MonoRoutine
 {
     public AudioClip introClip;
     public AudioClip loopClip;
@@ -14,9 +15,9 @@ public class AmbientHum : MonoBehaviour
     public bool autoPlayOnStart = false;
 
     [Header("Scheduling")]
-    [Tooltip("½ºÄÉÁÙ ¿©À¯½Ã°£(ÃÊ). ÀÚµ¿ °è»ê°ª°ú Áß Å« °ªÀ» »ç¿ë")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½(ï¿½ï¿½). ï¿½Úµï¿½ ï¿½ï¿½ê°ªï¿½ï¿½ ï¿½ï¿½ Å« ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½")]
     [Range(0.02f, 0.25f)] public float scheduleLead = 0.10f;
-    [Tooltip("·çÇÁ ½ÃÀÛ Æú¹é Ã¼Å© Áö¿¬(ÃÊ)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å© ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)")]
     [Range(0.02f, 0.25f)] public float fallbackProbe = 0.08f;
 
     AudioSource aIntro, bLoop;
@@ -24,8 +25,9 @@ public class AmbientHum : MonoBehaviour
     enum Stage { Stopped, Intro, Loop }
     Stage stage = Stage.Stopped;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         aIntro = gameObject.AddComponent<AudioSource>();
         bLoop = gameObject.AddComponent<AudioSource>();
         foreach (var s in new[] { aIntro, bLoop })
@@ -39,7 +41,7 @@ public class AmbientHum : MonoBehaviour
             s.dopplerLevel = 0f;
         }
 
-        // DSP ¹öÆÛ ±â¹Ý ¸®µåÅ¸ÀÓ »óÇâ(ÇÃ·§Æûº° ¾ÈÁ¤È­)
+        // DSP ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­)
         int buf, nbuf; AudioSettings.GetDSPBufferSize(out buf, out nbuf);
         float sr = AudioSettings.outputSampleRate > 0 ? AudioSettings.outputSampleRate : 48000f;
         float minLead = Mathf.Clamp((buf / sr) * nbuf * 2f, 0.06f, 0.15f);
@@ -51,7 +53,7 @@ public class AmbientHum : MonoBehaviour
         if (autoPlayOnStart) PlayFromIntro();
     }
 
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ API ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ API ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public void Toggle() { if (started) Stop(); else PlayFromIntro(); }
     public void ResetFromIntro() => PlayFromIntro();
     public void SetVolume(float v) { volume = Mathf.Clamp01(v); ApplyVolumes(); }
@@ -61,7 +63,7 @@ public class AmbientHum : MonoBehaviour
         if (stage == Stage.Intro && restartIfIntro) { bool was = started; Stop(true); if (was) PlayFromIntro(); return; }
         aIntro.pitch = bLoop.pitch = pitch;
     }
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     void ApplyVolumes()
     {
@@ -74,7 +76,7 @@ public class AmbientHum : MonoBehaviour
         if (!introClip || !loopClip) { Debug.LogWarning("AmbientHum: Clips not assigned."); return; }
         StopAllCoroutines();
 
-        // »çÀü ·Îµå
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½
         introClip.LoadAudioData();
         loopClip.LoadAudioData();
         started = true; stage = Stage.Intro;
@@ -83,7 +85,7 @@ public class AmbientHum : MonoBehaviour
 
     IEnumerator PlayRoutine()
     {
-        // ·Îµå ¿Ï·á ´ë±â
+        // ï¿½Îµï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½
         while (introClip.loadState == AudioDataLoadState.Loading ||
                loopClip.loadState == AudioDataLoadState.Loading)
             yield return null;
@@ -95,14 +97,14 @@ public class AmbientHum : MonoBehaviour
             yield break;
         }
 
-        // °øÅë ¼¼ÆÃ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         aIntro.Stop(); bLoop.Stop();
         aIntro.clip = introClip; bLoop.clip = loopClip;
         aIntro.loop = false; bLoop.loop = true;
         aIntro.pitch = bLoop.pitch = pitch;
         aIntro.volume = 0f; bLoop.volume = 0f;
 
-        // ½ºÄÉÁÙ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         double now = AudioSettings.dspTime;
         double start = now + scheduleLead;
         double introDur = (double)introClip.samples / introClip.frequency / pitch;
@@ -111,22 +113,22 @@ public class AmbientHum : MonoBehaviour
         aIntro.PlayScheduled(start);
         bLoop.PlayScheduled(loopStart);
 
-        // ÆäÀÌµå
+        // ï¿½ï¿½ï¿½Ìµï¿½
         StartCoroutine(FadeTo(aIntro, volume, fadeTime, 0f));
         StartCoroutine(FadeTo(bLoop, volume, fadeTime, (float)(loopStart - now)));
 
-        // ·çÇÁ ÁøÀÔ ¸¶Å·
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å·
         yield return new WaitForSecondsRealtime((float)(loopStart - now) + 0.01f);
         if (started) stage = Stage.Loop;
 
-        // ¦¡ Æú¹é: ·çÇÁ ½ÃÀÛ Á÷ÈÄ¿¡µµ ¹ÌÀç»ýÀÌ¸é Áï½Ã Àç»ý
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         yield return new WaitForSecondsRealtime(fallbackProbe);
         if (started && !bLoop.isPlaying)
         {
             bLoop.time = 0f;
             bLoop.loop = true;
             bLoop.volume = volume; bLoop.pitch = pitch;
-            bLoop.Play(); // »ùÇÃ Á¤È®µµ´Â ¾Æ´ÏÁö¸¸ ¹«À½ ¹æÁö
+            bLoop.Play(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
     }
 

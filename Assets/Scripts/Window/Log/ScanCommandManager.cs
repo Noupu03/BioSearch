@@ -1,13 +1,14 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 로그 창에 입력된 'scan 명령'을 처리한다.
 /// FileWindow와 LogWindowManager는 Instance로 접근하므로
 /// 인스펙터 크로스 참조가 없다.
 /// </summary>
-public class ScanCommandManager : MonoBehaviour
+public class ScanCommandManager : MonoRoutine
 {
     public static ScanCommandManager Instance { get; private set; }
 
@@ -17,13 +18,12 @@ public class ScanCommandManager : MonoBehaviour
     private bool   isScanning;
     private Slider scanProgressSlider;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
     }
-
-    void OnDestroy() { if (Instance == this) Instance = null; }
 
     void OnEnable()
     {
@@ -31,10 +31,13 @@ public class ScanCommandManager : MonoBehaviour
             LogWindowManager.Instance.OnScanCommandEntered += HandleScanCommand;
     }
 
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), Instance 해제는
+    // 기존 OnDisable(이벤트 구독 해제)에 같이 넣는다.
     void OnDisable()
     {
         if (LogWindowManager.Instance != null)
             LogWindowManager.Instance.OnScanCommandEntered -= HandleScanCommand;
+        if (Instance == this) Instance = null;
     }
 
     private void HandleScanCommand(string folderName)

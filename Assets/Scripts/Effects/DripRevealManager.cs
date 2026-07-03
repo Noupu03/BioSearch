@@ -10,9 +10,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using Haare.Client.Routine;
 
 [DefaultExecutionOrder(-50)]
-public class DripRevealManager : MonoBehaviour
+public class DripRevealManager : MonoRoutine
 {
     public static DripRevealManager Instance { get; private set; }
 
@@ -65,14 +66,16 @@ public class DripRevealManager : MonoBehaviour
     static readonly int ID_InvertY = Shader.PropertyToID("_InvertY");
     static readonly int ID_HardCut = Shader.PropertyToID("_HardCut");
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         if (applyOnSceneLoaded) SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    void OnDestroy()
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable()
     {
         if (Instance == this) Instance = null;
         SceneManager.sceneLoaded -= OnSceneLoaded;

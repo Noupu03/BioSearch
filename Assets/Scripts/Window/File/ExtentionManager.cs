@@ -1,9 +1,10 @@
 using UnityEngine;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 파일 확장자에 맞는 아이콘 스프라이트를 반환하는 싱글톤 서비스.
 /// </summary>
-public class ExtensionManager : MonoBehaviour
+public class ExtensionManager : MonoRoutine
 {
     public static ExtensionManager Instance { get; private set; }
 
@@ -12,13 +13,15 @@ public class ExtensionManager : MonoBehaviour
     [SerializeField] private Sprite pngIconSprite;
     [SerializeField] private Sprite defaultIconSprite;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
     }
 
-    void OnDestroy() { if (Instance == this) Instance = null; }
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable() { if (Instance == this) Instance = null; }
 
     public Sprite GetIconForExtension(string extension)
     {

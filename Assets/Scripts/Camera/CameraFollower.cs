@@ -1,11 +1,13 @@
 using UnityEngine;
+using Haare.Client.Routine;
 
-public class CameraFollower : MonoBehaviour
+public class CameraFollower : MonoRoutine
 {
     [SerializeField] private Transform mainCamera;
 
-    void LateUpdate()
+    protected override void LateUpdateProcess()
     {
+        base.LateUpdateProcess();
         if (mainCamera != null)
         {
             transform.position = mainCamera.position;

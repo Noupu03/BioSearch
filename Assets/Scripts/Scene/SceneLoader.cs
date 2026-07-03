@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Haare.Client.Routine;
 
-public class SceneLoader : MonoBehaviour
+public class SceneLoader : MonoRoutine
 {
     public void LoadNextScene(string sceneName)
     {
-        Debug.Log("¹öÆ° Å¬¸¯µÊ! ¾À ÀüÈ¯ ½Ãµµ Áß ¡æ " + sceneName);
+        Debug.Log("ï¿½ï¿½Æ° Å¬ï¿½ï¿½ï¿½ï¿½! ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½Ãµï¿½ ï¿½ï¿½ ï¿½ï¿½ " + sceneName);
         SceneManager.LoadScene(sceneName);
     }
 }

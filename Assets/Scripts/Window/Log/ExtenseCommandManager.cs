@@ -1,11 +1,12 @@
 using UnityEngine;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 'extense 파일명 확장자' 명령어를 처리한다.
 /// FileWindow와 LogWindowManager는 Instance로 접근하므로
 /// 인스펙터 크로스 참조가 없다.
 /// </summary>
-public class ExtenseCommandManager : MonoBehaviour
+public class ExtenseCommandManager : MonoRoutine
 {
     void OnEnable()
     {

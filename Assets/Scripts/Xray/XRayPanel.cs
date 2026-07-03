@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Haare.Client.Routine;
 
 /// <summary>
 /// Xray 패널 코디네이터. 각 신체 버튼(BodyPartButton)이 Start에서 자기 자신을
 /// Register()로 등록하므로 Inspector에서 버튼 목록을 수동 할당할 필요가 없다.
 /// </summary>
-public class XRayPanel : MonoBehaviour
+public class XRayPanel : MonoRoutine
 {
     [Header("카메라창")]
     public Image cameraPanel;

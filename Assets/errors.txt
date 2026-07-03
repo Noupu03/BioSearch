@@ -1,10 +1,12 @@
-NullReferenceException: Object reference not set to an instance of an object
-UnityEngine.ResourceManagement.ResourceProviders.SceneInstance.ActivateAsync () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/ISceneProvider.cs:59)
-Haare.Client.Routine.Service.SceneService.SceneService.LoadSceneInternal (Haare.Client.Routine.Service.SceneService.SceneLoadRequest request) (at Assets/Scripts/Haare/Client/Routine/Service/SceneService/SceneService.cs:108)
-Cysharp.Threading.Tasks.UniTask+ExceptionResultSource.GetResult (System.Int16 token) (at ./Library/PackageCache/com.cysharp.unitask@360e370345b9/Runtime/UniTask.Factory.cs:326)
-Haare.Client.Routine.Service.SceneService.SceneService.LoadScene (Haare.Client.Routine.Service.SceneService.SceneName scene, UnityEngine.SceneManagement.LoadSceneMode mode) (at Assets/Scripts/Haare/Client/Routine/Service/SceneService/SceneService.cs:69)
-Cysharp.Threading.Tasks.UniTask+ExceptionResultSource.GetResult (System.Int16 token) (at ./Library/PackageCache/com.cysharp.unitask@360e370345b9/Runtime/UniTask.Factory.cs:326)
-Cysharp.Threading.Tasks.UniTaskExtensions+ToCoroutineEnumerator.RunTask (Cysharp.Threading.Tasks.UniTask task) (at ./Library/PackageCache/com.cysharp.unitask@360e370345b9/Runtime/UniTaskExtensions.cs:807)
-Cysharp.Threading.Tasks.UniTaskExtensions+ToCoroutineEnumerator.MoveNext () (at ./Library/PackageCache/com.cysharp.unitask@360e370345b9/Runtime/UniTaskExtensions.cs:838)
-UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) (at <612ea0208cc847f49d539e6511ed3cd5>:0)
+<b><color=red>[<b><color=#6495ED>[SERVICE]</color></b>]</color></b> [LoadSceneInternal] 씬 로드 실패! 주소: 'StartScene'
+Status: None, 원인: 
+Addressable 등록(Tools → Haare Addressables 셋업)을 확인하세요.
+UnityEngine.Debug:LogError (object)
+Haare.Util.Logger.LogHelper:Error (string[]) (at Assets/Scripts/Haare/Util/LogHelper/LogHelper.cs:60)
+Haare.Client.Routine.Service.SceneService.SceneService/<LoadSceneInternal>d__13:MoveNext () (at Assets/Scripts/Haare/Client/Routine/Service/SceneService/SceneService.cs:105)
+Haare.Client.Routine.Service.SceneService.SceneService:LoadSceneInternal (Haare.Client.Routine.Service.SceneService.SceneLoadRequest)
+Haare.Client.Routine.Service.SceneService.SceneService/<LoadScene>d__12:MoveNext () (at Assets/Scripts/Haare/Client/Routine/Service/SceneService/SceneService.cs:69)
+Haare.Client.Routine.Service.SceneService.SceneService:LoadScene (Haare.Client.Routine.Service.SceneService.SceneName,UnityEngine.SceneManagement.LoadSceneMode)
+GameLoopManager/<DoGameOver>d__20:MoveNext () (at Assets/Scripts/Core/GameLoopManager.cs:119)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
 

@@ -1,7 +1,8 @@
 using UnityEngine;
 using TMPro;
+using Haare.Client.Routine;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoRoutine
 {
     [SerializeField] private TextMeshProUGUI counterText;
     private int currentValue = 10;

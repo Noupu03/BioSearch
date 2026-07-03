@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using System.Collections;
+using Haare.Client.Routine;
 
-public class CameraPostFX : MonoBehaviour
+public class CameraPostFX : MonoRoutine
 {
     [Header("Global Volume")]
     [SerializeField] private Volume globalVolume;
@@ -59,7 +60,8 @@ public class CameraPostFX : MonoBehaviour
         }
     }
 
-    void OnDestroy()
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable()
     {
         if (InputManager.Instance != null)
         {

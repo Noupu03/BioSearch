@@ -2,11 +2,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 파일 팝업 창. 드래그 이동은 topBar에 붙은 DragHandler 컴포넌트가 담당한다.
 /// </summary>
-public class FilePopup : MonoBehaviour
+public class FilePopup : MonoRoutine
 {
     [Header("UI")]
     [SerializeField] private Button        closeButton;
@@ -38,7 +39,8 @@ public class FilePopup : MonoBehaviour
     public void OnTopBarPointerDown(BaseEventData _) { }
     public void OnTopBarDrag(BaseEventData _)        { }
 
-    void OnDestroy()
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable()
     {
         if (FilePopupManager.Instance != null && !string.IsNullOrEmpty(fileKey))
             FilePopupManager.Instance.OnPopupDestroyed(fileKey);
