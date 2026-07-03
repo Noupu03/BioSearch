@@ -12,6 +12,7 @@ using System.Text;
 ///   1. SelectPopupManager 트리거 버튼 / 팝업 프리팹 / popupParent
 ///   2. FileWindow.bodyButtons 경로 초기화 (버튼은 수동 할당)
 ///   3. 씬 계층구조 정리 (그룹 폴더 생성 + 이름 정정)
+///   4. GameLifetimeScope 생성 (Haare/VContainer DI 루트, 없으면 생성)
 ///
 /// 싱글톤으로 전환된 시스템(FileWindow, SanityManager, LogWindowManager 등)은
 /// 자동 배선이 불필요하다.
@@ -54,6 +55,8 @@ public static class SceneSetupTool
         var hcc = Object.FindObjectOfType<HybridCameraController>(true);
         if (hcc != null) SetupHybridCameraController(hcc, log);
         else             log.AppendLine("⚠ HybridCameraController 없음");
+
+        SetupGameLifetimeScope(log);
 
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         Debug.Log("[씬 셋업]\n" + log);
@@ -266,6 +269,21 @@ public static class SceneSetupTool
         foreach (var req in new[] { "camera1", "camera2", "view2" })
             if (so.FindProperty(req)?.objectReferenceValue == null)
                 log.AppendLine($"  ⚠ {req} 미연결 — 수동 설정 필요");
+    }
+
+    private static void SetupGameLifetimeScope(StringBuilder log)
+    {
+        var scope = Object.FindObjectOfType<GameLifetimeScope>(true);
+        if (scope != null)
+        {
+            log.AppendLine("✓ GameLifetimeScope: 기존 유지");
+            return;
+        }
+
+        var go = new GameObject("GameLifetimeScope");
+        Undo.RegisterCreatedObjectUndo(go, "Create GameLifetimeScope");
+        go.AddComponent<GameLifetimeScope>();
+        log.AppendLine("✓ GameLifetimeScope 생성 (VContainer 루트 DI 스코프)");
     }
 
     private static void SetupSelectPopupManager(SelectPopupManager spm, GameLoopManager glm, StringBuilder log)
