@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 씬 시작 시 GameEvents.OnSceneInitialized를 발생시켜
@@ -8,7 +9,7 @@ using System.Collections;
 /// RequestFirstStage는 한 프레임 뒤에 호출해
 /// 모든 오브젝트의 Start()가 완료(이벤트 구독 완료)된 후 이벤트가 발사되도록 한다.
 /// </summary>
-public class SceneStartManager : MonoBehaviour
+public class SceneStartManager : MonoRoutine
 {
     IEnumerator Start()
     {

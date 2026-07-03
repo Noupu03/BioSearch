@@ -100,6 +100,16 @@ namespace Haare.Client.Routine.Service.SceneService
 
             await LoadSceneProgressTask(loadOperation);
 
+            if (loadOperation.Status != AsyncOperationStatus.Succeeded)
+            {
+                LogHelper.Error(LogHelper.SERVICE,
+                    $"[LoadSceneInternal] 씬 로드 실패! 주소: '{address}'\n" +
+                    $"Status: {loadOperation.Status}, 원인: {loadOperation.OperationException}\n" +
+                    "Addressable 등록(Tools → Haare Addressables 셋업)을 확인하세요.");
+                currentPhaseReactive.Value = SceneLoadPhase.UnloadCurrent;
+                return;
+            }
+
             var sceneInstance = loadOperation.Result;
 
             LogHelper.LogTask(LogHelper.SERVICE, ">>> Phase: EndLoad");

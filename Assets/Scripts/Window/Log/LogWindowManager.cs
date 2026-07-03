@@ -72,7 +72,8 @@ public class LogWindowManager : MonoRoutine, IStageResettable
         Log(".......complete");
     }
 
-    void OnDestroy()
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable()
     {
         if (Instance == this) Instance = null;
         if (inputField != null) inputField.onSubmit.RemoveListener(OnInputSubmitted);

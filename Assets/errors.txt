@@ -1,7 +1,10 @@
-MissingReferenceException: The object of type 'UnityEngine.AudioListener' has been destroyed but you are still trying to access it.
-Your script should either check if it is null or you should not destroy the object.
-UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <612ea0208cc847f49d539e6511ed3cd5>:0)
-UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <612ea0208cc847f49d539e6511ed3cd5>:0)
-UnityEngine.Component.get_gameObject () (at <612ea0208cc847f49d539e6511ed3cd5>:0)
-SceneSetupTool.OrganizeScene () (at Assets/Editor/SceneSetupTool.cs:136)
+NullReferenceException: Object reference not set to an instance of an object
+UnityEngine.ResourceManagement.ResourceProviders.SceneInstance.ActivateAsync () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/ISceneProvider.cs:59)
+Haare.Client.Routine.Service.SceneService.SceneService.LoadSceneInternal (Haare.Client.Routine.Service.SceneService.SceneLoadRequest request) (at Assets/Scripts/Haare/Client/Routine/Service/SceneService/SceneService.cs:108)
+Cysharp.Threading.Tasks.UniTask+ExceptionResultSource.GetResult (System.Int16 token) (at ./Library/PackageCache/com.cysharp.unitask@360e370345b9/Runtime/UniTask.Factory.cs:326)
+Haare.Client.Routine.Service.SceneService.SceneService.LoadScene (Haare.Client.Routine.Service.SceneService.SceneName scene, UnityEngine.SceneManagement.LoadSceneMode mode) (at Assets/Scripts/Haare/Client/Routine/Service/SceneService/SceneService.cs:69)
+Cysharp.Threading.Tasks.UniTask+ExceptionResultSource.GetResult (System.Int16 token) (at ./Library/PackageCache/com.cysharp.unitask@360e370345b9/Runtime/UniTask.Factory.cs:326)
+Cysharp.Threading.Tasks.UniTaskExtensions+ToCoroutineEnumerator.RunTask (Cysharp.Threading.Tasks.UniTask task) (at ./Library/PackageCache/com.cysharp.unitask@360e370345b9/Runtime/UniTaskExtensions.cs:807)
+Cysharp.Threading.Tasks.UniTaskExtensions+ToCoroutineEnumerator.MoveNext () (at ./Library/PackageCache/com.cysharp.unitask@360e370345b9/Runtime/UniTaskExtensions.cs:838)
+UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) (at <612ea0208cc847f49d539e6511ed3cd5>:0)
 

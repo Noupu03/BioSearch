@@ -55,7 +55,8 @@ public partial class FileWindow : MonoRoutine, IStageResettable
             pathPanelManager.Initialize(this);
     }
 
-    void OnDestroy()
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable()
     {
         if (Instance == this) Instance = null;
     }

@@ -1,10 +1,11 @@
 using Cysharp.Threading.Tasks;
+using Haare.Client.Routine;
 using Haare.Client.UI;
 using Haare.Util.Logger;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SelectPopupManager : MonoBehaviour
+public class SelectPopupManager : MonoRoutine
 {
     [Header("트리거 버튼")]
     [SerializeField] private Button acceptButton;

@@ -97,7 +97,8 @@ public class HybridCameraController : MonoRoutine
         }
     }
 
-    void OnDestroy()
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), 대신 OnDisable 사용.
+    void OnDisable()
     {
         if (InputManager.Instance != null)
         {

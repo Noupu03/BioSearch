@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Haare.Client.Routine;
 using Haare.Client.Routine.Service.SceneService;
 
 /// <summary>
@@ -10,7 +11,7 @@ using Haare.Client.Routine.Service.SceneService;
 /// DIP(의존 역전 원칙): 구체 매니저 참조 대신 IStageResettable 배열로
 /// 리셋 대상을 받아, 새 매니저 추가 시 이 파일을 수정하지 않아도 된다.
 /// </summary>
-public class GameLoopManager : MonoBehaviour
+public class GameLoopManager : MonoRoutine
 {
     public static GameLoopManager Instance { get; private set; }
 
@@ -28,8 +29,9 @@ public class GameLoopManager : MonoBehaviour
     private StageTransitionUI _transition;
     private bool              _isTransitioning;
 
-    void Awake()
+    protected override void Constructor()
     {
+        base.Constructor();
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
 
@@ -57,10 +59,15 @@ public class GameLoopManager : MonoBehaviour
         if (!hybridCamera)  Debug.LogWarning("[GameLoopManager] HybridCameraController 없음");
     }
 
-    void OnDestroy() { if (Instance == this) Instance = null; }
-
     void OnEnable()  => GameEvents.OnGameOver += HandleGameOver;
-    void OnDisable() => GameEvents.OnGameOver -= HandleGameOver;
+
+    // MonoRoutine도 private OnDestroy()를 정의하므로(Awake와 같은 문제), Instance 해제는
+    // 기존 OnDisable(GameEvents 구독 해제)에 같이 넣는다.
+    void OnDisable()
+    {
+        GameEvents.OnGameOver -= HandleGameOver;
+        if (Instance == this) Instance = null;
+    }
 
     /// <summary>씬 최초 로드 시 SceneStartManager가 호출.</summary>
     public void RequestFirstStage()
