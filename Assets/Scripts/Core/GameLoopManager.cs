@@ -1,7 +1,8 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Haare.Client.Routine.Service.SceneService;
 
 /// <summary>
 /// 게임 루프의 유일한 소유자.
@@ -26,9 +27,6 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] private float  transitionFadeDuration = 0.5f;
     [SerializeField] private float  transitionHoldDuration = 1.5f;
     [SerializeField] private string transitionMessage      = "다음 실험체를 받습니다...";
-
-    [Header("설정")]
-    [SerializeField] private string startSceneName = "StartScene";
 
     private StageTransitionUI _transition;
     private bool              _isTransitioning;
@@ -120,6 +118,6 @@ public class GameLoopManager : MonoBehaviour
         yield return null;
         ScoreCount.Reset();
         sanityManager?.ResetSanityForNewGame();
-        SceneManager.LoadScene(startSceneName);
+        yield return SceneService.Instance.LoadScene(SceneName.StartScene).ToCoroutine();
     }
 }

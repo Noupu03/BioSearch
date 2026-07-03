@@ -21,5 +21,6 @@ EditorBuildSettings:
     path: Assets/Scenes/scene ssh.unity
     guid: 85980d46474e0174fbf95410ec7de08f
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 45518582c6e5399408e3886139bc80ca, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

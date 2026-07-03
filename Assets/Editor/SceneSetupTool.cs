@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Text;
+using Haare.Client.UI;
 
 /// <summary>
 /// Tools 메뉴 → 씬 설정 자동화.
@@ -271,19 +272,89 @@ public static class SceneSetupTool
                 log.AppendLine($"  ⚠ {req} 미연결 — 수동 설정 필요");
     }
 
+    private const string CoreUIManagerPrefabPath = "Assets/Prefabs/Haare/CoreUIManager.prefab";
+
     private static void SetupGameLifetimeScope(StringBuilder log)
     {
         var scope = Object.FindObjectOfType<GameLifetimeScope>(true);
-        if (scope != null)
+        if (scope == null)
+        {
+            var go = new GameObject("GameLifetimeScope");
+            Undo.RegisterCreatedObjectUndo(go, "Create GameLifetimeScope");
+            scope = go.AddComponent<GameLifetimeScope>();
+            log.AppendLine("✓ GameLifetimeScope 생성 (VContainer 루트 DI 스코프)");
+        }
+        else
         {
             log.AppendLine("✓ GameLifetimeScope: 기존 유지");
+        }
+
+        SetupCoreUIManagerPrefab(scope, log);
+    }
+
+    private static void SetupCoreUIManagerPrefab(GameLifetimeScope scope, StringBuilder log)
+    {
+        var so   = new SerializedObject(scope);
+        var prop = so.FindProperty("coreUIManagerPrefab");
+        if (prop == null)
+        {
+            log.AppendLine("⚠ GameLifetimeScope.coreUIManagerPrefab 필드 없음");
             return;
         }
 
-        var go = new GameObject("GameLifetimeScope");
-        Undo.RegisterCreatedObjectUndo(go, "Create GameLifetimeScope");
-        go.AddComponent<GameLifetimeScope>();
-        log.AppendLine("✓ GameLifetimeScope 생성 (VContainer 루트 DI 스코프)");
+        var prefab = AssetDatabase.LoadAssetAtPath<CoreUIManager>(CoreUIManagerPrefabPath);
+        if (prefab == null)
+        {
+            prefab = CreateCoreUIManagerPrefab(log);
+        }
+        else
+        {
+            log.AppendLine("✓ CoreUIManager 프리팹: 기존 유지");
+        }
+
+        if (prop.objectReferenceValue == null && prefab != null)
+        {
+            prop.objectReferenceValue = prefab;
+            so.ApplyModifiedProperties();
+            log.AppendLine("✓ GameLifetimeScope.coreUIManagerPrefab 연결");
+        }
+    }
+
+    private static CoreUIManager CreateCoreUIManagerPrefab(StringBuilder log)
+    {
+        if (!AssetDatabase.IsValidFolder("Assets/Prefabs"))
+            AssetDatabase.CreateFolder("Assets", "Prefabs");
+        if (!AssetDatabase.IsValidFolder("Assets/Prefabs/Haare"))
+            AssetDatabase.CreateFolder("Assets/Prefabs", "Haare");
+
+        var root = new GameObject("CoreUIManager", typeof(RectTransform), typeof(Canvas),
+            typeof(CanvasScaler), typeof(GraphicRaycaster));
+        var canvas = root.GetComponent<Canvas>();
+        canvas.renderMode   = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 100; // 팝업이 다른 UI 위에 뜨도록
+
+        var scaler = root.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode         = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+
+        var panelRootGO = new GameObject("PanelRoot", typeof(RectTransform));
+        panelRootGO.transform.SetParent(root.transform, false);
+        var panelRootRect = (RectTransform)panelRootGO.transform;
+        panelRootRect.anchorMin = Vector2.zero;
+        panelRootRect.anchorMax = Vector2.one;
+        panelRootRect.offsetMin = Vector2.zero;
+        panelRootRect.offsetMax = Vector2.zero;
+
+        var coreUIManager = root.AddComponent<CoreUIManager>();
+        var cuiSo = new SerializedObject(coreUIManager);
+        cuiSo.FindProperty("safePannelRect").objectReferenceValue = panelRootRect;
+        cuiSo.ApplyModifiedPropertiesWithoutUndo();
+
+        var savedPrefab = PrefabUtility.SaveAsPrefabAsset(root, CoreUIManagerPrefabPath);
+        Object.DestroyImmediate(root);
+
+        log.AppendLine($"✓ CoreUIManager 프리팹 생성: {CoreUIManagerPrefabPath}");
+        return savedPrefab.GetComponent<CoreUIManager>();
     }
 
     private static void SetupSelectPopupManager(SelectPopupManager spm, GameLoopManager glm, StringBuilder log)

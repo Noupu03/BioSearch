@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using Haare.Client.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,28 +9,30 @@ public class SelectPopupManager : MonoBehaviour
     [SerializeField] private Button acceptButton;
     [SerializeField] private Button releaseButton;
 
-    [Header("팝업 프리팹 / 부모")]
-    [SerializeField] private GameObject acceptPopupPrefab;
-    [SerializeField] private GameObject releasePopupPrefab;
-    [SerializeField] private Transform  popupParent;
-
     [Header("게임 루프")]
     [SerializeField] private GameLoopManager gameLoopManager;
 
-    private SelectPopup currentPopup;
+    private const string AcceptQuestion = "피검사자를 수용하시겠습니까?\n\n이상이 없는 것이 확실합니까?";
+    private const string ReleaseQuestion = "피검사자를 방출 하시겠습니까?\n\n이상이 있는 것이 확실합니까?";
+
+    private CoreUIManager uiManager;
+    private SelectPopup   currentPopup;
 
     void Start()
     {
-        if (acceptButton)  acceptButton.onClick.AddListener(() => ShowPopup(acceptPopupPrefab, true));
-        if (releaseButton) releaseButton.onClick.AddListener(() => ShowPopup(releasePopupPrefab, false));
+        uiManager = FindObjectOfType<CoreUIManager>();
+
+        if (acceptButton)  acceptButton.onClick.AddListener(() => ShowPopupAsync(true).Forget());
+        if (releaseButton) releaseButton.onClick.AddListener(() => ShowPopupAsync(false).Forget());
     }
 
-    private void ShowPopup(GameObject prefab, bool isAccept)
+    private async UniTaskVoid ShowPopupAsync(bool isAccept)
     {
-        if (currentPopup != null || prefab == null || popupParent == null) return;
+        if (currentPopup != null || uiManager == null) return;
 
-        var go    = Instantiate(prefab, popupParent);
-        var popup = go.GetComponent<SelectPopup>();
+        var question = isAccept ? AcceptQuestion : ReleaseQuestion;
+        var panelId  = await uiManager.LoadPanel<SelectPopup, SelectPopupData>(new SelectPopupData { Question = question });
+        var popup    = uiManager.RentPanel<SelectPopup>(panelId);
         if (popup == null) return;
 
         currentPopup = popup;

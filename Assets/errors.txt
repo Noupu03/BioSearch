@@ -1,2 +1,8 @@
-Assets\Editor\SceneSetupTool.cs(7,25): error CS0234: The type or namespace name 'DI' does not exist in the namespace 'Haare.Client.Core' (are you missing an assembly reference?)
+Assets\Scripts\Haare\Util\AssetLoader\AssetLoader.cs(89,28): error CS0117: 'File' does not contain a definition for 'WriteAllTextAsync'
+
+Assets\Scripts\Haare\Util\AssetLoader\AssetLoader.cs(105,25): error CS0117: 'File' does not contain a definition for 'Exists'
+
+Assets\Scripts\Haare\Util\AssetLoader\AssetLoader.cs(112,23): error CS0117: 'File' does not contain a definition for 'Exists'
+
+Assets\Scripts\Haare\Util\AssetLoader\AssetLoader.cs(119,42): error CS0117: 'File' does not contain a definition for 'ReadAllTextAsync'
 
