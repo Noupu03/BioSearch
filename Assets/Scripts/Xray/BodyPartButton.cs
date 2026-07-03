@@ -18,6 +18,7 @@ public class BodyPartButton : MonoBehaviour
 
     private Button button;
     private Color restoreColor; // 클릭 직전 색상 (FileWindow가 red 등으로 바꿔둘 수 있음)
+    private bool isSelected;
 
     public string   PartName       => partName;
     public string[] FolderPath     => folderPath;
@@ -39,13 +40,18 @@ public class BodyPartButton : MonoBehaviour
 
     private void OnClick()
     {
-        // FileWindow가 변경했을 수 있는 현재 색상을 복원 기준으로 저장
-        restoreColor = button.colors.normalColor;
+        // 이미 선택된(초록색) 상태에서 다시 캡처하면 restoreColor가 초록색으로
+        // 오염되어 버리므로, 선택되지 않은 상태일 때만 복원 기준 색상을 갱신한다.
+        if (!isSelected)
+            restoreColor = button.colors.normalColor;
+
         GetComponentInParent<XRayPanel>()?.ShowPart(this);
     }
 
     public void SetHighlight(bool selected)
     {
+        isSelected = selected;
+
         ColorBlock cb       = button.colors;
         Color      c        = selected ? selectedColor : restoreColor;
         cb.normalColor      = c;
