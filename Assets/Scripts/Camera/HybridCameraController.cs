@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using Haare.Client.Routine;
 
 /// <summary>
 /// 카메라 전환 — 방 모드 / 모니터 모드 분리.
@@ -14,7 +15,7 @@ using System.Collections;
 /// Canvas가 Screen Space - Camera + worldCamera=camera2 여야 캡처됨.
 /// World Space Canvas인 경우 view2 위치에서 전체 캔버스가 보여야 함.
 /// </summary>
-public class HybridCameraController : MonoBehaviour
+public class HybridCameraController : MonoRoutine
 {
     [Header("Cameras")]
     [SerializeField] private Camera camera1;
@@ -105,8 +106,9 @@ public class HybridCameraController : MonoBehaviour
         }
     }
 
-    void Update()
+    protected override void UpdateProcess()
     {
+        base.UpdateProcess();
         if (targetInputField != null && targetInputField.isFocused) return;
         UpdateCamera2Input();
         UpdateCameraMovement();

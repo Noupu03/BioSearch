@@ -1,5 +1,6 @@
-<b><color=red>[<b><color=lightgreen>[HAARE]</color></b>]</color></b> [SelectPopupManager] CoreUIManager를 찾을 수 없습니다 — GameLifetimeScope.coreUIManagerPrefab이 비어있지 않은지, Tools → 씬 셋업을 실행했는지 확인하세요.
-UnityEngine.Debug:LogError (object)
-Haare.Util.Logger.LogHelper:Error (string[]) (at Assets/Scripts/Haare/Util/LogHelper/LogHelper.cs:60)
-SelectPopupManager:Start () (at Assets/Scripts/Select/SelectPopupManager.cs:26)
+Assets\Scripts\Haare\Client\Core\HaareClient.cs(16,6): error CS0246: The type or namespace name 'RuntimeInitializeOnLoadMethodAttribute' could not be found (are you missing a using directive or an assembly reference?)
+
+Assets\Scripts\Haare\Client\Core\HaareClient.cs(16,6): error CS0246: The type or namespace name 'RuntimeInitializeOnLoadMethod' could not be found (are you missing a using directive or an assembly reference?)
+
+Assets\Scripts\Haare\Client\Core\HaareClient.cs(16,37): error CS0103: The name 'RuntimeInitializeLoadType' does not exist in the current context
 

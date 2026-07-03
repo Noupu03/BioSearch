@@ -2,15 +2,16 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 using Haare.Client.Core;
 using Haare.Util.Logger;
 
 /// <summary>
 /// Haare 프레임워크의 진입점. 최초 씬 로드 전에 Processor를 생성하고 부트스트랩한다.
-/// BioSearch는 StartScene/게임 씬에 이미 EventSystem, AudioListener를 배치해 두었으므로
-/// 여기서는 중복 생성을 피하기 위해 이미 존재하는지 먼저 확인한다.
+/// BioSearch는 StartScene/게임 씬 둘 다 이미 자체 EventSystem/AudioListener를 배치해 두었으므로
+/// (원본 데모와 달리) 여기서 따로 만들지 않는다 — "없으면 생성" 가드는 BeforeSceneLoad 시점의
+/// 비동기 딜레이가 씬 오브젝트 인스턴스화보다 먼저 재개될 수 있어 타이밍을 신뢰할 수 없고,
+/// DontDestroyOnLoad로 만든 게 다음 씬의 것과 겹쳐 "There are 2 audio listeners" 경고를 냈다.
 /// </summary>
 public class HaareClient
 {
@@ -33,20 +34,6 @@ public class HaareClient
     static async UniTask RegisterProcesses()
     {
         LogHelper.LogTask(LogHelper.FRAMEWORK,"RegisterProcesses");
-
-        if (Object.FindObjectOfType<EventSystem>() == null)
-        {
-            var eventSystemObj = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
-            Object.DontDestroyOnLoad(eventSystemObj);
-        }
-
-        if (Object.FindObjectOfType<AudioListener>() == null)
-        {
-            var audioObj = new GameObject("AudioListener", typeof(AudioListener));
-            Object.DontDestroyOnLoad(audioObj);
-        }
-
-        LogHelper.LogTask(LogHelper.FRAMEWORK,"RegisterProcesses -> end");
         await UniTask.CompletedTask;
     }
 
