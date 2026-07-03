@@ -53,7 +53,6 @@ public class GameLoopManager : MonoBehaviour
             var list = new List<MonoBehaviour>();
             var sm  = FindObjectOfType<SanityManager>(true);    if (sm  != null) list.Add(sm);
             var fw  = FindObjectOfType<FileWindow>(true);       if (fw  != null) list.Add(fw);
-            var dis = FindObjectOfType<DummyIconSpawner>(true); if (dis != null) list.Add(dis);
             var lwm = FindObjectOfType<LogWindowManager>(true); if (lwm != null) list.Add(lwm);
             var gsm = FindObjectOfType<GameStateManager>(true); if (gsm != null) list.Add(gsm);
             var tm  = FindObjectOfType<TimerManager>(true);     if (tm  != null) list.Add(tm);

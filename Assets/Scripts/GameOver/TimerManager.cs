@@ -1,7 +1,8 @@
 using UnityEngine;
 using TMPro;
+using Haare.Client.Routine;
 
-public class TimerManager : MonoBehaviour, IStageResettable
+public class TimerManager : MonoRoutine, IStageResettable
 {
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI timerText;
@@ -18,8 +19,9 @@ public class TimerManager : MonoBehaviour, IStageResettable
 
     private void HandleGameOver(string _) => isRunning = false;
 
-    void Update()
+    protected override void UpdateProcess()
     {
+        base.UpdateProcess();
         if (!isRunning) return;
 
         currentTime -= Time.deltaTime;

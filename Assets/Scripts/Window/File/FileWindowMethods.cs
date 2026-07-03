@@ -45,21 +45,10 @@ public partial class FileWindow
             icon.Setup(file, this);
         }
 
-        CreateDummyIconsForFolder(folder);
-
         if (backButton != null)
             backButton.gameObject.SetActive(true);
 
         pathPanelManager?.UpdatePathButtons();
-    }
-
-    private void CreateDummyIconsForFolder(Folder folder)
-    {
-        foreach (var dummy in dummyIcons)
-        {
-            if (dummy.parentFolder == folder && dummy.uiObject == null)
-                CreateDummyIconUI(dummy, folder);
-        }
     }
 
     private bool HasFilesInFolder(Folder folder)

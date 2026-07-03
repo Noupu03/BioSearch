@@ -1021,7 +1021,6 @@ MonoBehaviour:
   stageResettables:
   - {fileID: 168379756}
   - {fileID: 1796863570}
-  - {fileID: 693352161}
   - {fileID: 942185077}
   - {fileID: 1135300294}
   - {fileID: 168379753}
@@ -3017,6 +3016,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 734832710}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &554605820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 554605822}
+  - component: {fileID: 554605821}
+  m_Layer: 0
+  m_Name: GameLifetimeScope
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &554605821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554605820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a08b9e2ee30b90a4193434dfbc41f480, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentReference:
+    TypeName: 
+  autoRun: 1
+  autoInjectGameObjects: []
+  coreUIManagerPrefab: {fileID: 7626309194892045907, guid: ce2f9e12a3b0de846bbbf9a400b73b3c, type: 3}
+--- !u!4 &554605822
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554605820}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &568018101
 GameObject:
   m_ObjectHideFlags: 0
@@ -3635,7 +3683,6 @@ GameObject:
   - component: {fileID: 693352158}
   - component: {fileID: 693352159}
   - component: {fileID: 693352160}
-  - component: {fileID: 693352161}
   m_Layer: 5
   m_Name: CanvasManager
   m_TagString: Untagged
@@ -3746,19 +3793,6 @@ MonoBehaviour:
   successText: {fileID: 449377471}
   failText: {fileID: 134486340}
   stageText: {fileID: 1245567807}
---- !u!114 &693352161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 693352153}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78400dafee199ae469647a5e2a96abe3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnInterval: 1
 --- !u!1 &708220948
 GameObject:
   m_ObjectHideFlags: 0
@@ -6368,8 +6402,6 @@ GameObject:
   - component: {fileID: 1215137033}
   - component: {fileID: 1215137032}
   - component: {fileID: 1215137034}
-  - component: {fileID: 1215137035}
-  - component: {fileID: 1215137036}
   m_Layer: 5
   m_Name: PathText
   m_TagString: Untagged
@@ -6524,30 +6556,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
---- !u!114 &1215137035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1215137030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4c2de99c93340f4faeb38c18ed864eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1215137036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1215137030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 570995fb58ea890479e5597c21d135fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1228096830
 GameObject:
   m_ObjectHideFlags: 0
@@ -9748,8 +9756,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   folderIconPrefab: {fileID: 2148310354490608959, guid: 9a7fdc50c5a26794392b1db8b25953c8, type: 3}
   fileIconPrefab: {fileID: 2148310354490608959, guid: ba79f0571b26f804597d74c216fff8b6, type: 3}
-  dummyFolderIconPrefab: {fileID: 2148310354490608959, guid: b7923cb7949e05746892bd48877c99e4, type: 3}
-  dummyFileIconPrefab: {fileID: 2148310354490608959, guid: 541b61359b186fe4fb5e528ad5e62977, type: 3}
   contentArea: {fileID: 751168858}
   emptyText: {fileID: 861951011}
   pathPanelManager: {fileID: 1841328800}
@@ -10870,3 +10876,4 @@ SceneRoots:
   - {fileID: 2009164830}
   - {fileID: 977293531}
   - {fileID: 835765030}
+  - {fileID: 554605822}

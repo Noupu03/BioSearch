@@ -22,7 +22,7 @@ Use **Tools → 씬 셋업** in the Unity Editor menu to auto-wire all Serialize
 4. Game over → `GameEvents.RaiseGameOver(reason)` → `GameLoopManager.HandleGameOver()` → `SceneService.Instance.LoadScene(SceneName.StartScene)` (Haare, Addressables-based — see below)
 
 ### IStageResettable
-Interface with a single `ResetForNewStage()`. Implementors: `SanityManager`, `FileWindow`, `DummyIconSpawner`, `LogWindowManager`, `GameStateManager`, `TimerManager`. The list is stored as `MonoBehaviour[] stageResettables` in `GameLoopManager` (inspector-ordered, order matters).
+Interface with a single `ResetForNewStage()`. Implementors: `SanityManager`, `FileWindow`, `LogWindowManager`, `GameStateManager`, `TimerManager`. The list is stored as `MonoBehaviour[] stageResettables` in `GameLoopManager` (inspector-ordered, order matters).
 
 ### GameEvents (static event hub)
 Loose coupling between managers. Key events: `OnSceneInitialized`, `OnGameOver(string)`, `OnSanityChanged(float,float)`, `OnScoreChanged`, `OnStageStarted`. Never subscribe in constructors — use `OnEnable`/`OnDisable`.

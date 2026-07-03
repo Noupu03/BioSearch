@@ -4,29 +4,29 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// ÅëÇÕµÈ ÆÄÀÏ ¾ÆÀÌÄÜ
-/// - È®ÀåÀÚº° ¾ÆÀÌÄÜ ÀÌ¹ÌÁö¸¦ ExtensionManager¿¡¼­ °¡Á®¿È
-/// - ´õºíÅ¬¸¯ ½Ã PopupManager ÅëÇØ ÆÄÀÏ ¿­¸²
-/// - µå·¡±× ¾Ø µå·Ó Áö¿ø
-/// - isAbnormal ¿©ºÎ¿¡ µû¶ó ÅØ½ºÆ® »ö»ó º¯°æ
+/// ï¿½ï¿½ï¿½Õµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+/// - È®ï¿½ï¿½ï¿½Úºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ExtensionManagerï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+/// - ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ ï¿½ï¿½ PopupManager ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+/// - ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+/// - isAbnormal ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 /// </summary>
 public class FileIcon : MonoBehaviour, IPointerClickHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("UI Components")]
-    public Image iconImage;          // ¾ÆÀÌÄÜ ÀÌ¹ÌÁö
-    public TMP_Text fileNameText;    // ÆÄÀÏ ÀÌ¸§ Ç¥½Ã
+    public Image iconImage;          // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+    public TMP_Text fileNameText;    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ Ç¥ï¿½ï¿½
 
     private FileWindow fileWindow;
     private File file;
 
-    // ±âº» »ö»ó
-    private Color normalColor = Color.white;   // Á¤»ó ÆÄÀÏ: ÇÏ¾ç
-    private Color abnormalColor = Color.red;   // ÀÌ»ó ÆÄÀÏ: »¡°­
+    // ï¿½âº» ï¿½ï¿½ï¿½ï¿½
+    private Color normalColor = Color.white;   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½Ï¾ï¿½
+    private Color abnormalColor = Color.red;   // ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
     private Color selectedColor = Color.yellow;
 
     /// <summary>
-    /// ¾ÆÀÌÄÜ ÃÊ±âÈ­
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
     /// </summary>
     public void Setup(File fileData, FileWindow window)
     {
@@ -39,7 +39,7 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
         if (iconImage != null && ExtensionManager.Instance != null)
             iconImage.sprite = ExtensionManager.Instance.GetIconForExtension(file.extension);
 
-        //  ÆÄÀÏ ÀÌ»ó ¿©ºÎ ¹Ý¿µ
+        //  ï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½
         if (fileNameText != null)
             fileNameText.color = file.isAbnormal ? abnormalColor : normalColor;
 
@@ -58,7 +58,7 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
         }
         else
         {
-            //  ¼±ÅÃ ÇØÁ¦ ½Ã ´Ù½Ã ÀÌ»ó ¿©ºÎ ¹Ý¿µ
+            //  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½
             fileNameText.color = file.isAbnormal ? abnormalColor : normalColor;
         }
     }
@@ -69,13 +69,13 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
 
         if (eventData.clickCount == 2)
         {
-            // ´õºíÅ¬¸¯ ½Ã PopupManager ÅëÇØ ÆÄÀÏ ¿­±â
+            // ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ ï¿½ï¿½ PopupManager ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (FilePopupManager.Instance != null && file != null)
                 FilePopupManager.Instance.OpenFile(file);
         }
     }
 
-    #region µå·¡±× ±¸Çö
+    #region ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -96,16 +96,4 @@ public class FileIcon : MonoBehaviour, IPointerClickHandler,
     }
 
     #endregion
-    // FileIcon.cs
-    public void SetupDummy(string dummyName)
-    {
-        if (fileNameText != null)
-            fileNameText.text = dummyName;
-
-        // Å¬¸¯/µå·¡±× ºñÈ°¼ºÈ­
-        Button btn = GetComponent<Button>();
-        if (btn != null)
-            btn.interactable = false;
-    }
-
 }

@@ -1,8 +1,5 @@
-Assets\Scripts\Haare\Util\AssetLoader\AssetLoader.cs(89,28): error CS0117: 'File' does not contain a definition for 'WriteAllTextAsync'
-
-Assets\Scripts\Haare\Util\AssetLoader\AssetLoader.cs(105,25): error CS0117: 'File' does not contain a definition for 'Exists'
-
-Assets\Scripts\Haare\Util\AssetLoader\AssetLoader.cs(112,23): error CS0117: 'File' does not contain a definition for 'Exists'
-
-Assets\Scripts\Haare\Util\AssetLoader\AssetLoader.cs(119,42): error CS0117: 'File' does not contain a definition for 'ReadAllTextAsync'
+<b><color=red>[<b><color=lightgreen>[HAARE]</color></b>]</color></b> [SelectPopupManager] CoreUIManager를 찾을 수 없습니다 — GameLifetimeScope.coreUIManagerPrefab이 비어있지 않은지, Tools → 씬 셋업을 실행했는지 확인하세요.
+UnityEngine.Debug:LogError (object)
+Haare.Util.Logger.LogHelper:Error (string[]) (at Assets/Scripts/Haare/Util/LogHelper/LogHelper.cs:60)
+SelectPopupManager:Start () (at Assets/Scripts/Select/SelectPopupManager.cs:26)
 

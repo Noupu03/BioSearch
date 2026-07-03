@@ -17,8 +17,6 @@ public partial class FileWindow : MonoBehaviour, IStageResettable
     [Header("Prefabs")]
     [SerializeField] private GameObject folderIconPrefab;
     [SerializeField] private GameObject fileIconPrefab;
-    [SerializeField] private GameObject dummyFolderIconPrefab;
-    [SerializeField] private GameObject dummyFileIconPrefab;
 
     [Header("Scroll Area")]
     [SerializeField] private Transform contentArea;
@@ -46,39 +44,6 @@ public partial class FileWindow : MonoBehaviour, IStageResettable
     private Folder currentFolder;
     private Stack<Folder> folderHistory = new Stack<Folder>();
     private List<File> currentFolderFiles = new List<File>();
-
-    private readonly List<DummyIcon> dummyIcons = new List<DummyIcon>();
-
-    /// <summary>더미 아이콘을 추가하고 현재 폴더면 즉시 UI 생성.</summary>
-    public void AddDummyIcon(DummyIcon dummy)
-    {
-        if (dummy == null) return;
-        dummyIcons.Add(dummy);
-        if (currentFolder == dummy.parentFolder)
-            CreateDummyIconUI(dummy, dummy.parentFolder);
-    }
-
-    public void CreateDummyIconUI(DummyIcon dummy, Folder parentFolder)
-    {
-        if (dummy == null) return;
-
-        GameObject prefab = dummy.isFolder ? dummyFolderIconPrefab : dummyFileIconPrefab;
-        if (prefab == null || contentArea == null) return;
-
-        GameObject go = Instantiate(prefab, contentArea);
-        dummy.uiObject = go;
-
-        TMP_Text textComp = go.GetComponentInChildren<TMP_Text>();
-        if (textComp != null)
-        {
-            textComp.text = dummy.name;
-            textComp.color = Color.white;
-        }
-
-        Button btn = go.GetComponent<Button>();
-        if (btn != null)
-            btn.interactable = false;
-    }
 
     void Awake()
     {
@@ -109,7 +74,6 @@ public partial class FileWindow : MonoBehaviour, IStageResettable
         foreach (Transform child in contentArea)
             Destroy(child.gameObject);
 
-        dummyIcons.Clear();
         folderHistory.Clear();
         currentFolderFiles.Clear();
         selectedFolderIcon = null;

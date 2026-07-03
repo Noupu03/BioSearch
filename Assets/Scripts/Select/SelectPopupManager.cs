@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Haare.Client.UI;
+using Haare.Util.Logger;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +22,8 @@ public class SelectPopupManager : MonoBehaviour
     void Start()
     {
         uiManager = FindObjectOfType<CoreUIManager>();
+        if (uiManager == null)
+            LogHelper.Error(LogHelper.FRAMEWORK, "[SelectPopupManager] CoreUIManager를 찾을 수 없습니다 — GameLifetimeScope.coreUIManagerPrefab이 비어있지 않은지, Tools → 씬 셋업을 실행했는지 확인하세요.");
 
         if (acceptButton)  acceptButton.onClick.AddListener(() => ShowPopupAsync(true).Forget());
         if (releaseButton) releaseButton.onClick.AddListener(() => ShowPopupAsync(false).Forget());
@@ -28,12 +31,21 @@ public class SelectPopupManager : MonoBehaviour
 
     private async UniTaskVoid ShowPopupAsync(bool isAccept)
     {
-        if (currentPopup != null || uiManager == null) return;
+        if (currentPopup != null) return;
+        if (uiManager == null)
+        {
+            LogHelper.Error(LogHelper.FRAMEWORK, "[SelectPopupManager] uiManager가 없어 팝업을 띄울 수 없습니다.");
+            return;
+        }
 
         var question = isAccept ? AcceptQuestion : ReleaseQuestion;
         var panelId  = await uiManager.LoadPanel<SelectPopup, SelectPopupData>(new SelectPopupData { Question = question });
         var popup    = uiManager.RentPanel<SelectPopup>(panelId);
-        if (popup == null) return;
+        if (popup == null)
+        {
+            LogHelper.Error(LogHelper.FRAMEWORK, "[SelectPopupManager] SelectPopup 패널 로드에 실패했습니다 — Addressable 등록(Tools → Haare SelectPopup 셋업)을 확인하세요.");
+            return;
+        }
 
         currentPopup = popup;
         popup.OnYesClicked += () => HandleYes(isAccept);

@@ -109,6 +109,20 @@ public static class SceneSetupTool
 
         MoveToRoot("MonitorButton", log);
 
+        log.AppendLine("\n[ Missing Script 제거 ]");
+        int removedMissing = 0;
+        foreach (var go in Resources.FindObjectsOfTypeAll<GameObject>())
+        {
+            if (!go.scene.IsValid()) continue; // 씬에 없는 에셋(프리팹 등)은 제외
+            int removed = GameObjectUtility.RemoveMonoBehavioursWithMissingScript(go);
+            if (removed > 0)
+            {
+                removedMissing += removed;
+                log.AppendLine($"  {go.name}: {removed}개 제거");
+            }
+        }
+        if (removedMissing == 0) log.AppendLine("  없음");
+
         log.AppendLine("\n[ 그룹 구성 ]");
         foreach (var kv in SceneGroups)
         {
@@ -152,7 +166,6 @@ public static class SceneSetupTool
         {
             Object.FindObjectOfType<SanityManager>(),
             Object.FindObjectOfType<FileWindow>(),
-            Object.FindObjectOfType<DummyIconSpawner>(),
             Object.FindObjectOfType<LogWindowManager>(),
             Object.FindObjectOfType<GameStateManager>(),
             Object.FindObjectOfType<TimerManager>(),
